@@ -1,8 +1,8 @@
 
 package com.huanghua.view;
 
+import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
-import com.huanghua.socket.SocketAgent;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -30,9 +30,9 @@ public class MessageFrame extends JFrame implements ActionListener {
     private JTextField mMessage;
     private JButton mSendButton;
     private JTextArea mMessageList;
-    private SocketAgent mAgent;
+    private ClientThread mClient;
 
-    public MessageFrame(SocketAgent agent) {
+    public MessageFrame() {
         this.setTitle(Resource.getStringForSet("frame_title"));
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -53,14 +53,12 @@ public class MessageFrame extends JFrame implements ActionListener {
         mMessageList = new JTextArea();
         mMessageList.setEditable(false);
         this.add(new JScrollPane(mMessageList), BorderLayout.CENTER);
-        mAgent = agent;
 
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (mSendButton == e.getSource()) {
-            //mAgent.sendMessage(mMessage.getText());
             mMessage.setText("");
         }
     }
@@ -69,4 +67,9 @@ public class MessageFrame extends JFrame implements ActionListener {
         this.mMessageList.append(message + "\n");
     }
 
+    public static void main(String[] args) {
+        Resource.setLanguage(Resource.Language_zh_CN);
+        MessageFrame main = new MessageFrame();
+        main.setVisible(true);
+    }
 }

@@ -3,12 +3,15 @@ package com.huanghua.view;
 
 import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
+import com.huanghua.pojo.User;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -16,8 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -27,9 +28,12 @@ public class MainFrame extends JFrame implements ActionListener {
     private static final int GAME_HEIGHT = 450;
     public static boolean sIsListenter = false;
 
-    private JTextField mMessage;
-    private JButton mSendButton;
-    private JTextArea mMessageList;
+    private JButton mConnect;
+    private JButton mDisconnect;
+    private JPanel mCenter;
+    private JScrollPane mJScroll;
+    private List<User> mUser;
+    
     private ClientThread mClient;
 
     public MainFrame() {
@@ -42,32 +46,85 @@ public class MainFrame extends JFrame implements ActionListener {
 
         this.setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();
-        mMessage = new JTextField();
-        mSendButton = new JButton(Resource.getStringForSet("send"));
-        mSendButton.addActionListener(this);
         topPanel.setBorder(new EtchedBorder());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-        topPanel.add(mMessage);
-        topPanel.add(mSendButton);
-        this.add(topPanel, BorderLayout.SOUTH);
-        mMessageList = new JTextArea();
-        mMessageList.setEditable(false);
-        this.add(new JScrollPane(mMessageList), BorderLayout.CENTER);
+        mConnect = new JButton(Resource.getStringForSet("connect"));
+        mDisconnect = new JButton(Resource.getStringForSet("disconnect"));
+        mConnect.addActionListener(this);
+        mDisconnect.addActionListener(this);
+        mDisconnect.setEnabled(false);
+        topPanel.add(new JLabel("      "));
+        topPanel.add(mConnect);
+        topPanel.add(new JLabel("       "));
+        topPanel.add(mDisconnect);
+        this.add(topPanel, BorderLayout.NORTH);
+        mCenter = new JPanel();
+        mCenter.setBorder(new EtchedBorder());
+        mCenter.setLayout(new BoxLayout(mCenter, BoxLayout.Y_AXIS));
+        mJScroll = new JScrollPane(mCenter);
+        this.add(mJScroll, BorderLayout.CENTER);
+        mUser = new ArrayList<User>();
+        //addUser(new User("192.168.1.94", "hh", 12345));
+    }
 
-        mClient = new ClientThread(this);
-        mClient.start();
+    public void refreshList() {
+        mCenter.removeAll();
+        mCenter.validate();
+        for (User u : mUser) {
+            addUserToPanel(u);
+        }
+    }
+
+    public void addUserToPanel(User u) {
+        JPanel list = new JPanel();
+        list.setBorder(new EtchedBorder());
+        list.setLayout(new BoxLayout(list, BoxLayout.X_AXIS));
+        list.add(new JLabel(u.getIp() + ":" + u.getName() + "                 "));
+        JButton button = new JButton(Resource.getStringForSet("frame_title"));
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        list.add(button);
+        mCenter.add(list);
+        mCenter.validate();
+    }
+    public void addUser(User u) {
+        boolean isHas = false;
+        for (User u1 : mUser) {
+            if (u.getName().equals(u1.getName())) {
+                isHas = true;
+                break;
+            }
+        }
+        if (!isHas) {
+            mUser.add(u);
+            addUserToPanel(u);
+        }
+    }
+
+    public void offLine() {
+        mUser.clear();
+        refreshList();
+        mClient.offLine();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (mSendButton == e.getSource()) {
-            mClient.sendMessage(mMessage.getText());
-            mMessage.setText("");
+        if (e.getSource() == mDisconnect) {
+            mConnect.setEnabled(true);
+            mDisconnect.setEnabled(false);
+            sIsListenter = false;
+            offLine();
+        } else if (e.getSource() == mConnect) {
+            mConnect.setEnabled(false);
+            mDisconnect.setEnabled(true);
+            sIsListenter = true;
+            mClient = new ClientThread(this);
+            mClient.start();
         }
-    }
-
-    public void setMessage(String message) {
-        this.mMessageList.append(message + "\n");
     }
 
     public static void main(String[] args) {

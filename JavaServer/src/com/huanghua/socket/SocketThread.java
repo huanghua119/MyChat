@@ -16,6 +16,7 @@ public class SocketThread implements Runnable {
     private ServerSocket mScocket;
     private MainFrame mFrame;
     private List<SocketAgent> mAgent = null;
+    private int port = 12345;
 
     public SocketThread(MainFrame frame) {
         mAgent = new ArrayList<SocketAgent>();
@@ -25,24 +26,37 @@ public class SocketThread implements Runnable {
     @Override
     public void run() {
         try {
-            mScocket = new ServerSocket(12345);
+            mScocket = new ServerSocket(port);
             mFrame.setMessage(Resource.getStringForSet("nowListener") + mScocket.getInetAddress());
-            int i = 1;
+            int i = 0;
             while (MainFrame.sIsListenter) {
                 Socket s = mScocket.accept();
-                mFrame.setMessage(Resource.getStringForSet("newPersor") + s.getInetAddress());
-                User u = new User();
-                u.setIp(s.getInetAddress().toString());
-                u.setName(i + "");
                 i++;
+                String ip = s.getInetAddress().toString().replace("/", "");
+                User u = new User();
+                u.setIp(ip);
+                u.setName(i + "");
+                u.setPort(port + i);
+                mFrame.setMessage(Resource.getStringForSet("newPersor") + ip + ":" + u.getName());
                 mFrame.addUser(u);
-                SocketAgent agent = new SocketAgent(s, mFrame);
+                SocketAgent agent = new SocketAgent(s, mFrame, u);
+                u.setsAgent(agent);
                 agent.start();
                 mAgent.add(agent);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void sendUserList() {
+        List<User> mList = mFrame.getUserList();
+        for (User u : mList) {
+            u.getsAgent().sendUserList();
+        }
+/*        for (SocketAgent sa : mAgent) {
+            sa.sendUserList();
+        }*/
     }
 
     public void cancel() {

@@ -84,6 +84,19 @@ public class MainFrame extends JFrame implements ActionListener {
         mUser.add(u);
     }
 
+    public List<User> getUserList() {
+        return this.mUser;
+    }
+
+    public void sendUserList() {
+        mSocket.sendUserList();
+    }
+    public void userOffLine(User u) {
+        setMessage(Resource.getStringForSet("offline") + u.getIp() + ":" + u.getName());
+        mUser.remove(u);
+        sendUserList();
+    }
+
     public void setMessage(String message) {
         this.mIPList.append(message + "\n");
     }

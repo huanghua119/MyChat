@@ -1,13 +1,14 @@
 
 package com.huanghua.socket;
 
+import com.huanghua.pojo.User;
 import com.huanghua.view.MainFrame;
-import com.huanghua.view.MessageFrame;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 public class SocketAgent extends Thread {
     private Socket mSocket;
@@ -15,17 +16,16 @@ public class SocketAgent extends Thread {
     private DataInputStream mDis;
     private boolean mFlag = true;
     private MainFrame mFrame = null;
-    private MessageFrame mMessFrame = null;
+    private User mCurrent = null;
 
-    public SocketAgent(Socket socket, MainFrame frame) {
+    public SocketAgent(Socket socket, MainFrame frame, User u) {
         this.mSocket = socket;
         this.mFrame = frame;
+        this.mCurrent = u;
         try {
             mFlag = true;
             mDos = new DataOutputStream(socket.getOutputStream());
             mDis = new DataInputStream(socket.getInputStream());
-            mMessFrame = new MessageFrame(this);
-            mMessFrame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,32 +33,35 @@ public class SocketAgent extends Thread {
 
     @Override
     public void run() {
-        // ScannerThread mScannerThread = new ScannerThread(mDos);
-        // mScannerThread.start();
         while (mFlag) {
             try {
                 String msg = mDis.readUTF();
-                mMessFrame.setMessage("it:" + msg);
-            } catch (IOException e) {
-                mFlag = false;
-                mFrame.setMessage(e.getMessage());
-                try {
-                    if (mDis != null) {
-                        mDis.close();
-                        mDis = null;
-                    }
-                    if (mDos != null) {
-                        mDos.close();
-                        mDos = null;
-                    }
-                    if (mSocket != null) {
-                        mSocket.close();
-                    }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                if (msg != null && msg.startsWith("<#GET_USERLIST#>")) {
+                    mFrame.sendUserList();
+                } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
+                    mDos.writeUTF("<#USER_OFFLINE#>");
+                    close();
+                    mFrame.userOffLine(mCurrent);
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                close();
             }
 
+        }
+    }
+
+    public void sendUserList() {
+        List<User> list = mFrame.getUserList();
+        try {
+            mDos.writeUTF("<#SENDUSERLIST#>" + (list.size() - 1));
+            for (User u : list) {
+                if (!u.getName().equals(mCurrent.getName())) {
+                    mDos.writeUTF(u.getIp() + "|" + u.getName() + "|" + u.getPort());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -76,17 +79,6 @@ public class SocketAgent extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    public void sendMessage(String text) {
-        if (mDos != null) {
-            try {
-                mMessFrame.setMessage("me:" + text);
-                mDos.writeUTF(text);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 

@@ -1,24 +1,20 @@
 
 package com.huanghua.pojo;
 
-import com.huanghua.socket.SocketAgent;
-
 public class User {
 
     private String ip;
     private String name;
     private int port;
-    private SocketAgent sAgent;
 
     public User() {
 
     }
 
-    public User(String ip, String name, int port, SocketAgent agent) {
+    public User(String ip, String name, int port) {
         this.ip = ip;
         this.name = name;
         this.port = port;
-        this.sAgent = agent;
     }
 
     public int getPort() {
@@ -43,13 +39,5 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public SocketAgent getsAgent() {
-        return sAgent;
-    }
-
-    public void setsAgent(SocketAgent sAgent) {
-        this.sAgent = sAgent;
     }
 }
