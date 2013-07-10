@@ -133,7 +133,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public User getUserById(String id) {
         for (User u : mUser) {
-            if (u.getId() == id) {
+            if (u.getId().equals(id)) {
                 return u;
             }
         }
@@ -189,13 +189,16 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public void connect() {
         mConnect.setEnabled(false);
-        mDisconnect.setEnabled(true);
         sIsListenter = true;
         if (mPort == 0) {
             mPort = NetUtil.getValidPort(12346);
         }
         mClient = new ClientThread(this);
         mClient.start();
+    }
+    public void loginSuccess() {
+        setAlwaysOnTop(true);
+        mDisconnect.setEnabled(true);
     }
 
     @Override

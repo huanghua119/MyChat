@@ -28,12 +28,13 @@ public class ChatServer implements Runnable {
             mFlag = true;
             while (mFlag) {
                 Socket s = mSocket.accept();
-                ChatThread cThread = new ChatThread(mFrame, s);
-                cThread.start();
-                mChatList.add(cThread);
+                if (!s.getInetAddress().toString().equals("/127.0.0.1")) {
+                    ChatThread cThread = new ChatThread(mFrame, s);
+                    cThread.start();
+                    mChatList.add(cThread);
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             close();
         }
     }

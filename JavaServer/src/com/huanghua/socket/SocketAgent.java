@@ -74,7 +74,7 @@ public class SocketAgent extends Thread {
                     mDos.writeUTF(u.getIp() + "|" + u.getId() + "|" + u.getPort() + "|" + u.getName());
                 }
             }
-            mDos.writeUTF(mCurrent.getIp());
+            mDos.writeUTF(mCurrent.getId());
         } catch (IOException e) {
             e.printStackTrace();
         }

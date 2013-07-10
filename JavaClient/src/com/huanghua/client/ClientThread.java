@@ -49,6 +49,7 @@ public class ClientThread extends Thread {
                     String id = mDis.readUTF();
                     User u = new User("", id, mFrame.getPort(), mFrame.getName());
                     mFrame.setMySelf(u);
+                    mFrame.loginSuccess();
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     close();
                 } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
