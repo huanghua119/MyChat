@@ -42,6 +42,12 @@ public class SocketAgent extends Thread {
                     mDos.writeUTF("<#USER_OFFLINE#>");
                     close();
                     mFrame.userOffLine(mCurrent);
+                } else if (msg != null && msg.startsWith("<#USERLOGIN#>")) {
+                    msg = msg.substring(13);
+                    String[] temp = msg.split("\\|");
+                    mCurrent.setName(temp[0]);
+                    mCurrent.setPort(Integer.parseInt(temp[1]));
+                    mFrame.sendUserList();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -51,15 +57,24 @@ public class SocketAgent extends Thread {
         }
     }
 
+    public void sendUserOffline(User offline) {
+        try {
+            mDos.writeUTF("<#SENDUSEROFF#>");
+            mDos.writeUTF(offline.getIp() + "|" + offline.getId() + "|" + offline.getPort() + "|" + offline.getName());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void sendUserList() {
         List<User> list = mFrame.getUserList();
         try {
             mDos.writeUTF("<#SENDUSERLIST#>" + (list.size() - 1));
             for (User u : list) {
-                if (!u.getName().equals(mCurrent.getName())) {
-                    mDos.writeUTF(u.getIp() + "|" + u.getName() + "|" + u.getPort());
+                if (!u.getId().equals(mCurrent.getId())) {
+                    mDos.writeUTF(u.getIp() + "|" + u.getId() + "|" + u.getPort() + "|" + u.getName());
                 }
             }
+            mDos.writeUTF(mCurrent.getIp());
         } catch (IOException e) {
             e.printStackTrace();
         }

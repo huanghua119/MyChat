@@ -1,8 +1,8 @@
 
 package com.huanghua.view;
 
-import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
+import com.huanghua.pojo.User;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -25,15 +24,15 @@ public class MessageFrame extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private static final int GAME_WIDTH = 250;
     private static final int GAME_HEIGHT = 450;
-    public static boolean sIsListenter = false;
 
     private JTextField mMessage;
     private JButton mSendButton;
     private JTextArea mMessageList;
-    private ClientThread mClient;
+    private User mCurrent;
 
-    public MessageFrame() {
-        this.setTitle(Resource.getStringForSet("frame_title"));
+    public MessageFrame(User u) {
+        mCurrent = u;
+        this.setTitle(mCurrent.getName());
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds((int) (dim.getWidth() - GAME_WIDTH) / 2,
@@ -67,9 +66,4 @@ public class MessageFrame extends JFrame implements ActionListener {
         this.mMessageList.append(message + "\n");
     }
 
-    public static void main(String[] args) {
-        Resource.setLanguage(Resource.Language_zh_CN);
-        MessageFrame main = new MessageFrame();
-        main.setVisible(true);
-    }
 }

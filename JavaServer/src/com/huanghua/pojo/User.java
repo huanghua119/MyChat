@@ -6,18 +6,28 @@ import com.huanghua.socket.SocketAgent;
 public class User {
 
     private String ip;
-    private String name;
+    private String id;
     private int port;
+    private String name;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     private SocketAgent sAgent;
 
     public User() {
 
     }
 
-    public User(String ip, String name, int port, SocketAgent agent) {
+    public User(String ip, String id, int port, String name, SocketAgent agent) {
         this.ip = ip;
-        this.name = name;
+        this.id = id;
         this.port = port;
+        this.name = name;
         this.sAgent = agent;
     }
 
@@ -37,12 +47,12 @@ public class User {
         this.ip = ip;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public SocketAgent getsAgent() {

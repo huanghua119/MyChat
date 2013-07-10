@@ -15,11 +15,9 @@ public class SocketThread implements Runnable {
 
     private ServerSocket mScocket;
     private MainFrame mFrame;
-    private List<SocketAgent> mAgent = null;
     private int port = 12345;
 
     public SocketThread(MainFrame frame) {
-        mAgent = new ArrayList<SocketAgent>();
         mFrame = frame;
     }
 
@@ -35,37 +33,38 @@ public class SocketThread implements Runnable {
                 String ip = s.getInetAddress().toString().replace("/", "");
                 User u = new User();
                 u.setIp(ip);
-                u.setName(i + "");
-                u.setPort(port + i);
-                mFrame.setMessage(Resource.getStringForSet("newPersor") + ip + ":" + u.getName());
+                u.setId(i + "");
+                mFrame.setMessage(Resource.getStringForSet("newPersor") + ip + ":" + u.getId());
                 mFrame.addUser(u);
                 SocketAgent agent = new SocketAgent(s, mFrame, u);
                 u.setsAgent(agent);
                 agent.start();
-                mAgent.add(agent);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
+    public void sendUserOffline(User offUser) {
+        List<User> mList = mFrame.getUserList();
+        for (User u : mList) {
+            u.getsAgent().sendUserOffline(offUser);
+        }
+    }
     public void sendUserList() {
         List<User> mList = mFrame.getUserList();
         for (User u : mList) {
             u.getsAgent().sendUserList();
         }
-/*        for (SocketAgent sa : mAgent) {
-            sa.sendUserList();
-        }*/
     }
 
     public void cancel() {
         try {
-            if (mAgent != null && mAgent.size() > 0) {
-                for (SocketAgent sa : mAgent) {
-                    sa.close();
+            List<User> mList = mFrame.getUserList();
+            if (mList != null && mList.size() > 0) {
+                for (User u : mList) {
+                    u.getsAgent().close();
                 }
-                mAgent = null;
             }
             if (mScocket != null) {
                 mScocket.close();

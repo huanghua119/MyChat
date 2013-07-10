@@ -31,7 +31,8 @@ public class ClientThread extends Thread {
             mSocket = new Socket("192.168.1.94", 12345);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
-            sendUserList();
+            userLogin();
+            mFrame.startChatServer();
             while (mFlag) {
                 String msg = mDis.readUTF();
                 if (msg != null && msg.startsWith("<#SENDUSERLIST#>")) {
@@ -42,11 +43,19 @@ public class ClientThread extends Thread {
                     for (int i = 0; i < size; i++) {
                         String temp = mDis.readUTF();
                         String[] user = temp.split("\\|");
-                        User u = new User(user[0], user[1], Integer.parseInt(user[2]));
+                        User u = new User(user[0], user[1], Integer.parseInt(user[2]), user[3]);
                         mFrame.addUser(u);
                     }
+                    String id = mDis.readUTF();
+                    User u = new User("", id, mFrame.getPort(), mFrame.getName());
+                    mFrame.setMySelf(u);
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     close();
+                } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
+                    String temp = mDis.readUTF();
+                    String[] user = temp.split("\\|");
+                    User u = new User(user[0], user[1], Integer.parseInt(user[2]), user[3]);
+                    mFrame.removeUser(u);
                 }
             }
         } catch (UnknownHostException e) {
@@ -57,6 +66,15 @@ public class ClientThread extends Thread {
             close();
         }
     }
+
+    public void userLogin() {
+        try {
+            mDos.writeUTF("<#USERLOGIN#>" + mFrame.getName() + "|" + mFrame.getPort());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendUserList() {
         try {
             mDos.writeUTF("<#GET_USERLIST#>");
@@ -64,10 +82,12 @@ public class ClientThread extends Thread {
             e.printStackTrace();
         }
     }
+
     public void offLine() {
         try {
-            mDos.writeUTF("<#USER_OFFLINE#>");
-            //close();
+            if (mDos != null) {
+                mDos.writeUTF("<#USER_OFFLINE#>");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
