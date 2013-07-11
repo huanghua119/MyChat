@@ -21,9 +21,11 @@ public class ChatClient extends Thread {
     private MessageFrame mMessageFrame;
     private boolean mFlag = false;
 
-    public ChatClient(MainFrame frame, User u) {
+    public ChatClient(MainFrame frame, MessageFrame mf, User u) {
         mCurrent = u;
         mFrame = frame;
+        mMessageFrame = mf;
+        mFlag = false;
     }
 
     @Override
@@ -33,13 +35,17 @@ public class ChatClient extends Thread {
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             mDos.writeUTF("<#STARTCHAT#>" + mFrame.getMySelf().getId());
-            mMessageFrame = new MessageFrame(mCurrent);
-            mMessageFrame.setVisible(true);
-            String itname = mCurrent.getName();
             mFlag = true;
             while (mFlag) {
                 String msg = mDis.readUTF();
-                mMessageFrame.setMessage(itname + ":" + msg);
+                if (msg != null && msg.startsWith("<#SERVERCLOSE#>")) {
+                    sendMessage("<#SERVERCLOSEOK#>");
+                    close();
+                } else if (msg != null && msg.startsWith("<#CLIENTCLOSEOK#>")) {
+                    close();
+                } else {
+                    mMessageFrame.setMessage(msg, mCurrent);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,17 +53,37 @@ public class ChatClient extends Thread {
         }
     }
 
+    public boolean isRun() {
+        return mFlag;
+    }
+
     public void close() {
         mFlag = false;
         try {
             if (mDis != null) {
                 mDis.close();
+                mDis = null;
             }
             if (mDos != null) {
                 mDos.close();
+                mDos = null;
             }
             if (mSocket != null) {
                 mSocket.close();
+                mSocket = null;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (this.isAlive()) {
+            this.interrupt();
+        }
+    }
+
+    public void sendMessage(String msg) {
+        try {
+            if (mDos != null && !mSocket.isClosed()) {
+                mDos.writeUTF(msg);
             }
         } catch (IOException e) {
             e.printStackTrace();

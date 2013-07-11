@@ -40,11 +40,21 @@ public class ChatThread extends Thread{
                 if (msg != null && msg.startsWith("<#STARTCHAT#>")) {
                     String id = msg.substring(13);
                     mCurrent = mFrame.getUserById(id);
-                    System.out.println("id:" + id + " name:" + mCurrent.getName());
+                } else if (msg != null && msg.startsWith("<#CLIENTCLOSE#>")) {
+                    sendMessage("<#CLIENTCLOSEOK#>");
+                    close();
+                    if (mMessageFrame != null ) {
+                        mMessageFrame.setToClient();
+                    }
+                } else if (msg != null && msg.startsWith("<#SERVERCLOSEOK#>")) {
+                    close();
+                } else {
                     if (mMessageFrame == null) {
-                        mMessageFrame = new MessageFrame(mCurrent);
+                        mMessageFrame = mFrame.startChatForServer(mCurrent);
+                        mMessageFrame.setToServer(this);
                         mMessageFrame.setVisible(true);
                     }
+                    mMessageFrame.setMessage(msg, mCurrent);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -54,20 +64,36 @@ public class ChatThread extends Thread{
         }
     }
 
+    public void sendMessage(String msg) {
+        try {
+            if (mDos != null) {
+                mDos.writeUTF(msg);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void close() {
         mFlag = false;
         try {
             if (mDis != null) {
                 mDis.close();
+                mDis = null;
             }
             if (mDos != null) {
                 mDos.close();
+                mDos = null;
             }
             if (mSocket != null) {
                 mSocket.close();
+                mSocket = null;
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (this.isAlive()) {
+            this.interrupt();
         }
     }
 }

@@ -42,6 +42,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private JScrollPane mJScroll;
     private JList mUserList;
     private List<User> mUser;
+    private List<MessageFrame> mAllChatFrame;
     private User mSelf;
     private UserListListener mListListener;
 
@@ -150,8 +151,59 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     public void startChat(User u) {
-        ChatClient chatClient = new ChatClient(this, u);
-        new Thread(chatClient).start();
+        MessageFrame mf = null;
+        if (mAllChatFrame == null) {
+            mAllChatFrame = new ArrayList<MessageFrame>();
+        }
+        if (!chatframeisVisible(u)) {
+            mf = new MessageFrame(u, this, true);
+            mf.setToClient();
+            mAllChatFrame.add(mf);
+        } else {
+            mf = getMessageFrameById(u.getId());
+            mf.setToClient();
+        }
+        mf.startChat();
+    }
+
+    public MessageFrame startChatForServer(User u) {
+        MessageFrame mf = null;
+        if (mAllChatFrame == null) {
+            mAllChatFrame = new ArrayList<MessageFrame>();
+        }
+        if (!chatframeisVisible(u)) {
+            mf = new MessageFrame(u, this, false);
+            mAllChatFrame.add(mf);
+        } else {
+            mf = getMessageFrameById(u.getId());
+        }
+        return mf;
+    }
+
+    public MessageFrame getMessageFrameById(String id) {
+        MessageFrame frame = null;
+        for (MessageFrame ms : mAllChatFrame) {
+            User chatuser = ms.getChatUser();
+            if (chatuser.getId().equals(id)) {
+                frame = ms;
+                break;
+            }
+        }
+        return frame;
+    }
+
+    public boolean chatframeisVisible(User u) {
+        if (mAllChatFrame == null || mAllChatFrame.size() == 0) {
+            return false;
+        } else {
+            for (MessageFrame ms : mAllChatFrame) {
+                User chatuser = ms.getChatUser();
+                if (chatuser.getId().equals(u.getId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void offLine() {
