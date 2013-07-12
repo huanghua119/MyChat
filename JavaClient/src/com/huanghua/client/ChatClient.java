@@ -10,7 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-public class ChatClient extends Thread {
+public class ChatClient implements Runnable {
 
     private User mCurrent;
     private DataInputStream mDis;
@@ -74,9 +74,6 @@ public class ChatClient extends Thread {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        if (this.isAlive()) {
-            this.interrupt();
         }
     }
 

@@ -26,6 +26,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -161,7 +162,9 @@ public class MainFrame extends JFrame implements ActionListener {
             mAllChatFrame.add(mf);
         } else {
             mf = getMessageFrameById(u.getId());
-            mf.setToClient();
+            if (!mf.isVisible()) {
+                mf.setToClient();
+            }
         }
         mf.startChat();
     }
@@ -264,7 +267,12 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         Resource.setLanguage(Resource.Language_zh_CN);
-        MainFrame main = new MainFrame();
-        main.setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MainFrame main = new MainFrame();
+                main.setVisible(true);
+            }
+        });
     }
 }

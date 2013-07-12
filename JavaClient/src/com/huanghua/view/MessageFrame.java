@@ -8,6 +8,7 @@ import com.huanghua.server.ChatThread;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -56,7 +57,7 @@ public class MessageFrame extends JFrame implements ActionListener {
                 if (mIsClient) {
                     mChatClient.sendMessage("<#CLIENTCLOSE#>");
                 } else {
-                    mChatServer.sendMessage("<#SERVERCLOSE#>");
+                    //mChatServer.sendMessage("<#SERVERCLOSE#>");
                 }
                 setVisible(false);
             }
@@ -106,8 +107,8 @@ public class MessageFrame extends JFrame implements ActionListener {
             mChatClient = new ChatClient(mFrame, this, mCurrent);
         }
         if (!mChatClient.isRun()) {
-            System.out.println("Priority:" + mChatClient.getPriority());
-            mChatClient.start();
+            Thread thread = new Thread(mChatClient);
+            thread.start();
         }
         this.mIsClient = true;
     }
@@ -134,6 +135,10 @@ public class MessageFrame extends JFrame implements ActionListener {
     }
 
     public void setMessage(String message, User u) {
+        if (!this.isVisible()) {
+            setVisible(true);
+            toFront();
+        }
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("H:m:ss");
         String time = sdf.format(date);
