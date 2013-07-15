@@ -7,5 +7,7 @@
     <string name="disconnect">断开</string>
     <string name="anonymous">匿名</string>
     <string name="login_title">QQ2013</string>
+    <string name="register">注册帐号</string>
+    <string name="findPass">找回密码</string>
 
 </resources>
