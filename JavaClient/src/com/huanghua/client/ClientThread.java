@@ -32,7 +32,6 @@ public class ClientThread extends Thread {
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             userLogin();
-            mFrame.startChatServer();
             while (mFlag) {
                 String msg = mDis.readUTF();
                 if (msg != null && msg.startsWith("<#SENDUSERLIST#>")) {
@@ -43,11 +42,11 @@ public class ClientThread extends Thread {
                     for (int i = 0; i < size; i++) {
                         String temp = mDis.readUTF();
                         String[] user = temp.split("\\|");
-                        User u = new User(user[0], user[1], Integer.parseInt(user[2]), user[3]);
+                        User u = new User(user[0], user[1], user[2]);
                         mFrame.addUser(u);
                     }
                     String id = mDis.readUTF();
-                    User u = new User("", id, mFrame.getPort(), mFrame.getName());
+                    User u = new User("", id, mFrame.getName());
                     mFrame.setMySelf(u);
                     mFrame.loginSuccess();
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
@@ -55,8 +54,16 @@ public class ClientThread extends Thread {
                 } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
                     String temp = mDis.readUTF();
                     String[] user = temp.split("\\|");
-                    User u = new User(user[0], user[1], Integer.parseInt(user[2]), user[3]);
+                    User u = new User(user[0], user[1], user[2]);
                     mFrame.removeUser(u);
+                } else if (msg != null && msg.startsWith("<#GETMESSAGE#>")) {
+                    String id = msg.substring(14);
+                    String context = mDis.readUTF();
+                    mFrame.setMessageById(context, id);
+                } else if (msg != null && msg.startsWith("<#USERERROR#>")) {
+                    msg = msg.substring(13);
+                    String[] temp = msg.split("\\|");
+                    mFrame.setError(temp[0], temp[1]);
                 }
             }
         } catch (UnknownHostException e) {
@@ -70,7 +77,7 @@ public class ClientThread extends Thread {
 
     public void userLogin() {
         try {
-            mDos.writeUTF("<#USERLOGIN#>" + mFrame.getName() + "|" + mFrame.getPort());
+            mDos.writeUTF("<#USERLOGIN#>" + mFrame.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,6 +86,15 @@ public class ClientThread extends Thread {
     public void sendUserList() {
         try {
             mDos.writeUTF("<#GET_USERLIST#>");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(User u, String msg) {
+        try {
+            mDos.writeUTF("<#SENDMESSAGE#>" + u.getId());
+            mDos.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

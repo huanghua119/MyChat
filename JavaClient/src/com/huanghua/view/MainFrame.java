@@ -4,8 +4,6 @@ package com.huanghua.view;
 import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
-import com.huanghua.server.ChatServer;
-import com.huanghua.util.NetUtil;
 
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.skin.BusinessBlackSteelSkin;
@@ -40,7 +38,6 @@ public class MainFrame extends JFrame implements ActionListener {
     private static final int GAME_WIDTH = 250;
     private static final int GAME_HEIGHT = 450;
     public static boolean sIsListenter = false;
-    private int mPort = 0;
 
     private JTextField mNameText;
     private JButton mConnect;
@@ -53,7 +50,6 @@ public class MainFrame extends JFrame implements ActionListener {
     private UserListListener mListListener;
 
     private ClientThread mClient;
-    private ChatServer mCseServer;
 
     public MainFrame() {
         this.setTitle(Resource.getString("frame_title"));
@@ -109,6 +105,7 @@ public class MainFrame extends JFrame implements ActionListener {
     public void addUser(User u) {
         boolean isHas = false;
         for (User u1 : mUser) {
+            System.out.println("u1:" + u1.getId() + " u: " + u.getId());
             if (u.getId().equals(u1.getId())) {
                 isHas = true;
                 break;
@@ -165,14 +162,10 @@ public class MainFrame extends JFrame implements ActionListener {
             mAllChatFrame = new ArrayList<MessageFrame>();
         }
         if (!chatframeisVisible(u)) {
-            mf = new MessageFrame(u, this, true);
-            mf.setToClient();
+            mf = new MessageFrame(u, this, mClient);
             mAllChatFrame.add(mf);
         } else {
             mf = getMessageFrameById(u.getId());
-            if (!mf.isVisible()) {
-                mf.setToClient();
-            }
         }
         mf.startChat();
     }
@@ -183,7 +176,7 @@ public class MainFrame extends JFrame implements ActionListener {
             mAllChatFrame = new ArrayList<MessageFrame>();
         }
         if (!chatframeisVisible(u)) {
-            mf = new MessageFrame(u, this, false);
+            mf = new MessageFrame(u, this, mClient);
             mAllChatFrame.add(mf);
         } else {
             mf = getMessageFrameById(u.getId());
@@ -217,30 +210,35 @@ public class MainFrame extends JFrame implements ActionListener {
         return false;
     }
 
+    public void setMessageById(String context, String id) {
+        User u = getUserById(id);
+        MessageFrame mf = startChatForServer(u);
+        mf.startChat();
+        mf.setMessage(context, u);
+    }
+
+    public void setError(String id, String msg) {
+        MessageFrame mf = getMessageFrameById(id);
+        mf.setMessage(msg, mSelf);
+    }
+
     public void offLine() {
         mUser.clear();
         refreshList();
-        if (mCseServer != null) {
-            mCseServer.close();
-        }
         mClient.offLine();
+        if (mAllChatFrame != null && mAllChatFrame.size() > 0) {
+            for (MessageFrame mf : mAllChatFrame) {
+                if (mf.isVisible()) {
+                    mf.setVisible(false);
+                }
+            }
+            mAllChatFrame.clear();
+            mAllChatFrame = null;
+        }
     }
 
     public String getName() {
         return this.mNameText.getText();
-    }
-
-    public int getPort() {
-        return this.mPort;
-    }
-
-    public void startChatServer() {
-        if (mCseServer == null) {
-            mCseServer = new ChatServer(this);
-        }
-        if (!mCseServer.getFlag()) {
-            new Thread(mCseServer).start();
-        }
     }
 
     public void disconnect() {
@@ -253,12 +251,10 @@ public class MainFrame extends JFrame implements ActionListener {
     public void connect() {
         mConnect.setEnabled(false);
         sIsListenter = true;
-        if (mPort == 0) {
-            mPort = NetUtil.getValidPort(12346);
-        }
         mClient = new ClientThread(this);
         mClient.start();
     }
+
     public void loginSuccess() {
         setAlwaysOnTop(true);
         mDisconnect.setEnabled(true);

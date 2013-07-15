@@ -43,11 +43,13 @@ public class SocketAgent extends Thread {
                     close();
                     mFrame.userOffLine(mCurrent);
                 } else if (msg != null && msg.startsWith("<#USERLOGIN#>")) {
-                    msg = msg.substring(13);
-                    String[] temp = msg.split("\\|");
-                    mCurrent.setName(temp[0]);
-                    mCurrent.setPort(Integer.parseInt(temp[1]));
+                    String name = msg.substring(13);
+                    mCurrent.setName(name);
                     mFrame.sendUserList();
+                } else if (msg != null && msg.startsWith("<#SENDMESSAGE#>")) {
+                    String id = msg.substring(15);
+                    String context = mDis.readUTF();
+                    mFrame.sendContextByIdToUser(context, id, mCurrent);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -60,21 +62,40 @@ public class SocketAgent extends Thread {
     public void sendUserOffline(User offline) {
         try {
             mDos.writeUTF("<#SENDUSEROFF#>");
-            mDos.writeUTF(offline.getIp() + "|" + offline.getId() + "|" + offline.getPort() + "|" + offline.getName());
+            mDos.writeUTF(offline.getIp() + "|" + offline.getId() + "|" + offline.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     public void sendUserList() {
         List<User> list = mFrame.getUserList();
         try {
             mDos.writeUTF("<#SENDUSERLIST#>" + (list.size() - 1));
             for (User u : list) {
                 if (!u.getId().equals(mCurrent.getId())) {
-                    mDos.writeUTF(u.getIp() + "|" + u.getId() + "|" + u.getPort() + "|" + u.getName());
+                    mDos.writeUTF(u.getIp() + "|" + u.getId() + "|" + u.getName());
                 }
             }
             mDos.writeUTF(mCurrent.getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(String msg, User toUser) {
+        try {
+            mDos.writeUTF("<#GETMESSAGE#>" + toUser.getId());
+            mDos.writeUTF(msg);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendError(String msg, String id) {
+        try {
+            mDos.writeUTF("<#USERERROR#>" + id + "|" + msg);
+            mDos.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
         }

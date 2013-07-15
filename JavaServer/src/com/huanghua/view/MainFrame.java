@@ -101,6 +101,24 @@ public class MainFrame extends JFrame implements ActionListener {
         sendUserOffline(u);
     }
 
+    public User getUserById(String id) {
+        for (User u : mUser) {
+            if (u.getId().equals(id)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    public void sendContextByIdToUser(String context, String id, User toUser) {
+        User u = getUserById(id);
+        if (u == null) {
+            toUser.getsAgent().sendError(Resource.getString("usernotonline"), id);
+        } else {
+            u.getsAgent().sendMessage(context, toUser);
+        }
+    }
+
     public void setMessage(String message) {
         this.mIPList.append(message + "\n");
     }

@@ -5,17 +5,14 @@ public class User {
 
     private String ip;
     private String id;
-    private int port;
     private String name;
 
     public User() {
-
     }
 
-    public User(String ip, String id, int port, String name) {
+    public User(String ip, String id, String name) {
         this.ip = ip;
         this.id = id;
-        this.port = port;
         this.name = name;
     }
 
@@ -25,14 +22,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public String getIp() {

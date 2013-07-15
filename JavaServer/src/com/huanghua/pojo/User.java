@@ -7,7 +7,6 @@ public class User {
 
     private String ip;
     private String id;
-    private int port;
     private String name;
     public String getName() {
         return name;
@@ -23,20 +22,11 @@ public class User {
 
     }
 
-    public User(String ip, String id, int port, String name, SocketAgent agent) {
+    public User(String ip, String id, String name, SocketAgent agent) {
         this.ip = ip;
         this.id = id;
-        this.port = port;
         this.name = name;
         this.sAgent = agent;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     public String getIp() {

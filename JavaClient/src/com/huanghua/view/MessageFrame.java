@@ -1,10 +1,9 @@
 
 package com.huanghua.view;
 
-import com.huanghua.client.ChatClient;
+import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
-import com.huanghua.server.ChatThread;
 
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.skin.BusinessBlackSteelSkin;
@@ -45,12 +44,11 @@ public class MessageFrame extends JFrame implements ActionListener {
     private JTextArea mMessageList;
     private MainFrame mFrame;
     private User mCurrent;
-    private ChatClient mChatClient;
-    private ChatThread mChatServer;
-    private boolean mIsClient;
+    private ClientThread mChlientThread;
 
-    public MessageFrame(User u, MainFrame frame, boolean isClient) {
+    public MessageFrame(User u, MainFrame frame, ClientThread client) {
         JFrame.setDefaultLookAndFeelDecorated(true);
+        mChlientThread = client;
         try {
             UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
             SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
@@ -58,7 +56,6 @@ public class MessageFrame extends JFrame implements ActionListener {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
-        mIsClient = isClient;
         mCurrent = u;
         mFrame = frame;
         this.setTitle(mCurrent.getName());
@@ -68,11 +65,6 @@ public class MessageFrame extends JFrame implements ActionListener {
                 (int) (dim.getHeight() - GAME_HEIGHT) / 2, GAME_WIDTH, GAME_HEIGHT);
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                if (mIsClient) {
-                    mChatClient.sendMessage("<#CLIENTCLOSE#>");
-                } else {
-                    //mChatServer.sendMessage("<#SERVERCLOSE#>");
-                }
                 setVisible(false);
             }
         });
@@ -104,29 +96,6 @@ public class MessageFrame extends JFrame implements ActionListener {
         this.toFront();
     }
 
-    public void setToServer(ChatThread ct) {
-        if (mChatServer == null) {
-            if (mChatClient != null) {
-                mChatClient.close();
-                mChatClient = null;
-            }
-            mChatServer = ct;
-            this.mIsClient = false;
-        }
-    }
-    public void setToClient() {
-        mChatServer = null;
-        System.out.println("chatclient:" + mChatClient);
-        if (mChatClient == null) {
-            mChatClient = new ChatClient(mFrame, this, mCurrent);
-        }
-        if (!mChatClient.isRun()) {
-            Thread thread = new Thread(mChatClient);
-            thread.start();
-        }
-        this.mIsClient = true;
-    }
-
     public User getChatUser() {
         return this.mCurrent;
     }
@@ -137,14 +106,11 @@ public class MessageFrame extends JFrame implements ActionListener {
             sendMessage();
         }
     }
+
     private void sendMessage() {
         String msg = mMessage.getText();
+        mChlientThread.sendMessage(mCurrent, msg);
         setMessage(msg, mFrame.getMySelf());
-        if (mIsClient) {
-            mChatClient.sendMessage(msg);
-        } else {
-            mChatServer.sendMessage(msg);
-        }
         mMessage.setText("");
     }
 

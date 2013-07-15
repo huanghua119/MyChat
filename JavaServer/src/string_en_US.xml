@@ -7,5 +7,6 @@
     <string name="nowListener">正在监听:</string>
     <string name="newPersor">有人来了:</string>
     <string name="offline">有人走了:</string>
+    <string name="usernotonline">用户已经下线!</string>
 
 </resources>
