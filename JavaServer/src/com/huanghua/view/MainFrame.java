@@ -38,7 +38,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public MainFrame() {
         mUser = new ArrayList<User>();
-        this.setTitle(Resource.getStringForSet("frame_title"));
+        this.setTitle(Resource.getString("frame_title"));
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds((int) (dim.getWidth() - GAME_WIDTH) / 2,
@@ -49,8 +49,8 @@ public class MainFrame extends JFrame implements ActionListener {
         JPanel topPanel = new JPanel();
         topPanel.setBorder(new EtchedBorder());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-        mStartLinstater = new JButton(Resource.getStringForSet("start"));
-        mStopLinstater = new JButton(Resource.getStringForSet("stop"));
+        mStartLinstater = new JButton(Resource.getString("start"));
+        mStopLinstater = new JButton(Resource.getString("stop"));
         mStartLinstater.addActionListener(this);
         mStopLinstater.addActionListener(this);
         mStopLinstater.setEnabled(false);
@@ -96,7 +96,7 @@ public class MainFrame extends JFrame implements ActionListener {
         mSocket.sendUserOffline(u);
     }
     public void userOffLine(User u) {
-        setMessage(Resource.getStringForSet("offline") + u.getIp() + ":" + u.getId());
+        setMessage(Resource.getString("offline") + u.getIp() + ":" + u.getId());
         mUser.remove(u);
         sendUserOffline(u);
     }

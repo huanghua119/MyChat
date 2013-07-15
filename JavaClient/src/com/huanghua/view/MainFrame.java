@@ -51,7 +51,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private ChatServer mCseServer;
 
     public MainFrame() {
-        this.setTitle(Resource.getStringForSet("frame_title"));
+        this.setTitle(Resource.getString("frame_title"));
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds((int) (dim.getWidth() - GAME_WIDTH) / 2,
@@ -69,10 +69,10 @@ public class MainFrame extends JFrame implements ActionListener {
         JPanel topPanel = new JPanel();
         topPanel.setBorder(new EtchedBorder());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-        mConnect = new JButton(Resource.getStringForSet("connect"));
-        mDisconnect = new JButton(Resource.getStringForSet("disconnect"));
+        mConnect = new JButton(Resource.getString("connect"));
+        mDisconnect = new JButton(Resource.getString("disconnect"));
         mNameText = new JTextField();
-        mNameText.setText(Resource.getStringForSet("anonymous"));
+        mNameText.setText(Resource.getString("anonymous"));
         mConnect.addActionListener(this);
         mDisconnect.addActionListener(this);
         mDisconnect.setEnabled(false);

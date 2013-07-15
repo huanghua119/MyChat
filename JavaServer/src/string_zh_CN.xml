@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="frame_title">在线聊天</string>
+    <string name="start">开始监听</string>
+    <string name="stop">停止监听</string>
+    <string name="nowListener">正在监听:</string>
+    <string name="newPersor">有人来了:</string>
+    <string name="offline">有人走了:</string>
+
+</resources>

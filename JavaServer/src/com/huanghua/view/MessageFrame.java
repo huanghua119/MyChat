@@ -33,7 +33,7 @@ public class MessageFrame extends JFrame implements ActionListener {
     private SocketAgent mAgent;
 
     public MessageFrame(SocketAgent agent) {
-        this.setTitle(Resource.getStringForSet("frame_title"));
+        this.setTitle(Resource.getString("frame_title"));
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds((int) (dim.getWidth() - GAME_WIDTH) / 2,
@@ -43,7 +43,7 @@ public class MessageFrame extends JFrame implements ActionListener {
         this.setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();
         mMessage = new JTextField();
-        mSendButton = new JButton(Resource.getStringForSet("send"));
+        mSendButton = new JButton(Resource.getString("send"));
         mSendButton.addActionListener(this);
         topPanel.setBorder(new EtchedBorder());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));

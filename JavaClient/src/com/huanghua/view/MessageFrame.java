@@ -73,7 +73,7 @@ public class MessageFrame extends JFrame implements ActionListener {
                 }
             }
         });
-        mSendButton = new JButton(Resource.getStringForSet("send"));
+        mSendButton = new JButton(Resource.getString("send"));
         mSendButton.addActionListener(this);
         topPanel.setBorder(new EtchedBorder());
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));

@@ -1,68 +1,70 @@
+
 package com.huanghua.i18n;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.Locale;
-import java.util.PropertyResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 public class Resource {
+
     private static final String HEAD_FILE = "string";
-    private static final String LAST_FILE = ".properties";
+    private static final String LAST_FILE = ".xml";
     public static final String Language_en_US = "en_US";
     public static final String Language_zh_CN = "zh_CN";
     private static String slanguage = Language_en_US;
-
-    public Resource() {
-
+    private static Map<String, String> mAllString = new HashMap<String, String>();
+    static {
+        init();
     }
 
-    public static String getString(String disStr) {
-        String ret = "";
+    public static void init() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
-            Locale locale = Locale.getDefault();
-            System.out.println("locale:" + locale);
-            String baseName = new StringBuffer().append(HEAD_FILE).append("_")
-                    .append(locale.toString()).append(LAST_FILE).toString();
+            String baseName = new StringBuffer()
+                    .append(HEAD_FILE).append("_").append(slanguage)
+                    .append(LAST_FILE).toString();
 
-            String fileName = new StringBuffer().append(baseName).toString();
+            String fileName = new StringBuffer().append(baseName)
+                    .toString();
             URL url = Resource.class.getClassLoader().getResource(fileName);
             File file = new File(url.toURI());
+            DocumentBuilder domParser = factory.newDocumentBuilder();
+            Document document = domParser.parse(file);
+            NodeList nodeList = document.getChildNodes();
+            Node node = nodeList.item(0);
+            Element elementNode = (Element) node;
+            NodeList nodes = elementNode.getChildNodes();
 
-            InputStream is = new FileInputStream(file);
-            PropertyResourceBundle pr = new PropertyResourceBundle(is);
-            ret = pr.getString(disStr);
-            if (locale.equals(Locale.CHINA)) {
-                ret = new String(ret.getBytes("ISO-8859-1"), "GB2312");
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node n = nodes.item(i);
+                if (n.getNodeType() == Node.ELEMENT_NODE) {
+                    Element element = (Element) n;
+                    String name = element.getAttribute("name");
+                    String text = element.getTextContent();
+                    mAllString.put(name, text);
+                }
             }
-            is.close();
-            return ret;
+
         } catch (Exception e) {
             e.printStackTrace();
-            return disStr;
         }
     }
 
-    public static String getStringForSet(String disStr) {
-        String ret = "";
-        try {
-            String baseName = new StringBuffer().append(HEAD_FILE).append("_")
-                    .append(slanguage).append(LAST_FILE).toString();
-
-            String fileName = new StringBuffer().append(baseName).toString();
-            URL url = Resource.class.getClassLoader().getResource(fileName);
-            File file = new File(url.toURI());
-
-            InputStream is = new FileInputStream(file);
-            PropertyResourceBundle pr = new PropertyResourceBundle(is);
-            ret = pr.getString(disStr);
-            is.close();
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return disStr;
+    public static String getString(String name) {
+        String result = name;
+        if (mAllString != null && mAllString.size() != 0) {
+            result = mAllString.get(name);
         }
+        return result;
     }
 
     public static void setLanguage(String language) {

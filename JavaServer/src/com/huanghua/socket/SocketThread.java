@@ -25,7 +25,7 @@ public class SocketThread implements Runnable {
     public void run() {
         try {
             mScocket = new ServerSocket(port);
-            mFrame.setMessage(Resource.getStringForSet("nowListener") + mScocket.getInetAddress());
+            mFrame.setMessage(Resource.getString("nowListener") + mScocket.getInetAddress());
             int i = 0;
             while (MainFrame.sIsListenter) {
                 Socket s = mScocket.accept();
@@ -34,7 +34,7 @@ public class SocketThread implements Runnable {
                 User u = new User();
                 u.setIp(ip);
                 u.setId(i + "");
-                mFrame.setMessage(Resource.getStringForSet("newPersor") + ip + ":" + u.getId());
+                mFrame.setMessage(Resource.getString("newPersor") + ip + ":" + u.getId());
                 mFrame.addUser(u);
                 SocketAgent agent = new SocketAgent(s, mFrame, u);
                 u.setsAgent(agent);
