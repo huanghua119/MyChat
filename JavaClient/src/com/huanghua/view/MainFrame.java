@@ -1,12 +1,16 @@
 
 package com.huanghua.view;
 
-import com.huanghua.client.ChatClient;
 import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
 import com.huanghua.server.ChatServer;
 import com.huanghua.util.NetUtil;
+
+import org.jvnet.substance.SubstanceLookAndFeel;
+import org.jvnet.substance.skin.BusinessBlackSteelSkin;
+import org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel;
+import org.jvnet.substance.title.FlatTitlePainter;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,12 +25,13 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 
 public class MainFrame extends JFrame implements ActionListener {
@@ -147,6 +152,9 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     public void startChat(int index) {
+        if (mUser == null || mUser.size() == 0) {
+            return;
+        }
         User u = mUser.get(index);
         startChat(u);
     }
@@ -267,6 +275,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         Resource.setLanguage(Resource.Language_zh_CN);
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        try {
+            UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+            SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
+            SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {

@@ -6,9 +6,13 @@ import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
 import com.huanghua.server.ChatThread;
 
+import org.jvnet.substance.SubstanceLookAndFeel;
+import org.jvnet.substance.skin.BusinessBlackSteelSkin;
+import org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel;
+import org.jvnet.substance.title.FlatTitlePainter;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,6 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 
 public class MessageFrame extends JFrame implements ActionListener {
@@ -44,6 +50,14 @@ public class MessageFrame extends JFrame implements ActionListener {
     private boolean mIsClient;
 
     public MessageFrame(User u, MainFrame frame, boolean isClient) {
+        JFrame.setDefaultLookAndFeelDecorated(true);
+        try {
+            UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+            SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
+            SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
         mIsClient = isClient;
         mCurrent = u;
         mFrame = frame;

@@ -67,6 +67,19 @@ public class Resource {
         return result;
     }
 
+    public static String getString(String... name) {
+        String one = getString(name[0]);
+        for (int i = 1; i < name.length; i++) {
+            String temp = "%" + i + "$s";
+            if (one.contains(temp)) {
+                one = one.replace(temp, name[i]);
+            } else {
+                one = one.replace("%s", name[i]);
+            }
+        }
+        return one;
+    }
+
     public static void setLanguage(String language) {
         slanguage = language;
     }
