@@ -6,5 +6,6 @@
     <string name="connect">连接</string>
     <string name="disconnect">断开</string>
     <string name="anonymous">匿名</string>
+    <string name="login_title">QQ2013</string>
 
 </resources>

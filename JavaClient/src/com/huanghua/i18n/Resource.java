@@ -20,7 +20,7 @@ public class Resource {
     private static final String LAST_FILE = ".xml";
     public static final String Language_en_US = "en_US";
     public static final String Language_zh_CN = "zh_CN";
-    private static String slanguage = Language_en_US;
+    private static String slanguage = Language_zh_CN;
     private static Map<String, String> mAllString = new HashMap<String, String>();
     static {
         init();
@@ -64,6 +64,7 @@ public class Resource {
         if (mAllString != null && mAllString.size() != 0) {
             result = mAllString.get(name);
         }
+        System.out.println("result:" + result);
         return result;
     }
 
