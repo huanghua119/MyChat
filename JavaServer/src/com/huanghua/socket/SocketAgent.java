@@ -1,6 +1,8 @@
 
 package com.huanghua.socket;
 
+import com.huanghua.dao.DBUtil;
+import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
 import com.huanghua.view.MainFrame;
 
@@ -8,6 +10,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class SocketAgent extends Thread {
@@ -18,10 +22,9 @@ public class SocketAgent extends Thread {
     private MainFrame mFrame = null;
     private User mCurrent = null;
 
-    public SocketAgent(Socket socket, MainFrame frame, User u) {
+    public SocketAgent(Socket socket, MainFrame frame) {
         this.mSocket = socket;
         this.mFrame = frame;
-        this.mCurrent = u;
         try {
             mFlag = true;
             mDos = new DataOutputStream(socket.getOutputStream());
@@ -43,9 +46,11 @@ public class SocketAgent extends Thread {
                     close();
                     mFrame.userOffLine(mCurrent);
                 } else if (msg != null && msg.startsWith("<#USERLOGIN#>")) {
-                    String name = msg.substring(13);
-                    mCurrent.setName(name);
-                    mFrame.sendUserList();
+                    msg = msg.substring(13);
+                    String[] temp = msg.split("\\|");
+                    String id = temp[0];
+                    String pass = temp[1];
+                    userLogin(id, pass);
                 } else if (msg != null && msg.startsWith("<#SENDMESSAGE#>")) {
                     String id = msg.substring(15);
                     String context = mDis.readUTF();
@@ -56,6 +61,48 @@ public class SocketAgent extends Thread {
                 close();
             }
 
+        }
+    }
+    public void userLogin(String id, String pass) {
+        String sql = "select * from User where userId=" + id;
+        ResultSet rs = DBUtil.executeQuery(sql);
+        try {
+            if (rs.next()) {
+                String password = rs.getString("userPass");
+                if (password.equals(pass)) {
+                    String name = rs.getString("userName");
+                    String ip = mSocket.getInetAddress().toString().replace("/", "");
+                    mFrame.setMessage(Resource.getString("newPersor") + ip + "|" + id);
+                    mCurrent = new User();
+                    mCurrent.setIp(ip);
+                    mCurrent.setId(id);
+                    mCurrent.setName(name);
+                    mCurrent.setPassword(pass);
+                    mCurrent.setsAgent(this);
+                    mFrame.addUser(mCurrent);
+                    sendLoginSucces();
+                    mFrame.sendUserList();
+                } else {
+                    mDos.writeUTF("<#USERPASSERROR#>");
+                    close();
+                }
+            } else {
+                mDos.writeUTF("<#USERNOTFIND#>");
+                close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendLoginSucces() {
+        try {
+            mDos.writeUTF("<#USERLOGINSUCCES#>");
+            mDos.writeUTF(mCurrent.getId() + "|" + mCurrent.getName() + "|" + mCurrent.getPassword());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -77,7 +124,6 @@ public class SocketAgent extends Thread {
                     mDos.writeUTF(u.getIp() + "|" + u.getId() + "|" + u.getName());
                 }
             }
-            mDos.writeUTF(mCurrent.getId());
         } catch (IOException e) {
             e.printStackTrace();
         }

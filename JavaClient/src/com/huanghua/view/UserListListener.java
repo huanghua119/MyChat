@@ -1,6 +1,8 @@
 
 package com.huanghua.view;
 
+import com.huanghua.service.ChatService;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -8,9 +10,11 @@ import java.awt.event.MouseMotionListener;
 public class UserListListener implements MouseListener, MouseMotionListener {
 
     private MainFrame mFrame;
+    private ChatService mService;
 
-    public UserListListener(MainFrame frame) {
+    public UserListListener(MainFrame frame, ChatService service) {
         this.mFrame = frame;
+        this.mService = service;
     }
 
     // 鼠标按键在组件上按下并拖动时调用
@@ -33,9 +37,8 @@ public class UserListListener implements MouseListener, MouseMotionListener {
             int clickNum = e.getClickCount();
             // 双击鼠标
             if (clickNum == 2) {
-                mFrame.startChat(index);
+                mService.startChat(index);
             }
-
         }
     }
 

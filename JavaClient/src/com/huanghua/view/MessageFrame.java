@@ -4,11 +4,7 @@ package com.huanghua.view;
 import com.huanghua.client.ClientThread;
 import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
-
-import org.jvnet.substance.SubstanceLookAndFeel;
-import org.jvnet.substance.skin.BusinessBlackSteelSkin;
-import org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel;
-import org.jvnet.substance.title.FlatTitlePainter;
+import com.huanghua.service.ChatService;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -24,14 +20,11 @@ import java.util.Date;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EtchedBorder;
 
 public class MessageFrame extends JFrame implements ActionListener {
@@ -43,22 +36,15 @@ public class MessageFrame extends JFrame implements ActionListener {
     private JTextField mMessage;
     private JButton mSendButton;
     private JTextArea mMessageList;
-    private MainFrame mFrame;
     private User mCurrent;
     private ClientThread mChlientThread;
+    private ChatService mService;
 
-    public MessageFrame(User u, MainFrame frame, ClientThread client) {
+    public MessageFrame(User u, ChatService service, ClientThread client) {
         JFrame.setDefaultLookAndFeelDecorated(true);
         mChlientThread = client;
-        try {
-            UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-            SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
-            SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
         mCurrent = u;
-        mFrame = frame;
+        mService = service;
         this.setTitle(mCurrent.getName());
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -111,7 +97,7 @@ public class MessageFrame extends JFrame implements ActionListener {
     private void sendMessage() {
         String msg = mMessage.getText();
         mChlientThread.sendMessage(mCurrent, msg);
-        setMessage(msg, mFrame.getMySelf());
+        setMessage(msg, mService.getMySelf());
         mMessage.setText("");
     }
 

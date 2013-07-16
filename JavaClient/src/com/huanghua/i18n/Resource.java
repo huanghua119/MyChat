@@ -64,7 +64,6 @@ public class Resource {
         if (mAllString != null && mAllString.size() != 0) {
             result = mAllString.get(name);
         }
-        System.out.println("result:" + result);
         return result;
     }
 

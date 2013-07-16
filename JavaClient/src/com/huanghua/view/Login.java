@@ -1,6 +1,7 @@
 package com.huanghua.view;
 
 import com.huanghua.i18n.Resource;
+import com.huanghua.service.ChatService;
 import com.huanghua.util.ImageUtil;
 import com.huanghua.util.NumberDocument;
 
@@ -13,6 +14,8 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -49,6 +52,7 @@ public class Login extends JFrame implements ActionListener {
     private JPasswordField mUserPass;
     private JLabel mUserImage;
     private NumberDocument numberDocument = new NumberDocument();
+    private ChatService mService;
 
     private MouseAdapter moveWindowListener = new MouseAdapter() {
 
@@ -72,7 +76,17 @@ public class Login extends JFrame implements ActionListener {
         }
     };
 
+    private KeyAdapter mKeyAdapter = new KeyAdapter() {
+        public void keyReleased(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                startLogin();
+            }
+        }
+    };
+
     public Login() {
+        this.setIconImage(ImageUtil.getImage("image/icon.png"));
+        this.setTitle(Resource.getString("login_title"));
         this.setResizable(false);
         this.setUndecorated(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -94,6 +108,7 @@ public class Login extends JFrame implements ActionListener {
         mUserId.setDocument(numberDocument);
         mUserId.setBorder(null);
         mUserId.setBounds(115, 130, 200, 25);
+        mUserId.addKeyListener(mKeyAdapter);
 
         JLabel register = new JLabel("<html><font color=blue>" + Resource.getString("register")
                 + "</font></html>");
@@ -104,6 +119,7 @@ public class Login extends JFrame implements ActionListener {
         mUserPass = new JPasswordField();
         mUserPass.setBorder(null);
         mUserPass.setBounds(115, 165, 200, 25);
+        mUserPass.addKeyListener(mKeyAdapter);
 
         JLabel findPass = new JLabel("<html><font color=blue>" + Resource.getString("findPass")
                 + "</font></html>");
@@ -133,14 +149,31 @@ public class Login extends JFrame implements ActionListener {
         this.add(bottomPanel);
         this.addMouseListener(moveWindowListener);
         this.addMouseMotionListener(moveWindowListener);
+        mService = ChatService.getInstance();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == mLogin) {
-            String userId = mUserId.getText();
-            String userPass = new String(mUserPass.getPassword());
+            startLogin();
         }
+    }
+
+    private void startLogin() {
+        String userId = mUserId.getText();
+        String userPass = new String(mUserPass.getPassword());
+        if (userId == null || "".equals(userId)) {
+
+        } else if (userPass == null || "".equals(userPass)) {
+
+        } else {
+            mLogin.setEnabled(false);
+            mService.login(this, userId, userPass);
+        }
+    }
+
+    public void loginFail(String error) {
+        mLogin.setEnabled(true);
     }
 
     public static void main(String[] args) {

@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,7 +29,6 @@ public class MessageFrame extends JFrame implements ActionListener {
     private JTextField mMessage;
     private JButton mSendButton;
     private JTextArea mMessageList;
-    private SocketAgent mAgent;
 
     public MessageFrame(SocketAgent agent) {
         this.setTitle(Resource.getString("frame_title"));
@@ -53,14 +51,11 @@ public class MessageFrame extends JFrame implements ActionListener {
         mMessageList = new JTextArea();
         mMessageList.setEditable(false);
         this.add(new JScrollPane(mMessageList), BorderLayout.CENTER);
-        mAgent = agent;
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (mSendButton == e.getSource()) {
-            //mAgent.sendMessage(mMessage.getText());
             mMessage.setText("");
         }
     }

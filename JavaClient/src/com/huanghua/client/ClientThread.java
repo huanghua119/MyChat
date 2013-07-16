@@ -2,7 +2,7 @@
 package com.huanghua.client;
 
 import com.huanghua.pojo.User;
-import com.huanghua.view.MainFrame;
+import com.huanghua.service.ChatService;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,10 +15,10 @@ public class ClientThread extends Thread {
     private DataInputStream mDis;
     private DataOutputStream mDos;
     private boolean mFlag = true;
-    private MainFrame mFrame = null;
+    private ChatService mService = null;
 
-    public ClientThread(MainFrame frame) {
-        mFrame = frame;
+    public ClientThread(ChatService service) {
+        mService = service;
     }
 
     public ClientThread() {
@@ -31,39 +31,43 @@ public class ClientThread extends Thread {
             mSocket = new Socket("192.168.1.94", 12345);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
-            userLogin();
+            userLogin(mService.getMySelf().getId(), mService.getMySelf().getPassword());
             while (mFlag) {
                 String msg = mDis.readUTF();
                 if (msg != null && msg.startsWith("<#SENDUSERLIST#>")) {
                     msg = msg.substring(16);
                     String[] type = msg.split("\\|");
                     int size = Integer.parseInt(type[0]);
-                    System.out.println("size:" + size);
                     for (int i = 0; i < size; i++) {
                         String temp = mDis.readUTF();
                         String[] user = temp.split("\\|");
                         User u = new User(user[0], user[1], user[2]);
-                        mFrame.addUser(u);
+                        mService.addUser(u);
                     }
-                    String id = mDis.readUTF();
-                    User u = new User("", id, mFrame.getName());
-                    mFrame.setMySelf(u);
-                    mFrame.loginSuccess();
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     close();
                 } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
                     String temp = mDis.readUTF();
                     String[] user = temp.split("\\|");
                     User u = new User(user[0], user[1], user[2]);
-                    mFrame.removeUser(u);
+                    mService.removeUser(u);
                 } else if (msg != null && msg.startsWith("<#GETMESSAGE#>")) {
                     String id = msg.substring(14);
                     String context = mDis.readUTF();
-                    mFrame.setMessageById(context, id);
+                    mService.setMessageById(context, id);
                 } else if (msg != null && msg.startsWith("<#USERERROR#>")) {
                     msg = msg.substring(13);
                     String[] temp = msg.split("\\|");
-                    mFrame.setError(temp[0], temp[1]);
+                    mService.setError(temp[0], temp[1]);
+                } else if (msg != null && msg.startsWith("<#USERPASSERROR#>")) {
+                    mService.loginFail("passerror");
+                } else if (msg != null && msg.startsWith("<#USERNOTFIND#>")) {
+                    mService.loginFail("usernotfind");
+                } else if (msg != null && msg.startsWith("<#USERLOGINSUCCES#>")) {
+                    String[] self = mDis.readUTF().split("\\|");
+                    User u = new User("", self[0], self[1], self[2]);
+                    mService.setMySelf(u);
+                    mService.loginSuccess();
                 }
             }
         } catch (UnknownHostException e) {
@@ -75,9 +79,9 @@ public class ClientThread extends Thread {
         }
     }
 
-    public void userLogin() {
+    public void userLogin(String id, String password) {
         try {
-            mDos.writeUTF("<#USERLOGIN#>" + mFrame.getName());
+            mDos.writeUTF("<#USERLOGIN#>" + id + "|" + password);
         } catch (IOException e) {
             e.printStackTrace();
         }
