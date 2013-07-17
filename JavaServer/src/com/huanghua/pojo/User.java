@@ -23,6 +23,11 @@ public class User {
 
     }
 
+    public User(String name, String pass) {
+        this.name = name;
+        this.password = pass;
+    }
+
     public User(String ip, String id, String name, SocketAgent agent) {
         this.ip = ip;
         this.id = id;

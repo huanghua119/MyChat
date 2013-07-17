@@ -55,6 +55,9 @@ public class SocketAgent extends Thread {
                     String id = msg.substring(15);
                     String context = mDis.readUTF();
                     mFrame.sendContextByIdToUser(context, id, mCurrent);
+                } else if (msg != null && msg.startsWith("<#USERREGISTER#>")) {
+                    String temp[] = mDis.readUTF().split("\\|");
+                    userRegister(new User(temp[0], temp[1]));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -63,6 +66,10 @@ public class SocketAgent extends Thread {
 
         }
     }
+
+    public void userRegister(User u) {
+    }
+
     public void userLogin(String id, String pass) {
         String sql = "select * from User where userId=" + id;
         ResultSet rs = DBUtil.executeQuery(sql);

@@ -2,6 +2,7 @@
 package com.huanghua.service;
 
 import com.huanghua.client.ClientThread;
+import com.huanghua.client.RegisterThread;
 import com.huanghua.pojo.User;
 import com.huanghua.view.Login;
 import com.huanghua.view.MainFrame;
@@ -202,6 +203,11 @@ public class ChatService {
             mAllChatFrame = null;
         }
         System.exit(0);
+    }
+
+    public void userRegister(String name, String pass) {
+        RegisterThread rt = new RegisterThread(this, new User(name, pass));
+        new Thread(rt).start();
     }
 
     public void setMySelf(User u) {

@@ -11,6 +11,11 @@ public class User {
     public User() {
     }
 
+    public User(String name, String pass) {
+        this.name = name;
+        this.password = pass;
+    }
+
     public User(String ip, String id, String name) {
         this.ip = ip;
         this.id = id;

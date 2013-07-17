@@ -64,6 +64,9 @@ public class Resource {
         if (mAllString != null && mAllString.size() != 0) {
             result = mAllString.get(name);
         }
+        if (result == null || "".equals(result)) {
+            result = name;
+        }
         return result;
     }
 
@@ -78,6 +81,16 @@ public class Resource {
             }
         }
         return one;
+    }
+    public static String getStringForColor(String name, String color) {
+        String result = name;
+        if (mAllString != null && mAllString.size() != 0) {
+            result = mAllString.get(name);
+        }
+        if (result == null || "".equals(result)) {
+            result = name;
+        }
+        return "<html><font color=" + color + ">" + result + "</font></html>";
     }
 
     public static void setLanguage(String language) {

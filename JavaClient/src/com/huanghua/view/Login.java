@@ -21,10 +21,12 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -45,12 +47,26 @@ public class Login extends JFrame implements ActionListener {
             .getImage("image/login_btn_down.png"));
     private ImageIcon mLoginHighlight = new ImageIcon(ImageUtil
             .getImage("image/login_btn_highlight.png"));
+    private ImageIcon mCheckBox = new ImageIcon(ImageUtil
+            .getImage("image/Check_01.png"));
+    private ImageIcon mCheckBoxCheck = new ImageIcon(ImageUtil
+            .getImage("image/Check_02.png"));
+    private ImageIcon mCheckBoxSelect = new ImageIcon(ImageUtil
+            .getImage("image/CheckBox_border.png"));
 
     private Font FONT_12_BOLD = new Font("宋体", 0, 12);
     private JButton mLogin;
     private JTextField mUserId;
     private JPasswordField mUserPass;
+    private JLabel mRegister;
+    private JLabel mFindPass;
     private JLabel mUserImage;
+    private JLabel mRememberLabel;
+    private JLabel mAutoLabel;
+    private JCheckBox mRemember;
+    private JCheckBox mAutoLogin;
+    private JPopupMenu mAlertPop;
+    private JLabel mAlertLabel;
     private NumberDocument numberDocument = new NumberDocument();
     private ChatService mService;
 
@@ -66,6 +82,12 @@ public class Login extends JFrame implements ActionListener {
         @Override
         public void mouseDragged(MouseEvent e) {
             Point point = e.getLocationOnScreen();
+            if (point == null || lastPoint == null) {
+                if (mAlertPop.isShowing()) {
+                    mAlertPop.setVisible(false);
+                }
+                return;
+            }
             int offsetX = point.x - lastPoint.x;
             int offsetY = point.y - lastPoint.y;
             Rectangle bounds = Login.this.getBounds();
@@ -80,6 +102,36 @@ public class Login extends JFrame implements ActionListener {
         public void keyReleased(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 startLogin();
+            }
+        }
+    };
+
+    private MouseAdapter mButtonMouseAdapter = new MouseAdapter() {
+        public void mouseClicked(MouseEvent e) {
+            if (e.getSource() == mRememberLabel) {
+                mRemember.setSelected(!mRemember.isSelected());
+            } else if (e.getSource() == mAutoLabel) {
+                mAutoLogin.setSelected(!mAutoLogin.isSelected());
+            } else if (e.getSource() == mRegister) {
+                Register registerFrame = new Register(Login.this);
+                registerFrame.setVisible(true);
+                setVisible(false);
+            }
+        }
+
+        public void mouseEntered(MouseEvent e) {
+            if (e.getSource() == mRememberLabel) {
+                mRemember.setIcon(mCheckBoxSelect);
+            } else if (e.getSource() == mAutoLabel) {
+                mAutoLogin.setIcon(mCheckBoxSelect);
+            }
+        }
+
+        public void mouseExited(MouseEvent e) {
+            if (e.getSource() == mRememberLabel) {
+                mRemember.setIcon(mCheckBox);
+            } else if (e.getSource() == mAutoLabel) {
+                mAutoLogin.setIcon(mCheckBox);
             }
         }
     };
@@ -110,22 +162,48 @@ public class Login extends JFrame implements ActionListener {
         mUserId.setBounds(115, 130, 200, 25);
         mUserId.addKeyListener(mKeyAdapter);
 
-        JLabel register = new JLabel("<html><font color=blue>" + Resource.getString("register")
+        mRegister = new JLabel("<html><font color=blue>" + Resource.getString("register")
                 + "</font></html>");
-        register.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        register.setFont(FONT_12_BOLD);
-        register.setBounds(320, 130, 150, 25);
+        mRegister.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        mRegister.setFont(FONT_12_BOLD);
+        mRegister.setBounds(320, 130, 150, 25);
+        mRegister.addMouseListener(mButtonMouseAdapter);
 
         mUserPass = new JPasswordField();
         mUserPass.setBorder(null);
         mUserPass.setBounds(115, 165, 200, 25);
         mUserPass.addKeyListener(mKeyAdapter);
 
-        JLabel findPass = new JLabel("<html><font color=blue>" + Resource.getString("findPass")
+        mFindPass = new JLabel("<html><font color=blue>" + Resource.getString("findPass")
                 + "</font></html>");
-        findPass.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        findPass.setFont(FONT_12_BOLD);
-        findPass.setBounds(320, 165, 150, 25);
+        mFindPass.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        mFindPass.setFont(FONT_12_BOLD);
+        mFindPass.setBounds(320, 165, 150, 25);
+        mFindPass.addMouseListener(mButtonMouseAdapter);
+
+        mRemember = new JCheckBox();
+        mRemember.setBorder(null);
+        mRemember.setIcon(mCheckBox);
+        mRemember.setSelectedIcon(mCheckBoxCheck);
+        mRemember.setRolloverIcon(mCheckBoxSelect);
+        mRemember.setBounds(115, 198, 15, 15);
+        mRememberLabel = new JLabel("<html><font color=black>"
+                + Resource.getString("remember") + "</font></html>");
+        mRememberLabel.setFont(FONT_12_BOLD);
+        mRememberLabel.setBounds(133, 193, 50, 25);
+        mRememberLabel.addMouseListener(mButtonMouseAdapter);
+
+        mAutoLogin = new JCheckBox();
+        mAutoLogin.setBorder(null);
+        mAutoLogin.setIcon(mCheckBox);
+        mAutoLogin.setSelectedIcon(mCheckBoxCheck);
+        mAutoLogin.setRolloverIcon(mCheckBoxSelect);
+        mAutoLogin.setBounds(200, 198, 15, 15);
+        mAutoLabel = new JLabel("<html><font color=black>"
+                + Resource.getString("autologin") + "</font></html>");
+        mAutoLabel.setFont(FONT_12_BOLD);
+        mAutoLabel.setBounds(218, 193, 50, 25);
+        mAutoLabel.addMouseListener(mButtonMouseAdapter);
 
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(231, 236, 240));
@@ -142,14 +220,22 @@ public class Login extends JFrame implements ActionListener {
         this.add(topPanel);
         this.add(mUserImage);
         this.add(mUserId);
-        this.add(register);
+        this.add(mRegister);
         this.add(mUserPass);
-        this.add(findPass);
+        this.add(mFindPass);
+        this.add(mRemember);
+        this.add(mRememberLabel);
+        this.add(mAutoLogin);
+        this.add(mAutoLabel);
         this.add(mLogin);
         this.add(bottomPanel);
         this.addMouseListener(moveWindowListener);
         this.addMouseMotionListener(moveWindowListener);
         mService = ChatService.getInstance();
+        mAlertPop = new JPopupMenu();
+        mAlertLabel = new JLabel();
+        mAlertLabel.setFont(FONT_12_BOLD);
+        mAlertPop.add(mAlertLabel);
     }
 
     @Override
@@ -163,9 +249,11 @@ public class Login extends JFrame implements ActionListener {
         String userId = mUserId.getText();
         String userPass = new String(mUserPass.getPassword());
         if (userId == null || "".equals(userId)) {
-
+            mAlertLabel.setText(Resource.getStringForColor("notid", "black"));
+            mAlertPop.show(mUserId, -25, mUserId.getHeight() / 2);
         } else if (userPass == null || "".equals(userPass)) {
-
+            mAlertLabel.setText(Resource.getStringForColor("notpass", "black"));
+            mAlertPop.show(mUserPass, -25, mUserPass.getHeight() / 2);
         } else {
             mLogin.setEnabled(false);
             mService.login(this, userId, userPass);
@@ -173,6 +261,12 @@ public class Login extends JFrame implements ActionListener {
     }
 
     public void loginFail(String error) {
+        mAlertLabel.setText(Resource.getStringForColor(error, "black"));
+        if (error.equals("passerror")) {
+            mAlertPop.show(mUserPass, -25, mUserPass.getHeight() / 2);
+        } else {
+            mAlertPop.show(mUserId, -25, mUserId.getHeight() / 2);
+        }
         mLogin.setEnabled(true);
     }
 
