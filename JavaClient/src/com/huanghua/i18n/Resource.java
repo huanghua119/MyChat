@@ -36,7 +36,7 @@ public class Resource {
             String fileName = new StringBuffer().append(baseName)
                     .toString();
             URL url = Resource.class.getClassLoader().getResource(fileName);
-            File file = new File(url.toURI());
+            File file = new File("lib/" + fileName);
             DocumentBuilder domParser = factory.newDocumentBuilder();
             Document document = domParser.parse(file);
             NodeList nodeList = document.getChildNodes();

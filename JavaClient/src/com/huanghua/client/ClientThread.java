@@ -28,7 +28,7 @@ public class ClientThread extends Thread {
     @Override
     public void run() {
         try {
-            mSocket = new Socket("192.168.1.94", 12345);
+            mSocket = new Socket("huanghua119.xicp.net", 26741);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             userLogin(mService.getMySelf().getId(), mService.getMySelf().getPassword());

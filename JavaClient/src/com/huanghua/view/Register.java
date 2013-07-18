@@ -84,7 +84,15 @@ public class Register extends JFrame implements ActionListener {
     private KeyAdapter mKeyAdapter = new KeyAdapter() {
         public void keyReleased(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                startRegister();
+                if (mOK.getActionCommand().equals("startRegister")) {
+                    startRegister();
+                } else if (mOK.getActionCommand().equals("autoLogin")) {
+                    setVisible(false);
+                    mLogin.setLocation(getX(), getY());
+                    dispose();
+                    mLogin.setVisible(true);
+                    mLogin.autoLogin(mRegisterUser.getId(), mRegisterUser.getPassword());
+                }
             }
         }
     };
