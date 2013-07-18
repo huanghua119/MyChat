@@ -2,6 +2,7 @@
 package com.huanghua.view;
 
 import com.huanghua.i18n.Resource;
+import com.huanghua.pojo.User;
 import com.huanghua.service.ChatService;
 import com.huanghua.util.ImageUtil;
 
@@ -45,8 +46,15 @@ public class Register extends JFrame implements ActionListener {
     private JTextField mName;
     private JPasswordField mPass;
     private JPasswordField mTwoPass;
+    private JLabel mNameLabel;
+    private JLabel mPassLabel;
+    private JLabel mTwoPassLabel;
+    private JLabel mSuccesLabel;
     private JPopupMenu mAlertPop;
     private JLabel mAlertLabel;
+    private User mRegisterUser;
+
+    private ChatService mService;
 
     private Font FONT_12_BOLD = new Font("宋体", 0, 12);
     private MouseAdapter moveWindowListener = new MouseAdapter() {
@@ -88,19 +96,25 @@ public class Register extends JFrame implements ActionListener {
         this.setResizable(false);
         this.setUndecorated(true);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        this.setBounds((int) (dim.getWidth() - GAME_WIDTH) / 2,
-                (int) (dim.getHeight() - GAME_HEIGHT) / 2, GAME_WIDTH,
-                GAME_HEIGHT);
+        int x = (int) (dim.getWidth() - GAME_WIDTH) / 2;
+        int y = (int) (dim.getHeight() - GAME_HEIGHT) / 2;
+        if (mLogin != null) {
+            x = mLogin.getX();
+            y = mLogin.getY();
+        }
+        this.setBounds(x, y, GAME_WIDTH, GAME_HEIGHT);
         this.setLayout(null);
         JLabel loadingbg = new JLabel(mLoginbg);
         loadingbg.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
         TopPanel topPanel = new TopPanel(this);
-        topPanel.addTile(Resource.getString("register"));
+        topPanel.addTile(Resource.getStringForColor("register", "white"));
         topPanel.addCloseButtonListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (mLogin != null) {
                     setVisible(false);
+                    dispose();
+                    mLogin.setLocation(getX(), getY());
                     mLogin.setVisible(true);
                 } else {
                     System.exit(0);
@@ -109,25 +123,25 @@ public class Register extends JFrame implements ActionListener {
         });
         topPanel.hideMaxButton();
 
-        JLabel name = new JLabel(Resource.getStringForColor("name", "black"));
-        name.setFont(FONT_12_BOLD);
-        name.setBounds(80, 100, 60, 25);
+        mNameLabel = new JLabel(Resource.getStringForColor("name", "black"));
+        mNameLabel.setFont(FONT_12_BOLD);
+        mNameLabel.setBounds(80, 100, 60, 25);
         mName = new JTextField();
         mName.setBorder(null);
         mName.setBounds(140, 100, 150, 25);
         mName.addKeyListener(mKeyAdapter);
 
-        JLabel pass = new JLabel(Resource.getStringForColor("pass", "black"));
-        pass.setFont(FONT_12_BOLD);
-        pass.setBounds(80, 135, 60, 25);
+        mPassLabel = new JLabel(Resource.getStringForColor("pass", "black"));
+        mPassLabel.setFont(FONT_12_BOLD);
+        mPassLabel.setBounds(80, 135, 60, 25);
         mPass = new JPasswordField();
         mPass.setBorder(null);
         mPass.setBounds(140, 135, 150, 25);
         mPass.addKeyListener(mKeyAdapter);
 
-        JLabel twopass = new JLabel(Resource.getStringForColor("twopass", "black"));
-        twopass.setFont(FONT_12_BOLD);
-        twopass.setBounds(80, 170, 60, 25);
+        mTwoPassLabel = new JLabel(Resource.getStringForColor("twopass", "black"));
+        mTwoPassLabel.setFont(FONT_12_BOLD);
+        mTwoPassLabel.setBounds(80, 170, 60, 25);
         mTwoPass = new JPasswordField();
         mTwoPass.setBorder(null);
         mTwoPass.setBounds(140, 170, 150, 25);
@@ -136,7 +150,7 @@ public class Register extends JFrame implements ActionListener {
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(231, 236, 240));
         bottomPanel.setBounds(0, getHeight() - 50, getWidth(), 50);
-        mOK = new JButton("提交");
+        mOK = new JButton(Resource.getString("commit"));
         mOK.setBorder(null);
         mOK.setIcon(mButtonNormal);
         mOK.setPressedIcon(mButtonPress);
@@ -144,16 +158,22 @@ public class Register extends JFrame implements ActionListener {
         mOK.setContentAreaFilled(false);
         mOK.setHorizontalTextPosition(SwingConstants.CENTER);
         mOK.setBounds(getWidth() / 2 - 78 / 2, getHeight() - 40, 78, 30);
+        mOK.setActionCommand("startRegister");
         mOK.addActionListener(this);
+        mSuccesLabel = new JLabel();
+        mSuccesLabel.setVisible(false);
+        mSuccesLabel.setFont(new Font("宋体", 0, 14));
+        mSuccesLabel.setBounds(80, 100, 240, 45);
         bottomPanel.add(mOK);
         this.setContentPane(loadingbg);
         this.add(topPanel);
-        this.add(pass);
+        this.add(mPassLabel);
         this.add(mPass);
-        this.add(name);
+        this.add(mNameLabel);
         this.add(mName);
-        this.add(twopass);
+        this.add(mTwoPassLabel);
         this.add(mTwoPass);
+        this.add(mSuccesLabel);
         this.add(bottomPanel);
         this.addMouseListener(moveWindowListener);
         this.addMouseMotionListener(moveWindowListener);
@@ -182,16 +202,57 @@ public class Register extends JFrame implements ActionListener {
             mAlertLabel.setText(Resource.getStringForColor("twopassnotpass", "red"));
             mAlertPop.show(mTwoPass, -25, mTwoPass.getHeight() / 2);
         } else {
-            ChatService mService = ChatService.getInstance();
+            if (mService == null) {
+                mService = ChatService.getInstance();
+                mService.setRegister(this);
+            }
+            mName.setEditable(false);
+            mPass.setEditable(false);
+            mPassLabel.setEnabled(false);
             mService.userRegister(name, pass);
+            mOK.setText(Resource.getString("beingRegister"));
+            mOK.setEnabled(false);
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == mOK) {
+        if (e.getActionCommand().equals("startRegister")) {
             startRegister();
+        } else if (e.getActionCommand().equals("autoLogin")) {
+            this.setVisible(false);
+            mLogin.setLocation(this.getX(), this.getY());
+            dispose();
+            mLogin.setVisible(true);
+            mLogin.autoLogin(mRegisterUser.getId(), mRegisterUser.getPassword());
         }
+    }
+
+    public void userRegisterSucces(User u) {
+        mRegisterUser = u;
+        mTwoPassLabel.setVisible(false);
+        mPassLabel.setVisible(false);
+        mNameLabel.setVisible(false);
+        mTwoPass.setVisible(false);
+        mPass.setVisible(false);
+        mName.setVisible(false);
+        mOK.setEnabled(true);
+        mSuccesLabel.setText("<html><font color=white>"
+                + Resource.getString("succesAlert", u.getId()) + "</font></html>");
+        mSuccesLabel.setVisible(true);
+        mOK.setText(Resource.getString("autoLogin"));
+        mOK.setActionCommand("autoLogin");
+    }
+
+    public void userRegisterFail() {
+        mAlertLabel.setText(Resource.getStringForColor("registerFail", "red"));
+        mAlertPop.show(mTwoPass, -25, mTwoPass.getHeight() / 2);
+        mName.setEditable(true);
+        mPass.setEditable(true);
+        mPassLabel.setEnabled(true);
+        mOK.setActionCommand("startRegister");
+        mOK.setText(Resource.getString("commit"));
+        mOK.setEnabled(true);
     }
 
 }

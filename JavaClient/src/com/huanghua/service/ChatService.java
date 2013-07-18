@@ -3,10 +3,13 @@ package com.huanghua.service;
 
 import com.huanghua.client.ClientThread;
 import com.huanghua.client.RegisterThread;
+import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
+import com.huanghua.util.ImageUtil;
 import com.huanghua.view.Login;
 import com.huanghua.view.MainFrame;
 import com.huanghua.view.MessageFrame;
+import com.huanghua.view.Register;
 
 import org.jvnet.substance.SubstanceLookAndFeel;
 import org.jvnet.substance.skin.BusinessBlackSteelSkin;
@@ -16,6 +19,8 @@ import org.jvnet.substance.title.FlatTitlePainter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -24,6 +29,7 @@ public class ChatService {
     private static ChatService service = null;
     private ClientThread mClient;
     private MainFrame mFrame;
+    private Register mRegister;
     private Login mLogin;
     private List<User> mUser;
     private List<MessageFrame> mAllChatFrame;
@@ -49,7 +55,9 @@ public class ChatService {
     }
 
     public void login(Login login, String id, String password) {
-        mLogin = login;
+        if (mLogin == null) {
+            mLogin = login;
+        }
         mSelf = new User();
         mSelf.setId(id);
         mSelf.setPassword(password);
@@ -66,11 +74,11 @@ public class ChatService {
             } catch (UnsupportedLookAndFeelException e) {
                 e.printStackTrace();
             }
-            mLogin.setVisible(false);
             mFrame = new MainFrame(this);
-            mFrame.setVisible(true);
-            mFrame.setAlwaysOnTop(true);
         }
+        mFrame.setVisible(true);
+        mFrame.setAlwaysOnTop(true);
+        mLogin.setVisible(false);
     }
 
     public void loginFail(String error) {
@@ -205,9 +213,35 @@ public class ChatService {
         System.exit(0);
     }
 
+    public void forceOffLine() {
+        int message = JOptionPane.showConfirmDialog(mFrame,Resource.getString("offlineWarn"),
+                Resource.getString("offlineNotification"),
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.ERROR_MESSAGE,
+                new ImageIcon(ImageUtil.getImage("image/recent_icon_failed.png")));
+        if (message == 1) {
+            System.exit(0);
+        } else {
+            mLogin.setVisible(true);
+            mLogin.autoLogin(mSelf.getId(), mSelf.getPassword());
+        }
+    }
+
+    public void setRegister(Register r) {
+        mRegister = r;
+    }
+
     public void userRegister(String name, String pass) {
         RegisterThread rt = new RegisterThread(this, new User(name, pass));
         new Thread(rt).start();
+    }
+
+    public void userRegisterSucces(User u) {
+        mRegister.userRegisterSucces(u);
+    }
+
+    public void userRegisterFail() {
+        mRegister.userRegisterFail();
     }
 
     public void setMySelf(User u) {

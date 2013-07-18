@@ -2,32 +2,32 @@
 package com.huanghua.socket;
 
 import com.huanghua.i18n.Resource;
-import com.huanghua.pojo.User;
-import com.huanghua.view.MainFrame;
+import com.huanghua.service.ServerService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
 
 public class SocketThread implements Runnable {
 
     private ServerSocket mScocket;
-    private MainFrame mFrame;
     private int port = 12345;
+    private ServerService mService;
 
-    public SocketThread(MainFrame frame) {
-        mFrame = frame;
+    public SocketThread(ServerService service) {
+        mService = service;
     }
 
     @Override
     public void run() {
         try {
             mScocket = new ServerSocket(port);
-            mFrame.setMessage(Resource.getString("nowListener") + mScocket.getInetAddress());
-            while (MainFrame.sIsListenter) {
+            mService.setMessage(Resource.getString("nowListener") + mScocket.getInetAddress());
+            int[] poolRange = mService.getPoolRangeForSql();
+            mService.generatePool(poolRange[0], poolRange[1]);
+            while (ServerService.sIsListenter) {
                 Socket s = mScocket.accept();
-                SocketAgent agent = new SocketAgent(s, mFrame);
+                SocketAgent agent = new SocketAgent(s, mService);
                 agent.start();
             }
         } catch (Exception e) {
@@ -35,27 +35,8 @@ public class SocketThread implements Runnable {
         }
     }
 
-    public void sendUserOffline(User offUser) {
-        List<User> mList = mFrame.getUserList();
-        for (User u : mList) {
-            u.getsAgent().sendUserOffline(offUser);
-        }
-    }
-    public void sendUserList() {
-        List<User> mList = mFrame.getUserList();
-        for (User u : mList) {
-            u.getsAgent().sendUserList();
-        }
-    }
-
-    public void cancel() {
+    public void close() {
         try {
-            List<User> mList = mFrame.getUserList();
-            if (mList != null && mList.size() > 0) {
-                for (User u : mList) {
-                    u.getsAgent().close();
-                }
-            }
             if (mScocket != null) {
                 mScocket.close();
             }

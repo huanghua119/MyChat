@@ -68,6 +68,10 @@ public class ClientThread extends Thread {
                     User u = new User("", self[0], self[1], self[2]);
                     mService.setMySelf(u);
                     mService.loginSuccess();
+                } else if (msg != null && msg.startsWith("<#FORCEOFFLINE#>")) {
+                    mDos.writeUTF("<#FORCEOFFLINEOK#>");
+                    mService.forceOffLine();
+                    close();
                 }
             }
         } catch (UnknownHostException e) {

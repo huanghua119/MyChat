@@ -21,7 +21,6 @@ public class TopPanel extends JPanel implements ActionListener {
     private JButton mMax;
     private JButton mMini;
     private JFrame mJFrame;
-    private boolean mIsMax = false;
 
     public TopPanel(JFrame frame) {
         this.mJFrame = frame;

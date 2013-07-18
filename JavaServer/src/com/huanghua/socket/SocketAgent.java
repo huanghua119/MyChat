@@ -4,7 +4,7 @@ package com.huanghua.socket;
 import com.huanghua.dao.DBUtil;
 import com.huanghua.i18n.Resource;
 import com.huanghua.pojo.User;
-import com.huanghua.view.MainFrame;
+import com.huanghua.service.ServerService;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,12 +19,12 @@ public class SocketAgent extends Thread {
     private DataOutputStream mDos;
     private DataInputStream mDis;
     private boolean mFlag = true;
-    private MainFrame mFrame = null;
     private User mCurrent = null;
+    private ServerService mService;
 
-    public SocketAgent(Socket socket, MainFrame frame) {
+    public SocketAgent(Socket socket, ServerService service) {
         this.mSocket = socket;
-        this.mFrame = frame;
+        this.mService = service;
         try {
             mFlag = true;
             mDos = new DataOutputStream(socket.getOutputStream());
@@ -40,24 +40,31 @@ public class SocketAgent extends Thread {
             try {
                 String msg = mDis.readUTF();
                 if (msg != null && msg.startsWith("<#GET_USERLIST#>")) {
-                    mFrame.sendUserList();
+                    mService.sendUserList();
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     mDos.writeUTF("<#USER_OFFLINE#>");
                     close();
-                    mFrame.userOffLine(mCurrent);
+                    mService.userOffLine(mCurrent);
                 } else if (msg != null && msg.startsWith("<#USERLOGIN#>")) {
                     msg = msg.substring(13);
                     String[] temp = msg.split("\\|");
                     String id = temp[0];
                     String pass = temp[1];
-                    userLogin(id, pass);
+                    User u = mService.getUserById(id);
+                    if (u == null) {
+                        userLogin(id, pass);
+                    } else {
+                        forceLogin(u, id, pass);
+                    }
                 } else if (msg != null && msg.startsWith("<#SENDMESSAGE#>")) {
                     String id = msg.substring(15);
                     String context = mDis.readUTF();
-                    mFrame.sendContextByIdToUser(context, id, mCurrent);
+                    mService.sendContextByIdToUser(context, id, mCurrent);
                 } else if (msg != null && msg.startsWith("<#USERREGISTER#>")) {
-                    String temp[] = mDis.readUTF().split("\\|");
+                    String temp[] = msg.substring(16).split("\\|");
                     userRegister(new User(temp[0], temp[1]));
+                } else if (msg != null && msg.startsWith("<#FORCEOFFLINEOK#>")) {
+                    close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -67,7 +74,36 @@ public class SocketAgent extends Thread {
         }
     }
 
+    public void forceLogin(User u, String id, String pass) {
+        u.getsAgent().sendForceOffLine();
+        mService.userOffLine(u);
+        userLogin(id, pass);
+    }
+
+    public void sendForceOffLine() {
+        try {
+            mDos.writeUTF("<#FORCEOFFLINE#>");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void userRegister(User u) {
+        String userId = mService.getUserId();
+        u.setId(userId);
+        String sql = "insert into User values('" + u.getId() + "', '" + u.getName() + "', '"
+                + u.getPassword() + "')";
+        int result = DBUtil.executeUpdate(sql);
+        try {
+            if (result != 0) {
+                mDos.writeUTF("<#REGISTERSUCCES#>" + userId);
+            } else {
+                mDos.writeUTF("<#REGISTERFAIL#>");
+            }
+            close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void userLogin(String id, String pass) {
@@ -79,16 +115,16 @@ public class SocketAgent extends Thread {
                 if (password.equals(pass)) {
                     String name = rs.getString("userName");
                     String ip = mSocket.getInetAddress().toString().replace("/", "");
-                    mFrame.setMessage(Resource.getString("newPersor") + ip + "|" + id);
+                    mService.setMessage(Resource.getString("newPersor") + ip + "|" + id);
                     mCurrent = new User();
                     mCurrent.setIp(ip);
                     mCurrent.setId(id);
                     mCurrent.setName(name);
                     mCurrent.setPassword(pass);
                     mCurrent.setsAgent(this);
-                    mFrame.addUser(mCurrent);
+                    mService.addUser(mCurrent);
                     sendLoginSucces();
-                    mFrame.sendUserList();
+                    mService.sendUserList();
                 } else {
                     mDos.writeUTF("<#USERPASSERROR#>");
                     close();
@@ -97,6 +133,7 @@ public class SocketAgent extends Thread {
                 mDos.writeUTF("<#USERNOTFIND#>");
                 close();
             }
+            DBUtil.close(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -123,7 +160,7 @@ public class SocketAgent extends Thread {
     }
 
     public void sendUserList() {
-        List<User> list = mFrame.getUserList();
+        List<User> list = mService.getUserList();
         try {
             mDos.writeUTF("<#SENDUSERLIST#>" + (list.size() - 1));
             for (User u : list) {

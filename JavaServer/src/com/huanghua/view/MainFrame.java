@@ -2,16 +2,13 @@
 package com.huanghua.view;
 
 import com.huanghua.i18n.Resource;
-import com.huanghua.pojo.User;
-import com.huanghua.socket.SocketThread;
+import com.huanghua.service.ServerService;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -28,16 +25,13 @@ public class MainFrame extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private static final int GAME_WIDTH = 250;
     private static final int GAME_HEIGHT = 450;
-    public static boolean sIsListenter = false;
-    private SocketThread mSocket;
-    private List<User> mUser = null;
 
     private JButton mStartLinstater;
     private JButton mStopLinstater;
     private JTextArea mIPList;
+    private ServerService mService;
 
     public MainFrame() {
-        mUser = new ArrayList<User>();
         this.setTitle(Resource.getString("frame_title"));
         this.setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -69,53 +63,13 @@ public class MainFrame extends JFrame implements ActionListener {
         if (e.getSource() == mStopLinstater) {
             mStartLinstater.setEnabled(true);
             mStopLinstater.setEnabled(false);
-            sIsListenter = false;
-            mSocket.cancel();
+            mService.cancel();
         } else if (e.getSource() == mStartLinstater) {
             mStartLinstater.setEnabled(false);
             mStopLinstater.setEnabled(true);
-            sIsListenter = true;
-            mSocket = new SocketThread(this);
-            Thread thread = new Thread(mSocket);
-            thread.start();
-        }
-    }
-
-    public void addUser(User u) {
-        mUser.add(u);
-    }
-
-    public List<User> getUserList() {
-        return this.mUser;
-    }
-
-    public void sendUserList() {
-        mSocket.sendUserList();
-    }
-    public void sendUserOffline(User u) {
-        mSocket.sendUserOffline(u);
-    }
-    public void userOffLine(User u) {
-        setMessage(Resource.getString("offline") + u.getIp() + ":" + u.getId());
-        mUser.remove(u);
-        sendUserOffline(u);
-    }
-
-    public User getUserById(String id) {
-        for (User u : mUser) {
-            if (u.getId().equals(id)) {
-                return u;
-            }
-        }
-        return null;
-    }
-
-    public void sendContextByIdToUser(String context, String id, User toUser) {
-        User u = getUserById(id);
-        if (u == null) {
-            toUser.getsAgent().sendError(Resource.getString("usernotonline"), id);
-        } else {
-            u.getsAgent().sendMessage(context, toUser);
+            mService = ServerService.getInstance();
+            mService.setMainFrame(this);
+            mService.startListener();
         }
     }
 

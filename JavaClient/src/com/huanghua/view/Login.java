@@ -151,6 +151,7 @@ public class Login extends JFrame implements ActionListener {
         loadingbg.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         TopPanel topPanel = new TopPanel(this);
+        topPanel.hideMaxButton();
 
         mUserImage = new JLabel();
         mUserImage.setIcon(mUserImageDefalut);
@@ -268,6 +269,12 @@ public class Login extends JFrame implements ActionListener {
             mAlertPop.show(mUserId, -25, mUserId.getHeight() / 2);
         }
         mLogin.setEnabled(true);
+    }
+
+    public void autoLogin(String userId, String pass) {
+        mUserId.setText(userId);
+        mUserPass.setText(pass);
+        startLogin();
     }
 
     public static void main(String[] args) {

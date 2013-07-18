@@ -33,7 +33,6 @@ public class RegisterThread implements Runnable {
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             startRegister(mUser);
-            String msg = mDis.readUTF();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -46,6 +45,14 @@ public class RegisterThread implements Runnable {
     private void startRegister(User u) {
         try {
             mDos.writeUTF("<#USERREGISTER#>" + u.getName() + "|" + u.getPassword());
+            String msg = mDis.readUTF();
+            if (msg != null && msg.startsWith("<#REGISTERSUCCES#>")) {
+                String userId = msg.substring(18);
+                u.setId(userId);
+                mService.userRegisterSucces(mUser);
+            } else {
+                mService.userRegisterFail();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

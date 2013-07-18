@@ -21,5 +21,12 @@
     <string name="namenotnull">请输入用户昵称!</string>
     <string name="passnotnull">请输入登陆密码!</string>
     <string name="twopassnotpass">确认密码和登陆密码不一置!</string>
+    <string name="beingRegister">注册中......</string>
+    <string name="autoLogin">自动登陆</string>
+    <string nmae="registerFail">注册失败!请重新注册!</string>
+    <string name="succesAlert">注册成功!你的ID为:%s,请勿必记住,它将做为你的登陆帐号!</string>
+    <string name="commit">提交</string>
+    <string name="offlineNotification">下线通知</string>
+    <string name="offlineWarn">你的帐号在另一地点登陆,您被迫下线</string>
 
 </resources>
