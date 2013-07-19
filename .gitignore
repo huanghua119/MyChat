@@ -1,0 +1,7 @@
+AndroidClient/.classpath
+AndroidClient/.project
+AndroidClient/bin/
+AndroidClient/gen/
+AndroidClient/proguard-project.txt
+AndroidClient/project.properties
+*/bin/
