@@ -1,11 +1,11 @@
-
 package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.huanghua.mychat.service.ChatService;
 import com.huanghua.mychat.widght.AphoneCheckBox;
 import com.huanghua.pojo.User;
 
@@ -31,6 +32,26 @@ public class Login extends Activity implements View.OnClickListener {
     private TextView mAutoLabel;
     private Toast mToast;
     private LayoutInflater mInFlater;
+    private ChatService mService;
+
+    private static final int MSG_LOGIN_FAIL = 1;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int what = msg.what;
+            switch (what) {
+            case MSG_LOGIN_FAIL:
+                Bundle data = msg.getData();
+                String error = data.getString("error");
+                if (error.equals("passerror")) {
+                    showToast(R.string.passerror);
+                } else {
+                    showToast(R.string.usernotfind);
+                }
+                break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +62,8 @@ public class Login extends Activity implements View.OnClickListener {
     }
 
     private void init() {
-        mToast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        mToast = new Toast(this);
+        mToast.setDuration(Toast.LENGTH_SHORT);
         mToast.setView(mInFlater.inflate(R.layout.toast_view, null));
         mToast.setGravity(Gravity.CENTER, 0, 0);
         mUserPhoto = (ImageView) findViewById(R.id.userPhoto);
@@ -59,10 +81,10 @@ public class Login extends Activity implements View.OnClickListener {
         mAutoLabel.setOnClickListener(this);
         mLogin.setOnClickListener(this);
         mRegister.setOnClickListener(this);
+        mService = ChatService.getInstance();
     }
 
     private void showToast(String msg) {
-        mToast.cancel();
         View toast = mToast.getView();
         TextView m = (TextView) toast.findViewById(R.id.toast_msg);
         m.setText(msg);
@@ -110,6 +132,7 @@ public class Login extends Activity implements View.OnClickListener {
             } else {
                 removeRemeber();
             }
+            mService.login(this, userId, userPass);
         }
     }
 
@@ -135,5 +158,14 @@ public class Login extends Activity implements View.OnClickListener {
         editor.putString("userId", "");
         editor.putString("userPass", "");
         editor.commit();
+    }
+
+    public void loginFail(String error) {
+        Bundle data = new Bundle();
+        data.putString("error", error);
+        Message m = new Message();
+        m.setData(data);
+        m.what = MSG_LOGIN_FAIL;
+        mHandler.sendMessage(m);
     }
 }

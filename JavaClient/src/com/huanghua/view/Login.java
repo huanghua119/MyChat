@@ -1,17 +1,17 @@
 package com.huanghua.view;
 
-import com.huanghua.i18n.Resource;
-import com.huanghua.service.ChatService;
-import com.huanghua.util.ImageUtil;
-import com.huanghua.util.NumberDocument;
-
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.MenuItem;
 import java.awt.Point;
+import java.awt.PopupMenu;
 import java.awt.Rectangle;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -30,6 +30,11 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+
+import com.huanghua.i18n.Resource;
+import com.huanghua.service.ChatService;
+import com.huanghua.util.ImageUtil;
+import com.huanghua.util.NumberDocument;
 
 public class Login extends JFrame implements ActionListener {
 
@@ -67,6 +72,8 @@ public class Login extends JFrame implements ActionListener {
     private JCheckBox mAutoLogin;
     private JPopupMenu mAlertPop;
     private JLabel mAlertLabel;
+    private SystemTray mSystemtary;
+    private TrayIcon mTrayIcon;
     private NumberDocument numberDocument = new NumberDocument();
     private ChatService mService;
 
@@ -237,6 +244,22 @@ public class Login extends JFrame implements ActionListener {
         mAlertLabel = new JLabel();
         mAlertLabel.setFont(FONT_12_BOLD);
         mAlertPop.add(mAlertLabel);
+        if(SystemTray.isSupported()){
+            this.mSystemtary = SystemTray.getSystemTray();
+            PopupMenu pop = new PopupMenu();
+            MenuItem open = new MenuItem(Resource.getString("openFrame"));
+            MenuItem exit = new MenuItem(Resource.getString("exit"));
+            pop.add(open);
+            pop.add(exit);
+            try {
+                this.mTrayIcon = new TrayIcon(
+                        ImageUtil.getImage("image/tray.png"),
+                        Resource.getString("frame_title"), pop);
+                this.mSystemtary.add(mTrayIcon);
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

@@ -5,3 +5,5 @@ AndroidClient/gen/
 AndroidClient/proguard-project.txt
 AndroidClient/project.properties
 */bin/
+*/src/com/huanghua/*/*.class
+AndroidClient/.settings/

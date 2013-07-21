@@ -2,7 +2,7 @@
 <resources>
 
     <string name="send">发送</string>
-    <string name="frame_title">聊天</string>
+    <string name="frame_title">我的聊天</string>
     <string name="connect">连接</string>
     <string name="disconnect">断开</string>
     <string name="anonymous">匿名</string>
@@ -27,6 +27,8 @@
     <string name="succesAlert">注册成功!你的ID为:%s,请勿必记住,它将做为你的登陆帐号!</string>
     <string name="commit">提交</string>
     <string name="offlineNotification">下线通知</string>
-    <string name="offlineWarn">你的帐号在另一地点登陆,您被迫下线</string>
+    <string name="offlineWarn">你的帐号在另一地点登陆,您被迫下线,是否重新登陆！</string>
+    <string name="openFrame">打开主界面</string>
+    <string name="exit">退出</string>
 
 </resources>

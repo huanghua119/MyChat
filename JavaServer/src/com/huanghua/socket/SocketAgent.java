@@ -50,12 +50,7 @@ public class SocketAgent extends Thread {
                     String[] temp = msg.split("\\|");
                     String id = temp[0];
                     String pass = temp[1];
-                    User u = mService.getUserById(id);
-                    if (u == null) {
-                        userLogin(id, pass);
-                    } else {
-                        forceLogin(u, id, pass);
-                    }
+                    userLogin(id, pass);
                 } else if (msg != null && msg.startsWith("<#SENDMESSAGE#>")) {
                     String id = msg.substring(15);
                     String context = mDis.readUTF();
@@ -115,6 +110,11 @@ public class SocketAgent extends Thread {
                 if (password.equals(pass)) {
                     String name = rs.getString("userName");
                     String ip = mSocket.getInetAddress().toString().replace("/", "");
+                    User u = mService.getUserById(id);
+                    if (u != null) {
+                        forceLogin(u, id, password);
+                        return;
+                    }
                     mService.setMessage(Resource.getString("newPersor") + ip + "|" + id);
                     mCurrent = new User();
                     mCurrent.setIp(ip);
