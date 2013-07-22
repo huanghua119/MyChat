@@ -18,6 +18,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -112,6 +114,14 @@ public class Register extends JFrame implements ActionListener {
         }
         this.setBounds(x, y, GAME_WIDTH, GAME_HEIGHT);
         this.setLayout(null);
+        this.addWindowListener(new WindowAdapter() {
+            public void windowIconified(WindowEvent e) {
+                if (mService == null) {
+                    mService = ChatService.getInstance();
+                }
+                mService.windowIconified(Register.this);
+            }
+        });
         JLabel loadingbg = new JLabel(mLoginbg);
         loadingbg.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
         TopPanel topPanel = new TopPanel(this);
@@ -121,7 +131,6 @@ public class Register extends JFrame implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 if (mLogin != null) {
                     setVisible(false);
-                    dispose();
                     mLogin.setLocation(getX(), getY());
                     mLogin.setVisible(true);
                 } else {
@@ -189,11 +198,6 @@ public class Register extends JFrame implements ActionListener {
         mAlertLabel = new JLabel();
         mAlertLabel.setFont(FONT_12_BOLD);
         mAlertPop.add(mAlertLabel);
-    }
-
-    public static void main(String[] args) {
-        Register r = new Register(null);
-        r.setVisible(true);
     }
 
     private void startRegister() {

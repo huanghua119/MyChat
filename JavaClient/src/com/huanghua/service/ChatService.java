@@ -4,6 +4,7 @@ package com.huanghua.service;
 import com.huanghua.client.ClientThread;
 import com.huanghua.client.RegisterThread;
 import com.huanghua.i18n.Resource;
+import com.huanghua.listener.TrayListener;
 import com.huanghua.pojo.User;
 import com.huanghua.util.ImageUtil;
 import com.huanghua.view.Login;
@@ -11,18 +12,18 @@ import com.huanghua.view.MainFrame;
 import com.huanghua.view.MessageFrame;
 import com.huanghua.view.Register;
 
-import org.jvnet.substance.SubstanceLookAndFeel;
-import org.jvnet.substance.skin.BusinessBlackSteelSkin;
-import org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel;
-import org.jvnet.substance.title.FlatTitlePainter;
-
+import java.awt.AWTException;
+import java.awt.Frame;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 public class ChatService {
 
@@ -34,9 +35,46 @@ public class ChatService {
     private List<User> mUser;
     private List<MessageFrame> mAllChatFrame;
     private User mSelf;
+    private SystemTray mSystemtary;
+    private TrayIcon mTrayIcon;
+    private TrayListener mTrayListener = new TrayListener(this);
+    private boolean mIsLogin = false;
+    private TaryFalsh mTrayFalsh = new TaryFalsh();
+    private List<MessageFrame> mMessageBox;
+
+    private class TaryFalsh implements Runnable {
+        boolean flag = true;
+
+        @Override
+        public void run() {
+            while (flag) {
+                mTrayIcon.setImage(new ImageIcon("").getImage());
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                mTrayIcon.setImage(ImageUtil.getImage("image/tray.png"));
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void setFalsh() {
+            flag = true;
+        }
+
+        public void setStop() {
+            flag = false;
+        }
+    };
 
     private ChatService() {
         mUser = new ArrayList<User>();
+        mMessageBox = new ArrayList<MessageFrame>();
     }
 
     public static ChatService getInstance() {
@@ -54,10 +92,7 @@ public class ChatService {
         this.mFrame = frame;
     }
 
-    public void login(Login login, String id, String password) {
-        if (mLogin == null) {
-            mLogin = login;
-        }
+    public void login(String id, String password) {
         mSelf = new User();
         mSelf.setId(id);
         mSelf.setPassword(password);
@@ -67,21 +102,18 @@ public class ChatService {
 
     public void loginSuccess() {
         if (mFrame == null) {
-            try {
-                UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-                SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
-                SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
-            } catch (UnsupportedLookAndFeelException e) {
-                e.printStackTrace();
-            }
             mFrame = new MainFrame(this);
         }
+        mIsLogin = true;
+        changeSystemTray();
         mFrame.setVisible(true);
         mFrame.setAlwaysOnTop(true);
         mLogin.setVisible(false);
+        mLogin.dispose();
     }
 
     public void loginFail(String error) {
+        mIsLogin = false;
         mLogin.loginFail(error);
         mClient.close();
         mClient = null;
@@ -190,8 +222,12 @@ public class ChatService {
     public void setMessageById(String context, String id) {
         User u = getUserById(id);
         MessageFrame mf = startChatForServer(u);
-        mf.startChat();
         mf.setMessage(context, u);
+        if (!mf.isVisible()) {
+            mMessageBox.add(mf);
+            mTrayFalsh.setFalsh();
+            new Thread(mTrayFalsh).start();
+        }
     }
 
     public void setError(String id, String msg) {
@@ -250,5 +286,77 @@ public class ChatService {
 
     public User getMySelf() {
         return mSelf;
+    }
+
+    public void addSystemTray() {
+        if (SystemTray.isSupported()) {
+            this.mSystemtary = SystemTray.getSystemTray();
+            PopupMenu pop = new PopupMenu();
+            MenuItem open = new MenuItem(Resource.getString("openFrame"));
+            MenuItem exit = new MenuItem(Resource.getString("exit"));
+            pop.add(open);
+            pop.add(exit);
+            open.addActionListener(mTrayListener);
+            exit.addActionListener(mTrayListener);
+            try {
+                this.mTrayIcon = new TrayIcon(
+                        ImageUtil.getImage("image/tray.png"),
+                        Resource.getString("frame_title"), pop);
+                this.mSystemtary.add(mTrayIcon);
+                this.mTrayIcon.addMouseListener(mTrayListener);
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public void changeSystemTray() {
+        PopupMenu pop = new PopupMenu();
+        MenuItem open = new MenuItem(Resource.getString("openFrame"));
+        MenuItem exit = new MenuItem(Resource.getString("exit"));
+        pop.add(open);
+        pop.add(exit);
+        open.addActionListener(mTrayListener);
+        exit.addActionListener(mTrayListener);
+        try {
+            mSystemtary.remove(mTrayIcon);
+            this.mTrayIcon = new TrayIcon(
+                    ImageUtil.getImage("image/tray.png"),
+                    "QQ: " + mSelf.getName() + " (" + mSelf.getId() + ")", pop);
+            this.mSystemtary.add(mTrayIcon);
+            this.mTrayIcon.addMouseListener(mTrayListener);
+        } catch (AWTException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showMainFrame() {
+        JFrame frame = mIsLogin ? mFrame : mLogin;
+        frame.setExtendedState(Frame.NORMAL);
+        frame.setVisible(true);
+        frame.toFront();
+    }
+
+    public void windowIconified(JFrame frame) {
+        frame.dispose();
+    }
+
+    public void setLogin(Login login) {
+        mLogin = login;
+    }
+
+    public void exit() {
+        if (mIsLogin) {
+            offLine();
+        } else {
+            System.exit(0);
+        }
+    }
+
+    public List<MessageFrame> getMessageBox() {
+        return this.mMessageBox;
+    }
+
+    public void stopFlash() {
+        mTrayFalsh.setStop();
     }
 }

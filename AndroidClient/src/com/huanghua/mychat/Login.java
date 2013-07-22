@@ -48,6 +48,7 @@ public class Login extends Activity implements View.OnClickListener {
                 } else {
                     showToast(R.string.usernotfind);
                 }
+                mLogin.setClickable(true);
                 break;
             }
         }
@@ -132,6 +133,7 @@ public class Login extends Activity implements View.OnClickListener {
             } else {
                 removeRemeber();
             }
+            mLogin.setClickable(false);
             mService.login(this, userId, userPass);
         }
     }

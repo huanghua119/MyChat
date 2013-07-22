@@ -43,10 +43,12 @@ public class MainFrame extends JFrame implements ActionListener {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setBounds((int) (dim.getWidth() - GAME_WIDTH) / 2,
                 (int) (dim.getHeight() - GAME_HEIGHT) / 2, GAME_WIDTH, GAME_HEIGHT);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 mService.offLine();
+            }
+            public void windowIconified(WindowEvent e) {
+                mService.windowIconified(MainFrame.this);
             }
         });
 
@@ -71,7 +73,7 @@ public class MainFrame extends JFrame implements ActionListener {
         String[] data = new String[size];
         for (int i = 0; i < size; i++) {
             User u = mUser.get(i);
-            data[i] = u.getIp() + ":" + u.getName();
+            data[i] = "(" + u.getId() + "): " + u.getName();
         }
         mUserList.setListData(data);
     }

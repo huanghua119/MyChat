@@ -1,23 +1,30 @@
 package com.huanghua.view;
 
-import java.awt.AWTException;
+import com.huanghua.i18n.Resource;
+import com.huanghua.service.ChatService;
+import com.huanghua.util.ImageUtil;
+import com.huanghua.util.NumberDocument;
+
+import org.jvnet.substance.SubstanceLookAndFeel;
+import org.jvnet.substance.skin.BusinessBlackSteelSkin;
+import org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel;
+import org.jvnet.substance.title.FlatTitlePainter;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.MenuItem;
 import java.awt.Point;
-import java.awt.PopupMenu;
 import java.awt.Rectangle;
-import java.awt.SystemTray;
 import java.awt.Toolkit;
-import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,11 +37,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
-import com.huanghua.i18n.Resource;
-import com.huanghua.service.ChatService;
-import com.huanghua.util.ImageUtil;
-import com.huanghua.util.NumberDocument;
+import javax.swing.UnsupportedLookAndFeelException;
 
 public class Login extends JFrame implements ActionListener {
 
@@ -72,10 +75,9 @@ public class Login extends JFrame implements ActionListener {
     private JCheckBox mAutoLogin;
     private JPopupMenu mAlertPop;
     private JLabel mAlertLabel;
-    private SystemTray mSystemtary;
-    private TrayIcon mTrayIcon;
     private NumberDocument numberDocument = new NumberDocument();
     private ChatService mService;
+    private Register mRegisterFrame;
 
     private MouseAdapter moveWindowListener = new MouseAdapter() {
 
@@ -120,8 +122,10 @@ public class Login extends JFrame implements ActionListener {
             } else if (e.getSource() == mAutoLabel) {
                 mAutoLogin.setSelected(!mAutoLogin.isSelected());
             } else if (e.getSource() == mRegister) {
-                Register registerFrame = new Register(Login.this);
-                registerFrame.setVisible(true);
+                if (mRegisterFrame == null) {
+                    mRegisterFrame = new Register(Login.this);
+                }
+                mRegisterFrame.setVisible(true);
                 setVisible(false);
             }
         }
@@ -153,6 +157,11 @@ public class Login extends JFrame implements ActionListener {
                 (int) (dim.getHeight() - GAME_HEIGHT) / 2, GAME_WIDTH,
                 GAME_HEIGHT);
         this.setLayout(null);
+        this.addWindowListener(new WindowAdapter() {
+            public void windowIconified(WindowEvent e) {
+                mService.windowIconified(Login.this);
+            }
+        });
 
         JLabel loadingbg = new JLabel(mLoginbg);
         loadingbg.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -240,26 +249,12 @@ public class Login extends JFrame implements ActionListener {
         this.addMouseListener(moveWindowListener);
         this.addMouseMotionListener(moveWindowListener);
         mService = ChatService.getInstance();
+        mService.setLogin(this);
         mAlertPop = new JPopupMenu();
         mAlertLabel = new JLabel();
         mAlertLabel.setFont(FONT_12_BOLD);
         mAlertPop.add(mAlertLabel);
-        if(SystemTray.isSupported()){
-            this.mSystemtary = SystemTray.getSystemTray();
-            PopupMenu pop = new PopupMenu();
-            MenuItem open = new MenuItem(Resource.getString("openFrame"));
-            MenuItem exit = new MenuItem(Resource.getString("exit"));
-            pop.add(open);
-            pop.add(exit);
-            try {
-                this.mTrayIcon = new TrayIcon(
-                        ImageUtil.getImage("image/tray.png"),
-                        Resource.getString("frame_title"), pop);
-                this.mSystemtary.add(mTrayIcon);
-            } catch (AWTException e) {
-                e.printStackTrace();
-            }
-        }
+        mService.addSystemTray();
     }
 
     @Override
@@ -280,7 +275,7 @@ public class Login extends JFrame implements ActionListener {
             mAlertPop.show(mUserPass, -25, mUserPass.getHeight() / 2);
         } else {
             mLogin.setEnabled(false);
-            mService.login(this, userId, userPass);
+            mService.login(userId, userPass);
         }
     }
 
@@ -303,7 +298,10 @@ public class Login extends JFrame implements ActionListener {
     public static void main(String[] args) {
         try {
             System.setProperty("swing.useSystemFontSettings", "false");
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+            SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
+            SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
         } catch (Exception ex) {
         }
         SwingUtilities.invokeLater(new Runnable() {

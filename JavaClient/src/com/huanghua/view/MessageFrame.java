@@ -41,7 +41,6 @@ public class MessageFrame extends JFrame implements ActionListener {
     private ChatService mService;
 
     public MessageFrame(User u, ChatService service, ClientThread client) {
-        JFrame.setDefaultLookAndFeelDecorated(true);
         mChlientThread = client;
         mCurrent = u;
         mService = service;
@@ -53,6 +52,7 @@ public class MessageFrame extends JFrame implements ActionListener {
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
+                dispose();
             }
         });
 
@@ -102,10 +102,12 @@ public class MessageFrame extends JFrame implements ActionListener {
     }
 
     public void setMessage(String message, User u) {
+        /*
         if (!this.isVisible()) {
             setVisible(true);
             toFront();
         }
+        */
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("H:m:ss");
         String time = sdf.format(date);

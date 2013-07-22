@@ -3,8 +3,10 @@ package com.huanghua.mychat.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.util.Log;
 
+import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
@@ -15,6 +17,7 @@ public class ChatService {
     private static ChatService service = null;
     private ClientThread mClient;
     private Login mLogin;
+    private Home mHome;
     private List<User> mUser;
     private User mSelf;
 
@@ -45,7 +48,11 @@ public class ChatService {
     }
 
     public void loginSuccess() {
-        Log.i("huanghua", "loginSuccess");
+        Intent intent = new Intent();
+        intent.setClass(mLogin, Home.class);
+        mLogin.startActivity(intent);
+        mLogin.finish();
+        mLogin = null;
     }
 
     public void loginFail(String error) {
@@ -105,10 +112,17 @@ public class ChatService {
 
     public void offLine() {
         mClient.offLine();
-        System.exit(0);
     }
 
     public void forceOffLine() {
+    }
+
+    public void goToLogin() {
+        Intent intent = new Intent();
+        intent.setClass(mHome, Login.class);
+        mHome.startActivity(intent);
+        mHome.finish();
+        mHome = null;
     }
 
     public void userRegister(String name, String pass) {
@@ -136,5 +150,9 @@ public class ChatService {
 
     public void setError(String string, String string2) {
         
+    }
+
+    public void setHome(Home home) {
+        mHome = home;
     }
 }

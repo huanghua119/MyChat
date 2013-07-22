@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import android.util.Log;
-
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.pojo.User;
 
@@ -48,6 +46,7 @@ public class ClientThread implements Runnable {
                     }
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     close();
+                    mService.goToLogin();
                 } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
                     String temp = mDis.readUTF();
                     String[] user = temp.split("\\|");

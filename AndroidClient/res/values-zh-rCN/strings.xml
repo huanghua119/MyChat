@@ -28,5 +28,6 @@
     <string name="commit">提交</string>
     <string name="offlineNotification">下线通知</string>
     <string name="offlineWarn">你的帐号在另一地点登陆,您被迫下线</string>
+    <string name="exit">退出登陆</string>
 
 </resources>
