@@ -86,8 +86,8 @@ public class SocketAgent extends Thread {
     public void userRegister(User u) {
         String userId = mService.getUserId();
         u.setId(userId);
-        String sql = "insert into User values('" + u.getId() + "', '" + u.getName() + "', '"
-                + u.getPassword() + "')";
+        String sql = "insert into User(userId, userName, userPass,registerTime) values('" + u.getId() + "', '" + u.getName() + "', '"
+                + u.getPassword() + "', now())";
         int result = DBUtil.executeUpdate(sql);
         try {
             if (result != 0) {

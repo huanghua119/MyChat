@@ -130,9 +130,10 @@ public class Register extends JFrame implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (mLogin != null) {
-                    setVisible(false);
                     mLogin.setLocation(getX(), getY());
+                    mLogin.toFront();
                     mLogin.setVisible(true);
+                    setVisible(false);
                 } else {
                     System.exit(0);
                 }
@@ -214,6 +215,11 @@ public class Register extends JFrame implements ActionListener {
             mAlertLabel.setText(Resource.getStringForColor("twopassnotpass", "red"));
             mAlertPop.show(mTwoPass, -25, mTwoPass.getHeight() / 2);
         } else {
+            if (invalidCode(name)) {
+                mAlertLabel.setText(Resource.getStringForColor("invalidCode", "red"));
+                mAlertPop.show(mName, -25, mName.getHeight() / 2);
+                return;
+            }
             if (mService == null) {
                 mService = ChatService.getInstance();
                 mService.setRegister(this);
@@ -225,6 +231,12 @@ public class Register extends JFrame implements ActionListener {
             mOK.setText(Resource.getString("beingRegister"));
             mOK.setEnabled(false);
         }
+    }
+
+    public boolean invalidCode(String name) {
+        boolean result = false;
+        result = name.contains(" ");
+        return result;
     }
 
     @Override

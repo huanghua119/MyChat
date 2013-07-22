@@ -37,7 +37,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 public class Login extends JFrame implements ActionListener {
 
@@ -125,7 +124,9 @@ public class Login extends JFrame implements ActionListener {
                 if (mRegisterFrame == null) {
                     mRegisterFrame = new Register(Login.this);
                 }
+                mRegisterFrame.setLocation(getX(), getY());
                 mRegisterFrame.setVisible(true);
+                mRegisterFrame.toFront();
                 setVisible(false);
             }
         }

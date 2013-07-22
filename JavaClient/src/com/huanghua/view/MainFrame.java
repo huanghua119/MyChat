@@ -36,6 +36,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private UserListListener mListListener;
 
     public MainFrame(ChatService service) {
+        JFrame.setDefaultLookAndFeelDecorated(true);
         this.mService = service;
         this.setIconImage(ImageUtil.getImage("image/icon.png"));
         this.setTitle(Resource.getString("frame_title"));

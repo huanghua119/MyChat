@@ -30,5 +30,6 @@
     <string name="offlineWarn">你的帐号在另一地点登陆,您被迫下线,是否重新登陆！</string>
     <string name="openFrame">打开主界面</string>
     <string name="exit">退出</string>
+    <string name="invalidCode">昵称中包含无效字符！</string>
 
 </resources>
