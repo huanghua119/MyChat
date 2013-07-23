@@ -339,10 +339,10 @@ public class Login extends JFrame implements ActionListener {
     public static void main(String[] args) {
         try {
             System.setProperty("swing.useSystemFontSettings", "false");
-            //UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
-            SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
-            SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+           // UIManager.setLookAndFeel(new SubstanceBusinessBlueSteelLookAndFeel());
+           // SubstanceLookAndFeel.setSkin(new BusinessBlackSteelSkin());
+           // SubstanceLookAndFeel.setCurrentTitlePainter(new FlatTitlePainter());
         } catch (Exception ex) {
         }
         SwingUtilities.invokeLater(new Runnable() {
