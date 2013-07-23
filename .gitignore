@@ -7,3 +7,4 @@ AndroidClient/project.properties
 */bin/
 */src/com/huanghua/*/*.class
 AndroidClient/.settings/
+JavaClient/lib/userdata/*

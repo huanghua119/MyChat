@@ -2,6 +2,7 @@ package com.huanghua.view;
 
 import com.huanghua.i18n.Resource;
 import com.huanghua.service.ChatService;
+import com.huanghua.util.Configuration;
 import com.huanghua.util.ImageUtil;
 import com.huanghua.util.NumberDocument;
 
@@ -25,6 +26,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -256,7 +258,43 @@ public class Login extends JFrame implements ActionListener {
         mAlertLabel.setFont(FONT_12_BOLD);
         mAlertPop.add(mAlertLabel);
         mService.addSystemTray();
+        getConfiguragtion();
     }
+
+    public void getConfiguragtion() {
+        List<String> list = Configuration.sUserList;
+        if (list != null && list.size() > 0) {
+            String s = list.get(list.size() - 1);
+            String[] temp = s.split("::");
+            String id = temp[0];
+            String pass = temp[1];
+            boolean isRemeber = Boolean.parseBoolean(temp[2]);
+            boolean isAuto = Boolean.parseBoolean(temp[3]);
+            mUserId.setText(id);
+            if (isRemeber) {
+                mUserPass.setText(pass);
+                mRemember.setSelected(true);
+            }
+            if (isAuto) {
+                //mAutoLogin.setSelected(true);
+                //autoLogin(id, pass);
+            }
+        }
+    }
+
+    public void setVisible(boolean vFlag){
+        super.setVisible(vFlag);
+        if (vFlag) {
+            String tempId = mUserId.getText();
+            String pass = new String(mUserPass.getPassword());
+            if (tempId == null || "".equals(tempId) || pass == null || "".equals(pass)) {
+                mUserId.requestFocus();
+            } else {
+                mUserPass.requestFocus();
+            }
+        }
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -277,6 +315,8 @@ public class Login extends JFrame implements ActionListener {
         } else {
             mLogin.setEnabled(false);
             mService.login(userId, userPass);
+            Configuration.sIsSavePass = mRemember.isSelected();
+            Configuration.sIsAutoLogin = mAutoLogin.isSelected();
         }
     }
 

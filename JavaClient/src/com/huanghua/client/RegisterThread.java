@@ -3,6 +3,7 @@ package com.huanghua.client;
 
 import com.huanghua.pojo.User;
 import com.huanghua.service.ChatService;
+import com.huanghua.util.Configuration;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -29,7 +30,7 @@ public class RegisterThread implements Runnable {
     @Override
     public void run() {
         try {
-            mSocket = new Socket("huanghua119.xicp.net", 26741);
+            mSocket = new Socket(Configuration.SERVER_IP, Configuration.SERVER_PORT);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             startRegister(mUser);

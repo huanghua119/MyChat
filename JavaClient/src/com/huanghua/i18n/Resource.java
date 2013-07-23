@@ -7,7 +7,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ public class Resource {
 
             String fileName = new StringBuffer().append(baseName)
                     .toString();
-            URL url = Resource.class.getClassLoader().getResource(fileName);
             File file = new File("lib/" + fileName);
             DocumentBuilder domParser = factory.newDocumentBuilder();
             Document document = domParser.parse(file);

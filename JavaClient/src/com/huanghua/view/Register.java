@@ -279,4 +279,17 @@ public class Register extends JFrame implements ActionListener {
         mOK.setEnabled(true);
     }
 
+    public void setVisible(boolean vFlag){
+        super.setVisible(vFlag);
+        if (vFlag) {
+            String tempId = mName.getText();
+            String pass = new String(mPass.getPassword());
+            if (tempId == null || "".equals(tempId) || pass == null || "".equals(pass)) {
+                mName.requestFocus();
+            } else {
+                mPass.requestFocus();
+            }
+        }
+    }
+
 }

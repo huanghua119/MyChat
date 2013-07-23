@@ -6,6 +6,7 @@ import com.huanghua.client.RegisterThread;
 import com.huanghua.i18n.Resource;
 import com.huanghua.listener.TrayListener;
 import com.huanghua.pojo.User;
+import com.huanghua.util.Configuration;
 import com.huanghua.util.ImageUtil;
 import com.huanghua.view.Login;
 import com.huanghua.view.MainFrame;
@@ -110,6 +111,7 @@ public class ChatService {
         mFrame.setAlwaysOnTop(true);
         mLogin.setVisible(false);
         mLogin.dispose();
+        Configuration.saveUser(mSelf.getId(), mSelf.getPassword());
     }
 
     public void loginFail(String error) {
