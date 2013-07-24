@@ -10,6 +10,10 @@ public class Configuration {
 
     public static final int SERVER_PORT = 26741;
 
+    public static final float MESSAGE_TEXT_INTEND = 21;
+
+    public static final float MESSAGE_TITLE_INTEND = 2;
+
     public static boolean sIsSavePass = false;
     public static boolean sIsAutoLogin = false;
 

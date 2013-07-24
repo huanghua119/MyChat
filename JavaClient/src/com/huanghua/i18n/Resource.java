@@ -91,6 +91,10 @@ public class Resource {
         return "<html><font color=" + color + ">" + result + "</font></html>";
     }
 
+    public static String getColor(String name, String color) {
+        return "<html><font color=" + color + ">" + name + "</font></html>";
+    }
+
     public static void setLanguage(String language) {
         slanguage = language;
     }

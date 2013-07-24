@@ -10,7 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,18 +21,19 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.border.EtchedBorder;
 
 public class MainFrame extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
     private static final int GAME_WIDTH = 250;
-    private static final int GAME_HEIGHT = 450;
+    private static final int GAME_HEIGHT = 600;
+    private ImageIcon mFrameBackground = new ImageIcon(ImageUtil.getImage("image/mian_defalut.jpg"));
 
     private JLabel mName;
     private JScrollPane mJScroll;
@@ -41,28 +41,42 @@ public class MainFrame extends JFrame implements ActionListener {
     private ChatService mService;
     private UserListListener mListListener;
     private JPanel mRootPanel;
+    private JLabel mBackground;
 
     private MouseAdapter moveWindowListener = new MouseAdapter() {
         private boolean top = false;
         private boolean down = false;
         private boolean left = false;
         private boolean right = false;
-        private boolean drag = false;
-        private Point lastPoint = null;
         private Point draggingAnchor = null;
 
         @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getButton() == 1) {
+                int index = getUserList().locationToIndex(e.getPoint());
+                int clickNum = e.getClickCount();
+                // 双击鼠标
+                if (clickNum == 2) {
+                    mService.startChat(index);
+                }
+            }
+        }
+
+        @Override
         public void mouseMoved(MouseEvent e) {
-            if (e.getPoint().getY() == 0) {
+            if (e.getPoint().getY() <= 2) {
+                if (e.getSource() == mUserList) {
+                    return;
+                }
                 setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
                 top = true;
-            } else if (Math.abs(e.getPoint().getY() - getSize().getHeight()) <= 1) {
+            } else if (Math.abs(e.getPoint().getY() + 40 - getSize().getHeight()) <= 3) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
                 down = true;
-            } else if (e.getPoint().getX() == 0) {
+            } else if (e.getPoint().getX() <= 2) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
                 left = true;
-            } else if (Math.abs(e.getPoint().getX() - getSize().getWidth()) <= 1) {
+            } else if (Math.abs(e.getPoint().getX() - getSize().getWidth()) <= 3) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
                 right = true;
             } else {
@@ -72,7 +86,6 @@ public class MainFrame extends JFrame implements ActionListener {
                 down = false;
                 left = false;
                 right = false;
-                drag = true;
             }
 
         }
@@ -86,11 +99,18 @@ public class MainFrame extends JFrame implements ActionListener {
                 setSize(dimension);
                 setLocation(getLocationOnScreen().x, getLocationOnScreen().y
                         + e.getY());
+                mBackground = new JLabel();
+                mBackground.setIcon(mFrameBackground);
+                mBackground.setBounds(0, 0, getWidth(), getHeight());
+                getLayeredPane().add(mBackground, new Integer(Integer.MIN_VALUE));
             } else if (down) {
 
                 dimension.setSize(dimension.getWidth(), e.getY());
                 setSize(dimension);
-
+                mBackground = new JLabel();
+                mBackground.setIcon(mFrameBackground);
+                mBackground.setBounds(0, 0, getWidth(), getHeight());
+                getLayeredPane().add(mBackground, new Integer(Integer.MIN_VALUE));
             } else if (left) {
 
                 dimension.setSize(dimension.getWidth() - e.getX(), dimension.getHeight());
@@ -98,12 +118,22 @@ public class MainFrame extends JFrame implements ActionListener {
 
                 setLocation(getLocationOnScreen().x + e.getX(),
                         getLocationOnScreen().y);
-
+                mBackground = new JLabel();
+                mBackground.setIcon(mFrameBackground);
+                mBackground.setBounds(0, 0, getWidth(), getHeight());
+                getLayeredPane().add(mBackground, new Integer(Integer.MIN_VALUE));
             } else if (right) {
 
                 dimension.setSize(e.getX(), dimension.getHeight());
                 setSize(dimension);
+                mBackground = new JLabel();
+                mBackground.setIcon(mFrameBackground);
+                mBackground.setBounds(0, 0, getWidth(), getHeight());
+                getLayeredPane().add(mBackground, new Integer(Integer.MIN_VALUE));
             } else {
+                if (e.getSource() == mUserList) {
+                    return;
+                }
                 setLocation(e.getLocationOnScreen().x - draggingAnchor.x,
                         e.getLocationOnScreen().y - draggingAnchor.y);
             }
@@ -129,8 +159,15 @@ public class MainFrame extends JFrame implements ActionListener {
         });
 
         setUndecorated(true);
+
+        mBackground = new JLabel();
+        mBackground.setIcon(mFrameBackground);
+        mBackground.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
+        this.getLayeredPane().add(mBackground, new Integer(Integer.MIN_VALUE));
+
         mRootPanel = new JPanel();
-        mRootPanel.setLayout(null);
+        mRootPanel.setLayout(new BorderLayout());
+        mRootPanel.setOpaque(false);
         TopPanel topPanel2 = new TopPanel(this);
         topPanel2.hideMaxButton();
         topPanel2.addCloseButtonListener(new ActionListener() {
@@ -139,24 +176,23 @@ public class MainFrame extends JFrame implements ActionListener {
                 mService.offLine();
             }
         });
-        this.setLayout(new BorderLayout());
         JPanel topPanel = new JPanel();
-        topPanel.setBounds(new Rectangle(GAME_WIDTH, 40));
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.setOpaque(false);
         JPanel topPanel3 = new JPanel();
         topPanel3.setLayout(new BoxLayout(topPanel3, BoxLayout.X_AXIS));
-        mName = new JLabel(service.getMySelf().getName());
+        topPanel3.setOpaque(false);
+        mName = new JLabel(Resource.getColor(service.getMySelf().getName(), "white"));
         topPanel3.add(mName);
         topPanel.add(topPanel2);
         topPanel.add(topPanel3);
-        mRootPanel.add(topPanel);
+        mRootPanel.add(topPanel, BorderLayout.NORTH);
         mUserList = new JList();
         mListListener = new UserListListener(this, service);
-        mUserList.addMouseListener(mListListener);
-        mUserList.addMouseMotionListener(mListListener);
+        mUserList.addMouseListener(moveWindowListener);
+        mUserList.addMouseMotionListener(moveWindowListener);
         mJScroll = new JScrollPane(mUserList);
-        mJScroll.setBounds(0,40,GAME_WIDTH, 100);
-        mRootPanel.add(mJScroll);
+        mRootPanel.add(mJScroll, BorderLayout.CENTER);
         mRootPanel.addMouseListener(moveWindowListener);
         mRootPanel.addMouseMotionListener(moveWindowListener);
         this.setContentPane(mRootPanel);
