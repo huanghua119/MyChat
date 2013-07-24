@@ -44,7 +44,7 @@ public class ChatService {
     private List<MessageFrame> mMessageBox;
 
     private class TaryFalsh implements Runnable {
-        boolean flag = true;
+        boolean flag = false;
 
         @Override
         public void run() {
@@ -70,6 +70,10 @@ public class ChatService {
 
         public void setStop() {
             flag = false;
+        }
+
+        public boolean getFlag() {
+            return flag;
         }
     };
 
@@ -226,9 +230,13 @@ public class ChatService {
         MessageFrame mf = startChatForServer(u);
         mf.setMessage(context, u);
         if (!mf.isVisible()) {
-            mMessageBox.add(mf);
-            mTrayFalsh.setFalsh();
-            new Thread(mTrayFalsh).start();
+            if (!mMessageBox.contains(mf)) {
+                mMessageBox.add(mf);
+            }
+            if (!mTrayFalsh.getFlag()) {
+                mTrayFalsh.setFalsh();
+                new Thread(mTrayFalsh).start();
+            }
         }
     }
 

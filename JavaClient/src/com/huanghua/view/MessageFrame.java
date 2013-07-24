@@ -125,6 +125,8 @@ public class MessageFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (mSendButton == e.getSource()) {
             sendMessage();
+        } else if (mCloseButton ==  e.getSource()) {
+            dispose();
         }
     }
 

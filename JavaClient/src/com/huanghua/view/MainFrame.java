@@ -7,6 +7,7 @@ import com.huanghua.service.ChatService;
 import com.huanghua.util.ImageUtil;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -193,6 +195,14 @@ public class MainFrame extends JFrame implements ActionListener {
         mUserList.addMouseMotionListener(moveWindowListener);
         mJScroll = new JScrollPane(mUserList);
         mRootPanel.add(mJScroll, BorderLayout.CENTER);
+        JPanel bottom = new JPanel();
+        bottom.setOpaque(false);
+        bottom.setLayout(new BorderLayout());
+        bottom.setBackground(new Color(231, 236, 240));
+        JButton mSetting = new JButton("settign");
+        JPanel bottom2 = new JPanel();
+        bottom.add(mSetting);
+        mRootPanel.add(bottom, BorderLayout.SOUTH);
         mRootPanel.addMouseListener(moveWindowListener);
         mRootPanel.addMouseMotionListener(moveWindowListener);
         this.setContentPane(mRootPanel);
