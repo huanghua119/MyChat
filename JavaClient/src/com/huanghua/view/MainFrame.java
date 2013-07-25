@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -23,7 +24,6 @@ import java.util.List;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -36,6 +36,8 @@ public class MainFrame extends JFrame implements ActionListener {
     private static final int GAME_WIDTH = 250;
     private static final int GAME_HEIGHT = 600;
     private ImageIcon mFrameBackground = new ImageIcon(ImageUtil.getImage("image/mian_defalut.jpg"));
+    private ImageIcon mSettingNormal = new ImageIcon(ImageUtil.getImage("image/settings_normal.png"));
+    private ImageIcon mSettingPress = new ImageIcon(ImageUtil.getImage("image/settings_press.png"));
 
     private JLabel mName;
     private JScrollPane mJScroll;
@@ -44,6 +46,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private UserListListener mListListener;
     private JPanel mRootPanel;
     private JLabel mBackground;
+    private JPanel mBottom;
 
     private MouseAdapter moveWindowListener = new MouseAdapter() {
         private boolean top = false;
@@ -54,12 +57,14 @@ public class MainFrame extends JFrame implements ActionListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getButton() == 1) {
-                int index = getUserList().locationToIndex(e.getPoint());
-                int clickNum = e.getClickCount();
-                // 双击鼠标
-                if (clickNum == 2) {
-                    mService.startChat(index);
+            if (e.getSource() == mUserList) {
+                if (e.getButton() == 1) {
+                    int index = getUserList().locationToIndex(e.getPoint());
+                    int clickNum = e.getClickCount();
+                    // 双击鼠标
+                    if (clickNum == 2) {
+                        mService.startChat(index);
+                    }
                 }
             }
         }
@@ -72,7 +77,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 }
                 setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
                 top = true;
-            } else if (Math.abs(e.getPoint().getY() + 40 - getSize().getHeight()) <= 3) {
+            } else if (Math.abs(e.getPoint().getY() - getSize().getHeight()) <= 3) {
                 setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
                 down = true;
             } else if (e.getPoint().getX() <= 2) {
@@ -195,14 +200,19 @@ public class MainFrame extends JFrame implements ActionListener {
         mUserList.addMouseMotionListener(moveWindowListener);
         mJScroll = new JScrollPane(mUserList);
         mRootPanel.add(mJScroll, BorderLayout.CENTER);
-        JPanel bottom = new JPanel();
-        bottom.setOpaque(false);
-        bottom.setLayout(new BorderLayout());
-        bottom.setBackground(new Color(231, 236, 240));
-        JButton mSetting = new JButton("settign");
+        mBottom = new JPanel();
+        mBottom.setOpaque(false);
+        mBottom.setBorder(null);
+        mBottom.setLayout(new BorderLayout());
+        mBottom.setBackground(new Color(231, 236, 240));
+        JButton mSetting = new JButton(mSettingNormal);
+        mSetting.setPressedIcon(mSettingPress);
         JPanel bottom2 = new JPanel();
-        bottom.add(mSetting);
-        mRootPanel.add(bottom, BorderLayout.SOUTH);
+        bottom2.setLayout(new FlowLayout(FlowLayout.LEFT));
+        bottom2.setBorder(null);
+        bottom2.add(mSetting);
+        mBottom.add(bottom2, BorderLayout.SOUTH);
+        mRootPanel.add(mBottom, BorderLayout.SOUTH);
         mRootPanel.addMouseListener(moveWindowListener);
         mRootPanel.addMouseMotionListener(moveWindowListener);
         this.setContentPane(mRootPanel);

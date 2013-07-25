@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="tab_text_color">#f3f3f3</color>
+    <color name="black">#383636</color>
+    <color name="context_search_color">#999999</color>
+
+</resources>

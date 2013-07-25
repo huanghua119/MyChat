@@ -6,11 +6,6 @@ import com.huanghua.util.Configuration;
 import com.huanghua.util.ImageUtil;
 import com.huanghua.util.NumberDocument;
 
-import org.jvnet.substance.SubstanceLookAndFeel;
-import org.jvnet.substance.skin.BusinessBlackSteelSkin;
-import org.jvnet.substance.skin.SubstanceBusinessBlueSteelLookAndFeel;
-import org.jvnet.substance.title.FlatTitlePainter;
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
