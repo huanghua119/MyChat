@@ -202,7 +202,6 @@ public class MainFrame extends JFrame implements ActionListener {
         mRootPanel.add(mJScroll, BorderLayout.CENTER);
         mBottom = new JPanel();
         mBottom.setOpaque(false);
-        mBottom.setBorder(null);
         mBottom.setLayout(new BorderLayout());
         mBottom.setBackground(new Color(231, 236, 240));
         JButton mSetting = new JButton(mSettingNormal);

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 
+import com.huanghua.mychat.Contact;
 import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.client.ClientThread;
@@ -20,6 +22,8 @@ public class ChatService {
     private Home mHome;
     private List<User> mUser;
     private User mSelf;
+
+    private Handler mContactHandle = null;
 
     private ChatService() {
         mUser = new ArrayList<User>();
@@ -96,6 +100,7 @@ public class ChatService {
     }
 
     public void refreshList() {
+        mContactHandle.sendEmptyMessage(Contact.HANDLER_MEG_REFRESHLIST);
         Log.i("huanghua", "refreshList");
     }
 
@@ -154,5 +159,13 @@ public class ChatService {
 
     public void setHome(Home home) {
         mHome = home;
+    }
+
+    public void setContactHandle(Handler handler) {
+        mContactHandle = handler;
+    }
+
+    public List<User> getUserList() {
+        return this.mUser;
     }
 }

@@ -1,10 +1,13 @@
 
 package com.huanghua.mychat;
 
+import java.util.List;
+
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.pojo.User;
 
 public class Contact extends Activity implements View.OnClickListener {
 
@@ -98,6 +102,24 @@ public class Contact extends Activity implements View.OnClickListener {
 
     };
 
+    public static final int HANDLER_MEG_REFRESHLIST = 1;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int what = msg.what;
+            switch (what) {
+            case HANDLER_MEG_REFRESHLIST:
+                List<User> mUser = mService.getUserList();
+                mChild[0] = new String[mUser.size()];
+                for (int i = 0;i<mUser.size();i++) {
+                    mChild[0][i] = mUser.get(i).getName();
+                }
+                mContactList.invalidateViews();
+                break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,16 +134,15 @@ public class Contact extends Activity implements View.OnClickListener {
         mToast.setView(mInFlater.inflate(R.layout.toast_view, null));
         mToast.setGravity(Gravity.CENTER, 0, 0);
         mService = ChatService.getInstance();
+        mService.setContactHandle(mHandler);
         mContactList = (ExpandableListView) findViewById(R.id.contactList);
         View serchView = mInFlater.inflate(R.layout.search_view, null);
         mGroup = new String[] {
                 getString(R.string.myfriend), getString(R.string.blacklist)
         };
         mChild = new String[mGroup.length][];
-        mChild[0] = new String[] {
-                "one", "two"
-        };
-        mChild[1] = new String[] {};
+        mChild[0] = new String[]{};
+        mChild[1] = new String[]{};
         mContactList.addHeaderView(serchView);
         mContactList.setAdapter(ContactListAdapter);
     }
