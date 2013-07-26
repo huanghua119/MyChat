@@ -49,7 +49,7 @@ public class Home extends TabActivity implements View.OnClickListener {
     }
 
     private void prepareIntent() {
-        mMessageIntent = new Intent(this, Message.class);
+        mMessageIntent = new Intent(this, Messages.class);
         mContactIntent = new Intent(this, Contact.class);
         mLoveIntent = new Intent(this, Love.class);
         mSettingIntent = new Intent(this, Setting.class);

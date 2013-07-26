@@ -5,4 +5,7 @@
     <color name="black">#383636</color>
     <color name="context_search_color">#999999</color>
 
+    <drawable name="driver_color">#c9c9c9</drawable>
+    <drawable name="child_view_press_color">#00aea0</drawable>
+
 </resources>

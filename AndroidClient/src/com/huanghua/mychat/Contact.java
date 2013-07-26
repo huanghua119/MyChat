@@ -1,13 +1,12 @@
 
 package com.huanghua.mychat;
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +16,14 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ExpandableListView.OnChildClickListener;
 
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.pojo.User;
 
-public class Contact extends Activity implements View.OnClickListener {
+import java.util.List;
+
+public class Contact extends Activity implements View.OnClickListener, OnChildClickListener {
 
     private Toast mToast;
     private LayoutInflater mInFlater;
@@ -86,7 +88,7 @@ public class Contact extends Activity implements View.OnClickListener {
                         : R.drawable.group_flag_red);
             }
             TextView userCount = (TextView) group.findViewById(R.id.user_count);
-            userCount.setText("0/0");
+            userCount.setText("0/" + mChild[groupPosition].length);
             return group;
         }
 
@@ -97,7 +99,7 @@ public class Contact extends Activity implements View.OnClickListener {
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return false;
+            return true;
         }
 
     };
@@ -108,14 +110,14 @@ public class Contact extends Activity implements View.OnClickListener {
         public void handleMessage(Message msg) {
             int what = msg.what;
             switch (what) {
-            case HANDLER_MEG_REFRESHLIST:
-                List<User> mUser = mService.getUserList();
-                mChild[0] = new String[mUser.size()];
-                for (int i = 0;i<mUser.size();i++) {
-                    mChild[0][i] = mUser.get(i).getName();
-                }
-                mContactList.invalidateViews();
-                break;
+                case HANDLER_MEG_REFRESHLIST:
+                    List<User> mUser = mService.getUserList();
+                    mChild[0] = new String[mUser.size()];
+                    for (int i = 0; i < mUser.size(); i++) {
+                        mChild[0][i] = mUser.get(i).getName();
+                    }
+                    ContactListAdapter.notifyDataSetInvalidated();
+                    break;
             }
         }
     };
@@ -137,14 +139,24 @@ public class Contact extends Activity implements View.OnClickListener {
         mService.setContactHandle(mHandler);
         mContactList = (ExpandableListView) findViewById(R.id.contactList);
         View serchView = mInFlater.inflate(R.layout.search_view, null);
+        refershList();
+        mContactList.addHeaderView(serchView);
+        mContactList.setAdapter(ContactListAdapter);
+        mContactList.setOnChildClickListener(this);
+    }
+
+    private void refershList() {
         mGroup = new String[] {
                 getString(R.string.myfriend), getString(R.string.blacklist)
         };
         mChild = new String[mGroup.length][];
-        mChild[0] = new String[]{};
-        mChild[1] = new String[]{};
-        mContactList.addHeaderView(serchView);
-        mContactList.setAdapter(ContactListAdapter);
+        List<User> mUser = mService.getUserList();
+        mChild[0] = new String[mUser.size()];
+        for (int i = 0; i < mUser.size(); i++) {
+            mChild[0][i] = mUser.get(i).getName();
+        }
+        mChild[1] = new String[] {};
+        mContactList.invalidateViews();
     }
 
     private void showToast(String msg) {
@@ -165,6 +177,13 @@ public class Contact extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
+            int childPosition, long id) {
+        Log.i("huanghua", "groupPosition:" + groupPosition + " childPosition:" + childPosition);
+        return false;
     }
 
 }

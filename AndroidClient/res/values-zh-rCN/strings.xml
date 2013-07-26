@@ -37,5 +37,6 @@
     <string name="add_contact">添加联系人</string>
     <string name="myfriend">我的好友</string>
     <string name="blacklist">黑名单</string>
+    <string name="newmessage">最近消息</string>
 
 </resources>

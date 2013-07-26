@@ -1,17 +1,21 @@
+
 package com.huanghua.mychat.service;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
 
 import com.huanghua.mychat.Contact;
 import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
+import com.huanghua.mychat.Messages;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
+import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.User;
 
 public class ChatService {
@@ -22,11 +26,14 @@ public class ChatService {
     private Home mHome;
     private List<User> mUser;
     private User mSelf;
+    private HashMap<User, ArrayList<NewMessage>> mMessageBox;
 
+    private Handler mMessagesHandle = null;
     private Handler mContactHandle = null;
 
     private ChatService() {
         mUser = new ArrayList<User>();
+        mMessageBox = new HashMap<User, ArrayList<NewMessage>>();
     }
 
     public static ChatService getInstance() {
@@ -100,8 +107,9 @@ public class ChatService {
     }
 
     public void refreshList() {
-        mContactHandle.sendEmptyMessage(Contact.HANDLER_MEG_REFRESHLIST);
-        Log.i("huanghua", "refreshList");
+        if (mContactHandle != null) {
+            mContactHandle.sendEmptyMessage(Contact.HANDLER_MEG_REFRESHLIST);
+        }
     }
 
     public void startChat(int index) {
@@ -150,11 +158,30 @@ public class ChatService {
     }
 
     public void setMessageById(String context, String id) {
-        
+        User u = getUserById(id);
+        if (mMessageBox.containsKey(u)) {
+            ArrayList<NewMessage> message = mMessageBox.get(u);
+            NewMessage m = new NewMessage();
+            m.setMessageDate(new Date());
+            m.setContext(context);
+            message.add(m);
+        } else {
+            ArrayList<NewMessage> message = new ArrayList<NewMessage>();
+            NewMessage m = new NewMessage();
+            m.setMessageDate(new Date());
+            m.setContext(context);
+            message.add(m);
+            mMessageBox.put(u, message);
+        }
+        mMessagesHandle.sendEmptyMessage(Messages.HANDLER_MEG_REFRESHLIST);
+    }
+
+    public HashMap<User, ArrayList<NewMessage>> getMessageBox() {
+        return this.mMessageBox;
     }
 
     public void setError(String string, String string2) {
-        
+
     }
 
     public void setHome(Home home) {
@@ -163,6 +190,9 @@ public class ChatService {
 
     public void setContactHandle(Handler handler) {
         mContactHandle = handler;
+    }
+    public void setMessagesHandle(Handler handler) {
+        mMessagesHandle = handler;
     }
 
     public List<User> getUserList() {
