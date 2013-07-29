@@ -47,6 +47,7 @@ public class ChatActivity extends Activity implements OnClickListener {
                 case HANDLER_MEG_REFRESHLIST:
                     refreshList();
                     mAdapter.notifyDataSetInvalidated();
+                    mChatList.setSelection(mAllMessage.size());
                     break;
             }
         }
@@ -60,7 +61,6 @@ public class ChatActivity extends Activity implements OnClickListener {
             View it = v.findViewById(R.id.it_chat);
             NewMessage message = mAllMessage.get(position);
             User u = message.getUser();
-            Log.i("huanghua", "position:" + position + " u:" + u.getName());
             if (u.getId().equals(mService.getMySelf().getId())) {
                 it.setVisibility(View.GONE);
                 self.setVisibility(View.VISIBLE);

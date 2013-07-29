@@ -7,8 +7,7 @@
     <RelativeLayout
         android:id="@+id/it_chat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dip" >
+        android:layout_height="wrap_content" >
 
         <ImageView
             android:id="@+id/it_chat_photo"
@@ -96,9 +95,8 @@
             android:id="@+id/self_chat_context"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/it_chat_time"
+            android:layout_below="@+id/self_chat_name"
             android:layout_marginLeft="10dip"
-            android:layout_marginTop="20dip"
             android:layout_toLeftOf="@+id/self_chat_photo"
             android:background="@drawable/self_chat_context_bg"
             android:paddingBottom="12dip"
