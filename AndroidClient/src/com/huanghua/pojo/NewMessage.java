@@ -9,6 +9,18 @@ public class NewMessage {
 
     private String context;
 
+    private User user;
+
+    private boolean isNew;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public Date getMessageDate() {
         return messageDate;
     }
@@ -23,6 +35,14 @@ public class NewMessage {
 
     public void setContext(String context) {
         this.context = context;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
     }
 
 }

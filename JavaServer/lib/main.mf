@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.huanghua.view.MainFrame
+Class-Path: lib/mysql-connector-java-3.1.13-bin.jar

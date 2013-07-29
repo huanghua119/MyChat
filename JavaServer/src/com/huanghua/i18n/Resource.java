@@ -7,7 +7,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +19,7 @@ public class Resource {
     private static final String LAST_FILE = ".xml";
     public static final String Language_en_US = "en_US";
     public static final String Language_zh_CN = "zh_CN";
-    private static String slanguage = Language_en_US;
+    private static String slanguage = Language_zh_CN;
     private static Map<String, String> mAllString = new HashMap<String, String>();
     static {
         init();
@@ -35,8 +34,7 @@ public class Resource {
 
             String fileName = new StringBuffer().append(baseName)
                     .toString();
-            URL url = Resource.class.getClassLoader().getResource(fileName);
-            File file = new File(url.toURI());
+            File file = new File("lib/" + fileName);
             DocumentBuilder domParser = factory.newDocumentBuilder();
             Document document = domParser.parse(file);
             NodeList nodeList = document.getChildNodes();
@@ -64,6 +62,9 @@ public class Resource {
         if (mAllString != null && mAllString.size() != 0) {
             result = mAllString.get(name);
         }
+        if (result == null || "".equals(result)) {
+            result = name;
+        }
         return result;
     }
 
@@ -78,6 +79,20 @@ public class Resource {
             }
         }
         return one;
+    }
+    public static String getStringForColor(String name, String color) {
+        String result = name;
+        if (mAllString != null && mAllString.size() != 0) {
+            result = mAllString.get(name);
+        }
+        if (result == null || "".equals(result)) {
+            result = name;
+        }
+        return "<html><font color=" + color + ">" + result + "</font></html>";
+    }
+
+    public static String getColor(String name, String color) {
+        return "<html><font color=" + color + ">" + name + "</font></html>";
     }
 
     public static void setLanguage(String language) {

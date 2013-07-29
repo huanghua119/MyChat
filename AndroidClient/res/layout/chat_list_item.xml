@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dip" >
+
+    <RelativeLayout
+        android:id="@+id/it_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="18dip" >
+
+        <ImageView
+            android:id="@+id/it_chat_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="18dip"
+            android:layout_marginRight="10dip"
+            android:background="@drawable/user_photo_frame"
+            android:contentDescription="@string/contact"
+            android:src="@drawable/user_photo_default" />
+
+        <TextView
+            android:id="@+id/it_chat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/it_chat_photo"
+            android:textColor="@color/context_search_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/it_chat_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dip"
+            android:layout_toRightOf="@+id/it_chat_name"
+            android:textColor="@color/context_search_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/it_chat_context"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/it_chat_time"
+            android:layout_toRightOf="@+id/it_chat_photo"
+            android:background="@drawable/it_chat_context_bg"
+            android:paddingBottom="12dip"
+            android:paddingLeft="15dip"
+            android:paddingRight="15dip"
+            android:paddingTop="12dip"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/self_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="18dip" >
+
+        <ImageView
+            android:id="@+id/self_chat_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dip"
+            android:background="@drawable/user_photo_frame"
+            android:contentDescription="@string/contact"
+            android:src="@drawable/user_photo_default" />
+
+        <TextView
+            android:id="@+id/self_chat_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/self_chat_photo"
+            android:textColor="@color/context_search_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/self_chat_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dip"
+            android:layout_alignParentTop="true"
+            android:layout_toLeftOf="@+id/self_chat_time"
+            android:textColor="@color/context_search_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/self_chat_context"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/it_chat_time"
+            android:layout_marginLeft="10dip"
+            android:layout_marginTop="20dip"
+            android:layout_toLeftOf="@+id/self_chat_photo"
+            android:background="@drawable/self_chat_context_bg"
+            android:paddingBottom="12dip"
+            android:paddingLeft="15dip"
+            android:paddingRight="15dip"
+            android:paddingTop="12dip"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+</FrameLayout>

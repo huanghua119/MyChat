@@ -3,6 +3,7 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -49,7 +50,7 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
                 View convertView, ViewGroup parent) {
             View child = mInFlater.inflate(R.layout.contact_child_view, null);
             TextView name = (TextView) child.findViewById(R.id.userName);
-            name.setText(mChild[groupPosition][childPosition]);
+            name.setText(mService.getUserById(mChild[groupPosition][childPosition]).getName());
             return child;
         }
 
@@ -114,7 +115,7 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
                     List<User> mUser = mService.getUserList();
                     mChild[0] = new String[mUser.size()];
                     for (int i = 0; i < mUser.size(); i++) {
-                        mChild[0][i] = mUser.get(i).getName();
+                        mChild[0][i] = mUser.get(i).getId();
                     }
                     ContactListAdapter.notifyDataSetInvalidated();
                     break;
@@ -153,10 +154,10 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
         List<User> mUser = mService.getUserList();
         mChild[0] = new String[mUser.size()];
         for (int i = 0; i < mUser.size(); i++) {
-            mChild[0][i] = mUser.get(i).getName();
+            mChild[0][i] = mUser.get(i).getId();
         }
         mChild[1] = new String[] {};
-        mContactList.invalidateViews();
+        ContactListAdapter.notifyDataSetInvalidated();
     }
 
     private void showToast(String msg) {
@@ -182,7 +183,9 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition,
             int childPosition, long id) {
-        Log.i("huanghua", "groupPosition:" + groupPosition + " childPosition:" + childPosition);
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("userId", mChild[groupPosition][childPosition]);
+        startActivity(intent);
         return false;
     }
 

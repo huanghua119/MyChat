@@ -3,6 +3,7 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,7 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class Messages extends Activity implements View.OnClickListener {
+public class Messages extends Activity implements View.OnClickListener, OnItemClickListener {
 
     private Toast mToast;
     private LayoutInflater mInFlater;
@@ -111,6 +114,7 @@ public class Messages extends Activity implements View.OnClickListener {
         View head = mInFlater.inflate(R.layout.message_headview, null);
         mMessageList.addHeaderView(head);
         mMessageList.setAdapter(mAdapter);
+        mMessageList.setOnItemClickListener(this);
     }
 
     private void refreshList() {
@@ -142,6 +146,17 @@ public class Messages extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        if (arg2 == 0) {
+            return;
+        }
+        int position = arg2 - 1;
+        Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("userId", mMessageUser[position].getId());
+        startActivity(intent);
     }
 
 }

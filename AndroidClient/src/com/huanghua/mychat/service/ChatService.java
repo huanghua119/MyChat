@@ -9,6 +9,7 @@ import java.util.List;
 import android.content.Intent;
 import android.os.Handler;
 
+import com.huanghua.mychat.ChatActivity;
 import com.huanghua.mychat.Contact;
 import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
@@ -30,6 +31,7 @@ public class ChatService {
 
     private Handler mMessagesHandle = null;
     private Handler mContactHandle = null;
+    private Handler mChatHandle = null;
 
     private ChatService() {
         mUser = new ArrayList<User>();
@@ -159,25 +161,24 @@ public class ChatService {
 
     public void setMessageById(String context, String id) {
         User u = getUserById(id);
-        if (mMessageBox.containsKey(u)) {
-            ArrayList<NewMessage> message = mMessageBox.get(u);
-            NewMessage m = new NewMessage();
-            m.setMessageDate(new Date());
-            m.setContext(context);
-            message.add(m);
-        } else {
-            ArrayList<NewMessage> message = new ArrayList<NewMessage>();
-            NewMessage m = new NewMessage();
-            m.setMessageDate(new Date());
-            m.setContext(context);
-            message.add(m);
-            mMessageBox.put(u, message);
-        }
+        MessageService.addMessage(context, u, true, u);
         mMessagesHandle.sendEmptyMessage(Messages.HANDLER_MEG_REFRESHLIST);
+        if (mChatHandle != null) {
+            mChatHandle.sendEmptyMessage(ChatActivity.HANDLER_MEG_REFRESHLIST);
+        }
+    }
+
+    public void sendMessageToUser(final User mCurrent, final String msg) {
+        new Thread() {
+            @Override
+            public void run() {
+                mClient.sendMessage(mCurrent, msg);
+            }
+        }.start();
     }
 
     public HashMap<User, ArrayList<NewMessage>> getMessageBox() {
-        return this.mMessageBox;
+        return MessageService.getMessageBox();
     }
 
     public void setError(String string, String string2) {
@@ -191,11 +192,20 @@ public class ChatService {
     public void setContactHandle(Handler handler) {
         mContactHandle = handler;
     }
+
     public void setMessagesHandle(Handler handler) {
         mMessagesHandle = handler;
     }
 
+    public void setChatHandler(Handler handler) {
+        mChatHandle = handler;
+    }
+
     public List<User> getUserList() {
         return this.mUser;
+    }
+
+    public ArrayList<NewMessage> getMessageByUser(User mCurrentUser) {
+        return MessageService.getMessageByUser(mCurrentUser);
     }
 }

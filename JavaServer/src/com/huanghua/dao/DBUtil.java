@@ -1,13 +1,15 @@
 
 package com.huanghua.dao;
 
-import com.huanghua.i18n.Resource;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.PropertyResourceBundle;
 
 public class DBUtil {
@@ -20,8 +22,7 @@ public class DBUtil {
     public static Connection getConnection() {
         if (conn == null) {
             try {
-                URL jdbc = Resource.class.getClassLoader().getResource("jdbc.properties");
-                File file = new File(jdbc.toURI());
+                File file = new File("lib/jdbc.properties");
                 InputStream is = new FileInputStream(file);
                 PropertyResourceBundle pr = new PropertyResourceBundle(is);
                 Class.forName(pr.getString("jdbc.driverClassName"));
