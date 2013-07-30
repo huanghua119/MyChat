@@ -7,6 +7,7 @@ public class User {
     private String id;
     private String name;
     private String password;
+    private int status;
 
     public User() {
     }
@@ -59,5 +60,28 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        User u = (User) o;
+        if (u.getId().equals(this.getId())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(this.getId());
     }
 }
