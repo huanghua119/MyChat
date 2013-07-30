@@ -47,6 +47,7 @@ public class ChatActivity extends Activity implements OnClickListener {
                     refreshList();
                     mAdapter.notifyDataSetInvalidated();
                     mChatList.setSelection(mAllMessage.size());
+                    mBack.setText(getString(R.string.message) + MessageService.getAllNewMessage(mCurrentUser));
                     break;
             }
         }
@@ -133,6 +134,7 @@ public class ChatActivity extends Activity implements OnClickListener {
         mChatList = (ListView) findViewById(R.id.chatList);
         mChatList.setAdapter(mAdapter);
         mChatList.setSelection(mAllMessage.size());
+        mBack.setText(getString(R.string.message) + MessageService.getAllNewMessage(mCurrentUser));
     }
 
     private void refreshList() {

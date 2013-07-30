@@ -51,6 +51,9 @@
             android:name="com.huanghua.mychat.ChatActivity"
             android:label="@string/setting"
             android:screenOrientation="portrait" />
+        <service android:name="com.huanghua.mychat.service.BackStageService" >
+        </service>
+
     </application>
 
 </manifest>

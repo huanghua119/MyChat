@@ -27,6 +27,7 @@ public class ChatService {
     private List<User> mUser;
     private User mSelf;
 
+    private BackStageService mBackStageService = null;
     private Handler mMessagesHandle = null;
     private Handler mContactHandle = null;
     private Handler mChatHandle = null;
@@ -61,6 +62,8 @@ public class ChatService {
         Intent intent = new Intent();
         intent.setClass(mLogin, Home.class);
         mLogin.startActivity(intent);
+        Intent service = new Intent(mLogin, BackStageService.class);
+        mLogin.startService(service);
         mLogin.finish();
         mLogin = null;
     }
@@ -134,6 +137,8 @@ public class ChatService {
         intent.setClass(mHome, Login.class);
         mHome.startActivity(intent);
         mHome.finish();
+        mBackStageService.stopSelf();
+        mBackStageService = null;
         mHome = null;
     }
 
@@ -200,6 +205,10 @@ public class ChatService {
 
     public void setChatHandler(Handler handler) {
         mChatHandle = handler;
+    }
+
+    public void setBackStageService(BackStageService sevice) {
+        mBackStageService = sevice;
     }
 
     public List<User> getUserList() {

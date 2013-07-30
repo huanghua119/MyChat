@@ -1,12 +1,20 @@
 
 package com.huanghua.mychat.service;
 
+import android.util.Log;
+
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class MessageService {
 
@@ -41,6 +49,31 @@ public class MessageService {
             message.add(m);
             mMessageBox.put(u, message);
         }
+        List<Map.Entry<User, ArrayList<NewMessage>>> lists = new ArrayList<Map.Entry<User, ArrayList<NewMessage>>>(
+                mMessageBox.entrySet());
+        Collections.sort(lists, new Comparator<Map.Entry<User, ArrayList<NewMessage>>>() {
+            @Override
+            public int compare(Entry<User, ArrayList<NewMessage>> lhs,
+                    Entry<User, ArrayList<NewMessage>> rhs) {
+                ArrayList<NewMessage> u1 = lhs.getValue();
+                ArrayList<NewMessage> u2 = rhs.getValue();
+                int u1size = u1.size();
+                int u2size = u2.size();
+                if (u1size == 0 && u2size == 0) {
+                    return 0;
+                } else if (u1size == 0 && u2size > 0) {
+                    return -1;
+                } else if (u1size > 0 && u2size == 0) {
+                    return 1;
+                } else {
+                    NewMessage nm1 = u1.get(u1.size() - 1);
+                    NewMessage nm2 = u2.get(u2.size() - 1);
+                    Date d1 = nm1.getMessageDate();
+                    Date d2 = nm2.getMessageDate();
+                    return d1.compareTo(d2);
+                }
+            }
+        });
     }
 
     public static HashMap<User, ArrayList<NewMessage>> getMessageBox() {
@@ -63,4 +96,56 @@ public class MessageService {
         return result;
     }
 
+    public static String getAllNewMessage(User ignore) {
+        int result = getAllNewMessage2(ignore);
+        if (result == 0) {
+            return "";
+        } else {
+            return "(" + result + ")";
+        }
+    }
+
+    public static int getAllNewMessage2(User ignore) {
+        int result = 0;
+        Iterator<Entry<User, ArrayList<NewMessage>>> iterators = mMessageBox.entrySet().iterator();
+        while (iterators.hasNext()) {
+            Entry<User, ArrayList<NewMessage>> entry = iterators.next();
+            User u = entry.getKey();
+            if (u == ignore) {
+                continue;
+            }
+            ArrayList<NewMessage> list = entry.getValue();
+            for (NewMessage nm : list) {
+                if (nm.isNew()) {
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    private class ComparatorSort implements Comparator<Map.Entry<User, ArrayList<NewMessage>>> {
+        @Override
+        public int compare(Entry<User, ArrayList<NewMessage>> lhs,
+                Entry<User, ArrayList<NewMessage>> rhs) {
+            ArrayList<NewMessage> u1 = lhs.getValue();
+            ArrayList<NewMessage> u2 = rhs.getValue();
+            int u1size = u1.size();
+            int u2size = u2.size();
+            if (u1size == 0 && u2size == 0) {
+                return 0;
+            } else if (u1size == 0 && u2size > 0) {
+                return -1;
+            } else if (u1size > 0 && u2size == 0) {
+                return 1;
+            } else {
+                NewMessage nm1 = u1.get(u1.size());
+                NewMessage nm2 = u1.get(u1.size());
+                Date d1 = nm1.getMessageDate();
+                Date d2 = nm2.getMessageDate();
+                return d1.compareTo(d2);
+            }
+        }
+
+    }
 }
