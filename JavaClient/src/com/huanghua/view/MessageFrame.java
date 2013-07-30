@@ -108,7 +108,7 @@ public class MessageFrame extends JFrame implements ActionListener {
         createStyle("myTextStyle", mMessageDocStyle, 14, false, false, false, Color.BLUE, "宋体",
                 Configuration.MESSAGE_TEXT_INTEND);
         mMessageList.setEditable(false);
-        JScrollPane messageScroll = new JScrollPane(mMessageList);
+        JScrollPane  messageScroll = new JScrollPane(mMessageList);
         this.add(messageScroll, BorderLayout.CENTER);
     }
 
@@ -152,6 +152,7 @@ public class MessageFrame extends JFrame implements ActionListener {
             insertDoc(mMessageDocStyle, time2 + "\n", "itTitleStyle");
             insertDoc(mMessageDocStyle, message + "\n", "itTextStyle");
         }
+        mMessageList.setCaretPosition(mMessageList.getText().length());
     }
 
     public void createStyle(String styleName, StyledDocument doc, int size,
@@ -193,4 +194,13 @@ public class MessageFrame extends JFrame implements ActionListener {
         blankPanel.add(blankLabel);
         return blankPanel;
     }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        if (mMessageList != null) {
+            mMessageList.setCaretPosition(mMessageList.getText().length());
+        }
+    }
+
 }

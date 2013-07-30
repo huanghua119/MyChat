@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.mychat.service.MessageService;
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.User;
 
@@ -70,7 +71,13 @@ public class Messages extends Activity implements View.OnClickListener, OnItemCl
             if (message != null && message.size() > 0) {
                 int messsageCount = message.size();
                 context.setText(message.get(messsageCount - 1).getContext());
-                count.setText(message.size() + "");
+                int newMessageCount = MessageService.getNewMessageByUser(u);
+                if (newMessageCount == 0) {
+                    count.setVisibility(View.GONE);
+                } else {
+                    count.setVisibility(View.VISIBLE);
+                    count.setText(newMessageCount + "");
+                }
                 SimpleDateFormat sdf = new SimpleDateFormat("H:mm:ss");
                 String time = sdf.format(message.get(messsageCount - 1).getMessageDate());
                 date.setText(time);
@@ -145,6 +152,8 @@ public class Messages extends Activity implements View.OnClickListener, OnItemCl
 
     @Override
     protected void onResume() {
+        mHandler.removeMessages(HANDLER_MEG_REFRESHLIST);
+        mHandler.sendEmptyMessage(HANDLER_MEG_REFRESHLIST);
         super.onResume();
     }
 

@@ -2,7 +2,6 @@
 package com.huanghua.mychat.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -27,7 +26,6 @@ public class ChatService {
     private Home mHome;
     private List<User> mUser;
     private User mSelf;
-    private HashMap<User, ArrayList<NewMessage>> mMessageBox;
 
     private Handler mMessagesHandle = null;
     private Handler mContactHandle = null;
@@ -35,7 +33,6 @@ public class ChatService {
 
     private ChatService() {
         mUser = new ArrayList<User>();
-        mMessageBox = new HashMap<User, ArrayList<NewMessage>>();
     }
 
     public static ChatService getInstance() {
@@ -181,8 +178,12 @@ public class ChatService {
         return MessageService.getMessageBox();
     }
 
-    public void setError(String string, String string2) {
-
+    public void setError(String id, String msg) {
+        User u = getUserById(id);
+        MessageService.addMessage(msg, u, false, mSelf);
+        if (mChatHandle != null) {
+            mChatHandle.sendEmptyMessage(ChatActivity.HANDLER_MEG_REFRESHLIST);
+        }
     }
 
     public void setHome(Home home) {

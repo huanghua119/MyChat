@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +59,7 @@ public class ChatActivity extends Activity implements OnClickListener {
             View self = v.findViewById(R.id.self_chat);
             View it = v.findViewById(R.id.it_chat);
             NewMessage message = mAllMessage.get(position);
+            message.setNew(false);
             User u = message.getUser();
             if (u.getId().equals(mService.getMySelf().getId())) {
                 it.setVisibility(View.GONE);
@@ -101,6 +101,11 @@ public class ChatActivity extends Activity implements OnClickListener {
         public int getCount() {
             return mAllMessage.size();
         }
+
+        @Override
+        public boolean isEnabled(int position) {
+            return false;
+        }
     };
 
     @Override
@@ -127,6 +132,7 @@ public class ChatActivity extends Activity implements OnClickListener {
         mContext = (EditText) findViewById(R.id.chat_context);
         mChatList = (ListView) findViewById(R.id.chatList);
         mChatList.setAdapter(mAdapter);
+        mChatList.setSelection(mAllMessage.size());
     }
 
     private void refreshList() {
@@ -147,5 +153,19 @@ public class ChatActivity extends Activity implements OnClickListener {
                 mContext.setText("");
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mChatList != null) {
+            mChatList.setSelection(mAllMessage.size());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        mService.setChatHandler(null);
+        super.onBackPressed();
     }
 }

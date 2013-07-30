@@ -47,4 +47,20 @@ public class MessageService {
         return mMessageBox;
     }
 
+    public static int getNewMessageByUser(User u) {
+        int result = 0;
+        if (mMessageBox.containsKey(u)) {
+            ArrayList<NewMessage> message = mMessageBox.get(u);
+            int i = 0;
+            for (NewMessage nm : message) {
+                if (nm.isNew()) {
+                    i++;
+                }
+            }
+            result = i;
+        }
+
+        return result;
+    }
+
 }

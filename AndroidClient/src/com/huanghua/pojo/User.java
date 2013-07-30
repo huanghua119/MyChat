@@ -1,6 +1,7 @@
 
 package com.huanghua.pojo;
 
+
 public class User {
 
     private String ip;
@@ -59,5 +60,20 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        User u = (User) o;
+        if (u.getId().equals(this.getId())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.parseInt(this.getId());
     }
 }
