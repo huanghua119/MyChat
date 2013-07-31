@@ -9,6 +9,7 @@ import com.huanghua.util.Configuration;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -108,6 +109,7 @@ public class MessageFrame extends JFrame implements ActionListener {
         createStyle("myTextStyle", mMessageDocStyle, 14, false, false, false, Color.BLUE, "宋体",
                 Configuration.MESSAGE_TEXT_INTEND);
         mMessageList.setEditable(false);
+        mMessageList.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         JScrollPane  messageScroll = new JScrollPane(mMessageList);
         this.add(messageScroll, BorderLayout.CENTER);
     }
@@ -152,7 +154,7 @@ public class MessageFrame extends JFrame implements ActionListener {
             insertDoc(mMessageDocStyle, time2 + "\n", "itTitleStyle");
             insertDoc(mMessageDocStyle, message + "\n", "itTextStyle");
         }
-        mMessageList.setCaretPosition(mMessageList.getText().length());
+        mMessageList.setSelectionStart(mMessageList.getText().length());
     }
 
     public void createStyle(String styleName, StyledDocument doc, int size,
@@ -198,8 +200,8 @@ public class MessageFrame extends JFrame implements ActionListener {
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        if (mMessageList != null) {
-            mMessageList.setCaretPosition(mMessageList.getText().length());
+        if (mMessageList != null && b) {
+            mMessageList.setSelectionStart(mMessageList.getText().length());
         }
     }
 

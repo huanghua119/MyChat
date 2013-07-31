@@ -173,6 +173,7 @@ public class ChatService {
     }
 
     public void forceOffLine() {
+        goToLogin();
     }
 
     public void goToLogin() {

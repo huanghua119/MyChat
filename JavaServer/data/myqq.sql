@@ -89,6 +89,6 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO user VALUES ('10000', '黄华', '3629226', '江西', '1', '2', '2013-07-21 12:45:26', null, null, null);
+INSERT INTO user VALUES ('10000', '黄华', '3629226', '江西', '1', '4', '2013-07-21 12:45:26', null, null, null);
 
-INSERT INTO user VALUES ('10001', '朱燕', '3629226', '湖北', '1', '2', '2013-07-21 12:45:26', null, null, null);
+INSERT INTO user VALUES ('10001', '朱燕', '3629226', '湖北', '1', '4', '2013-07-21 12:45:26', null, null, null);
