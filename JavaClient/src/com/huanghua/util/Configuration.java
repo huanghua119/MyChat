@@ -28,6 +28,10 @@ public class Configuration {
     }
 
     public static void init() {
+        File file = new File(SAVE_DIRECTORY);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
         sUserList = FileUtil.getUserList();
     }
 

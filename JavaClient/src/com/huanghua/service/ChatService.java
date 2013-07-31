@@ -20,6 +20,8 @@ import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -130,13 +132,15 @@ public class ChatService {
         for (User u1 : mUser) {
             if (u.getId().equals(u1.getId())) {
                 isHas = true;
+                mUser.remove(u1);
+                mUser.add(u);
                 break;
             }
         }
         if (!isHas) {
             mUser.add(u);
-            refreshList();
         }
+        refreshList();
     }
 
     public void removeUser(User offuser) {
@@ -145,6 +149,19 @@ public class ChatService {
             if (u.getId().equals(offuser.getId())) {
                 mUser.remove(i);
                 break;
+            }
+        }
+        refreshList();
+    }
+
+    public void udpateUser(User updateUser) {
+        if (mUser != null && mUser.contains(updateUser)) {
+            for (User u : mUser) {
+                if (u.equals(updateUser)) {
+                    mUser.remove(u);
+                    mUser.add(updateUser);
+                    break;
+                }
             }
         }
         refreshList();
@@ -160,6 +177,18 @@ public class ChatService {
     }
 
     public void refreshList() {
+        Collections.sort(mUser, new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                if (o1.getStatus() < o2.getStatus()) {
+                    return -1;
+                } else if (o1.getStatus() > o2.getStatus()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
         mFrame.refreshList(mUser);
     }
 

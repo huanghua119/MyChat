@@ -3,6 +3,7 @@ package com.huanghua.socket;
 
 import com.huanghua.dao.DBUtil;
 import com.huanghua.i18n.Resource;
+import com.huanghua.pojo.Status;
 import com.huanghua.pojo.User;
 import com.huanghua.service.ServerService;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SocketAgent extends Thread {
@@ -20,6 +22,7 @@ public class SocketAgent extends Thread {
     private DataInputStream mDis;
     private boolean mFlag = true;
     private User mCurrent = null;
+    private List<User> mAllFriend = null;
     private ServerService mService;
 
     public SocketAgent(Socket socket, ServerService service) {
@@ -44,6 +47,7 @@ public class SocketAgent extends Thread {
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     mDos.writeUTF("<#USER_OFFLINE#>");
                     close();
+                    mCurrent.setStatus(Status.STATUS_OFFLINE);
                     mService.userOffLine(mCurrent);
                 } else if (msg != null && msg.startsWith("<#USERLOGIN#>")) {
                     msg = msg.substring(13);
@@ -86,8 +90,8 @@ public class SocketAgent extends Thread {
     public void userRegister(User u) {
         String userId = mService.getUserId();
         u.setId(userId);
-        String sql = "insert into User(userId, userName, userPass,registerTime) values('" + u.getId() + "', '" + u.getName() + "', '"
-                + u.getPassword() + "', now())";
+        String sql = "insert into User(userId, userName, userPass, statusId,registerTime) values('" + u.getId() + "', '" + u.getName() + "', '"
+                + u.getPassword() + "', " + Status.STATUS_OFFLINE + ", now())";
         int result = DBUtil.executeUpdate(sql);
         try {
             if (result != 0) {
@@ -122,6 +126,7 @@ public class SocketAgent extends Thread {
                     mCurrent.setName(name);
                     mCurrent.setPassword(pass);
                     mCurrent.setsAgent(this);
+                    mCurrent.setStatus(Status.STATUS_ONLINE);
                     mService.addUser(mCurrent);
                     sendLoginSucces();
                     mService.sendUserList();
@@ -142,32 +147,53 @@ public class SocketAgent extends Thread {
     }
 
     public void sendLoginSucces() {
+        String sql = "update User set statusId=" + mCurrent.getStatus() + " ,lastLoginTime=now()" + " where userId=" + mCurrent.getId();
+        DBUtil.executeUpdate(sql);
         try {
             mDos.writeUTF("<#USERLOGINSUCCES#>");
-            mDos.writeUTF(mCurrent.getId() + "|" + mCurrent.getName() + "|" + mCurrent.getPassword());
+            mDos.writeUTF(mCurrent.getId() + "|" + mCurrent.getName() + "|" + mCurrent.getPassword() + "|" + mCurrent.getStatus());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void sendUserOffline(User offline) {
-        try {
-            mDos.writeUTF("<#SENDUSEROFF#>");
-            mDos.writeUTF(offline.getIp() + "|" + offline.getId() + "|" + offline.getName());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mAllFriend != null && mAllFriend.size() > 0 && mAllFriend.contains(offline)) {
+            try {
+                mDos.writeUTF("<#SENDUSEROFF#>");
+                mDos.writeUTF(offline.getId() + "|" + offline.getName() + "|" + offline.getStatus());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void sendUserList() {
-        List<User> list = mService.getUserList();
+        String sql1 = "select count(*) from User where userId !=" + mCurrent.getId();
+        String sql2 = "select * from User where userId !=" + mCurrent.getId();
+        ResultSet rs1 = DBUtil.executeQuery(sql1);
+        int count = 0;
+        mAllFriend = new ArrayList<User>();
         try {
-            mDos.writeUTF("<#SENDUSERLIST#>" + (list.size() - 1));
-            for (User u : list) {
-                if (!u.getId().equals(mCurrent.getId())) {
-                    mDos.writeUTF(u.getIp() + "|" + u.getId() + "|" + u.getName());
-                }
+            while (rs1.next()) {
+                count = rs1.getInt(1);
             }
+            rs1.close();
+            mDos.writeUTF("<#SENDUSERLIST#>" + count);
+            if (count > 0) {
+                ResultSet rs2 = DBUtil.executeQuery(sql2);
+                while (rs2.next()) {
+                    User u = new User();
+                    u.setId(rs2.getString("userId"));
+                    u.setName(rs2.getString("userName"));
+                    u.setStatus(rs2.getInt("statusId"));
+                    mAllFriend.add(u);
+                    mDos.writeUTF(u.getId() + "|" + u.getName() + "|" + u.getStatus());
+                }
+                rs2.close();
+            }
+        } catch (SQLException e1) {
+            e1.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

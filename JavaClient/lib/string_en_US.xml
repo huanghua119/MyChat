@@ -32,5 +32,9 @@
     <string name="exit">退出</string>
     <string name="invalidCode">昵称中包含无效字符！</string>
     <string name="close">关闭</string>
+    <string name="status_online">在线</string>
+    <string name="status_offline">离线</string>
+    <string name="status_stedlth">隐身</string>
+    <string name="status_leave">离开</string>
 
 </resources>

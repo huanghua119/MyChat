@@ -71,6 +71,8 @@ public class ServerService {
     public void userOffLine(User u) {
         setMessage(Resource.getString("offline") + u.getIp() + ":" + u.getId());
         mUser.remove(u);
+        String sql = "update User set statusId=" + u.getStatus() + " where userId=" + u.getId();
+        DBUtil.executeUpdate(sql);
         sendUserOffline(u);
     }
 

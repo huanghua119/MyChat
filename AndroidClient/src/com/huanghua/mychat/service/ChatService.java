@@ -2,6 +2,8 @@
 package com.huanghua.mychat.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import com.huanghua.mychat.Messages;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
 import com.huanghua.pojo.NewMessage;
+import com.huanghua.pojo.Status;
 import com.huanghua.pojo.User;
 
 public class ChatService {
@@ -79,13 +82,15 @@ public class ChatService {
         for (User u1 : mUser) {
             if (u.getId().equals(u1.getId())) {
                 isHas = true;
+                mUser.remove(u1);
+                mUser.add(u);
                 break;
             }
         }
         if (!isHas) {
             mUser.add(u);
-            refreshList();
         }
+        refreshList();
     }
 
     public void removeUser(User offuser) {
@@ -94,6 +99,19 @@ public class ChatService {
             if (u.getId().equals(offuser.getId())) {
                 mUser.remove(i);
                 break;
+            }
+        }
+        refreshList();
+    }
+
+    public void udpateUser(User updateUser) {
+        if (mUser != null && mUser.contains(updateUser)) {
+            for (User u : mUser) {
+                if (u.equals(updateUser)) {
+                    mUser.remove(u);
+                    mUser.add(updateUser);
+                    break;
+                }
             }
         }
         refreshList();
@@ -109,6 +127,18 @@ public class ChatService {
     }
 
     public void refreshList() {
+        Collections.sort(mUser, new Comparator<User>() {
+            @Override
+            public int compare(User o1, User o2) {
+                if (o1.getStatus() < o2.getStatus()) {
+                    return -1;
+                } else if (o1.getStatus() > o2.getStatus()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
         if (mContactHandle != null) {
             mContactHandle.sendEmptyMessage(Contact.HANDLER_MEG_REFRESHLIST);
         }
@@ -217,5 +247,18 @@ public class ChatService {
 
     public ArrayList<NewMessage> getMessageByUser(User mCurrentUser) {
         return MessageService.getMessageByUser(mCurrentUser);
+    }
+
+    public int getOnLineCount(int group) {
+        if (group != 0) {
+            return 0;
+        }
+        int result = 0;
+        for (User u : mUser) {
+            if (u.getStatus() != Status.STATUS_OFFLINE) {
+                result++;
+            }
+        }
+        return result;
     }
 }

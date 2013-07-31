@@ -80,6 +80,7 @@ public class Resource {
         }
         return one;
     }
+
     public static String getStringForColor(String name, String color) {
         String result = name;
         if (mAllString != null && mAllString.size() != 0) {
@@ -97,5 +98,24 @@ public class Resource {
 
     public static void setLanguage(String language) {
         slanguage = language;
+    }
+
+    public static String getUserStatus(int status) {
+        String result = getString("status_offline");
+        switch (status) {
+            case 1:
+                result = getString("status_online");
+                break;
+            case 2:
+                result = getString("status_leave");
+                break;
+            case 3:
+                result = getString("status_stedlth");
+                break;
+            case 4:
+                result = getString("status_offline");
+                break;
+        }
+        return result;
     }
 }

@@ -135,8 +135,8 @@ public class MessageFrame extends JFrame implements ActionListener {
         if (msg == null || "".equals(msg)) {
             return;
         }
-        mChlientThread.sendMessage(mCurrent, msg);
         setMessage(msg, mService.getMySelf());
+        mChlientThread.sendMessage(mCurrent, msg);
         mMessage.setText("");
     }
 

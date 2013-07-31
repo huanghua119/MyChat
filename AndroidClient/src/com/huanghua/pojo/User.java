@@ -4,7 +4,6 @@ package com.huanghua.pojo;
 
 public class User {
 
-    private String ip;
     private String id;
     private String name;
     private String password;
@@ -18,17 +17,17 @@ public class User {
         this.password = pass;
     }
 
-    public User(String ip, String id, String name) {
-        this.ip = ip;
+    public User(String id, String name, int status) {
         this.id = id;
         this.name = name;
+        this.status = status;
     }
 
-    public User(String ip, String id, String name, String pass) {
-        this.ip = ip;
+    public User(String ip, String id, String name, String pass, int status) {
         this.id = id;
         this.name = name;
         this.password = pass;
+        this.status = status;
     }
 
     public String getName() {
@@ -37,14 +36,6 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
     }
 
     public String getId() {

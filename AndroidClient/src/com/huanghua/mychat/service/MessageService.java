@@ -1,8 +1,6 @@
 
 package com.huanghua.mychat.service;
 
-import android.util.Log;
-
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.User;
 
@@ -124,28 +122,4 @@ public class MessageService {
         return result;
     }
 
-    private class ComparatorSort implements Comparator<Map.Entry<User, ArrayList<NewMessage>>> {
-        @Override
-        public int compare(Entry<User, ArrayList<NewMessage>> lhs,
-                Entry<User, ArrayList<NewMessage>> rhs) {
-            ArrayList<NewMessage> u1 = lhs.getValue();
-            ArrayList<NewMessage> u2 = rhs.getValue();
-            int u1size = u1.size();
-            int u2size = u2.size();
-            if (u1size == 0 && u2size == 0) {
-                return 0;
-            } else if (u1size == 0 && u2size > 0) {
-                return -1;
-            } else if (u1size > 0 && u2size == 0) {
-                return 1;
-            } else {
-                NewMessage nm1 = u1.get(u1.size());
-                NewMessage nm2 = u1.get(u1.size());
-                Date d1 = nm1.getMessageDate();
-                Date d2 = nm2.getMessageDate();
-                return d1.compareTo(d2);
-            }
-        }
-
-    }
 }

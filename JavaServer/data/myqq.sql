@@ -59,7 +59,7 @@ CREATE TABLE `status` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of status 1.在线 2.离线 3.隐身 4.离开
+-- Records of status 1.鍦ㄧ嚎 2.绂荤嚎 3.闅愯韩 4.绂诲紑
 -- ----------------------------
 INSERT INTO status VALUES ('1', '1');
 INSERT INTO status VALUES ('2', '2');
@@ -89,4 +89,6 @@ CREATE TABLE `user` (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO user VALUES ('10000', '黄华', '3629226', '江西萍乡', '1', '2', '2013-07-21 12:45:26', null, null, null);
+INSERT INTO user VALUES ('10000', '榛勫崕', '3629226', '姹熻タ', '1', '2', '2013-07-21 12:45:26', null, null, null);
+
+INSERT INTO user VALUES ('10001', '鏈辩嚂', '3629226', '婀栧寳', '1', '2', '2013-07-21 12:45:26', null, null, null);

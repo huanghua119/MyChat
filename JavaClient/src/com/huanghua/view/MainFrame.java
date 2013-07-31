@@ -43,7 +43,6 @@ public class MainFrame extends JFrame implements ActionListener {
     private JScrollPane mJScroll;
     private JList mUserList;
     private ChatService mService;
-    private UserListListener mListListener;
     private JPanel mRootPanel;
     private JLabel mBackground;
     private JPanel mBottom;
@@ -195,7 +194,6 @@ public class MainFrame extends JFrame implements ActionListener {
         topPanel.add(topPanel3);
         mRootPanel.add(topPanel, BorderLayout.NORTH);
         mUserList = new JList();
-        mListListener = new UserListListener(this, service);
         mUserList.addMouseListener(moveWindowListener);
         mUserList.addMouseMotionListener(moveWindowListener);
         mJScroll = new JScrollPane(mUserList);
@@ -223,7 +221,7 @@ public class MainFrame extends JFrame implements ActionListener {
         String[] data = new String[size];
         for (int i = 0; i < size; i++) {
             User u = mUser.get(i);
-            data[i] = "(" + u.getId() + "): " + u.getName();
+            data[i] = "[" + Resource.getUserStatus(u.getStatus()) + "]  " + "(" + u.getId() + "): " + u.getName();
         }
         mUserList.setListData(data);
     }

@@ -38,5 +38,9 @@
     <string name="myfriend">我的好友</string>
     <string name="blacklist">黑名单</string>
     <string name="newmessage">最近消息</string>
+    <string name="status_online">在线</string>
+    <string name="status_offline">离线</string>
+    <string name="status_stedlth">隐身</string>
+    <string name="status_leave">离开</string>
 
 </resources>

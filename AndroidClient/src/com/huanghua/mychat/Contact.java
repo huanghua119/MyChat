@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 import android.widget.ExpandableListView.OnChildClickListener;
 
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.mychat.util.Util;
 import com.huanghua.pojo.User;
 
 import java.util.List;
@@ -51,6 +51,9 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
             View child = mInFlater.inflate(R.layout.contact_child_view, null);
             TextView name = (TextView) child.findViewById(R.id.userName);
             name.setText(mService.getUserById(mChild[groupPosition][childPosition]).getName());
+            TextView status = (TextView) child.findViewById(R.id.status);
+            status.setText(Util.getStatus(getResources(),
+                    mService.getUserById(mChild[groupPosition][childPosition]).getStatus()));
             return child;
         }
 
@@ -89,7 +92,7 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
                         : R.drawable.group_flag_red);
             }
             TextView userCount = (TextView) group.findViewById(R.id.user_count);
-            userCount.setText("0/" + mChild[groupPosition].length);
+            userCount.setText(mService.getOnLineCount(groupPosition) + "/" + mChild[groupPosition].length);
             return group;
         }
 

@@ -41,7 +41,7 @@ public class ClientThread implements Runnable {
                     for (int i = 0; i < size; i++) {
                         String temp = mDis.readUTF();
                         String[] user = temp.split("\\|");
-                        User u = new User(user[0], user[1], user[2]);
+                        User u = new User(user[0], user[1], Integer.parseInt(user[2]));
                         mService.addUser(u);
                     }
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
@@ -50,8 +50,8 @@ public class ClientThread implements Runnable {
                 } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
                     String temp = mDis.readUTF();
                     String[] user = temp.split("\\|");
-                    User u = new User(user[0], user[1], user[2]);
-                    mService.removeUser(u);
+                    User u = new User(user[0], user[1], Integer.parseInt(user[2]));
+                    mService.udpateUser(u);
                 } else if (msg != null && msg.startsWith("<#GETMESSAGE#>")) {
                     String id = msg.substring(14);
                     String context = mDis.readUTF();
@@ -66,7 +66,7 @@ public class ClientThread implements Runnable {
                     mService.loginFail("usernotfind");
                 } else if (msg != null && msg.startsWith("<#USERLOGINSUCCES#>")) {
                     String[] self = mDis.readUTF().split("\\|");
-                    User u = new User("", self[0], self[1], self[2]);
+                    User u = new User(self[0], self[1], Integer.parseInt(self[2]));
                     mService.setMySelf(u);
                     mService.loginSuccess();
                 } else if (msg != null && msg.startsWith("<#FORCEOFFLINE#>")) {
