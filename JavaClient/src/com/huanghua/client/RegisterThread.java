@@ -45,7 +45,7 @@ public class RegisterThread implements Runnable {
 
     private void startRegister(User u) {
         try {
-            mDos.writeUTF("<#USERREGISTER#>" + u.getName() + "|" + u.getPassword());
+            mDos.writeUTF("<#USERREGISTER#>" + u.getName() + "|" + u.getPassword() + "|" + u.getSix());
             String msg = mDis.readUTF();
             if (msg != null && msg.startsWith("<#REGISTERSUCCES#>")) {
                 String userId = msg.substring(18);

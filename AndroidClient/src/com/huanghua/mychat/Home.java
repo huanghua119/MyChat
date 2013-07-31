@@ -5,11 +5,16 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.pojo.User;
+
+import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class Home extends TabActivity implements View.OnClickListener {
@@ -25,6 +30,19 @@ public class Home extends TabActivity implements View.OnClickListener {
     private View mMessageButton, mContactButton, mLoveButton, mSettingButton;
     private int mCurTabId;
 
+    public static final int HANDLER_MEG_FINISH = 1;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int what = msg.what;
+            switch (what) {
+                case HANDLER_MEG_FINISH:
+                    finish();
+                    break;
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +55,7 @@ public class Home extends TabActivity implements View.OnClickListener {
 
     private void init() {
         mService = ChatService.getInstance();
-        mService.setHome(this);
+        mService.setHomeHandler(mHandler);
         mMessageButton = findViewById(R.id.message);
         mContactButton = findViewById(R.id.contact);
         mLoveButton = findViewById(R.id.love);

@@ -2,6 +2,7 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.huanghua.mychat.service.BackStageService;
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.mychat.widght.AphoneCheckBox;
 import com.huanghua.pojo.User;
@@ -34,13 +36,15 @@ public class Login extends Activity implements View.OnClickListener {
     private LayoutInflater mInFlater;
     private ChatService mService;
 
-    private static final int MSG_LOGIN_FAIL = 1;
+    public static final String ACTION_AUTO_LOGIN = "action_auto_login";
+    public static final int HANDLE_MSG_LOGIN_FAIL = 1;
+    public static final int HANDLER_MEG_FINASH = 2;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int what = msg.what;
             switch (what) {
-            case MSG_LOGIN_FAIL:
+            case HANDLE_MSG_LOGIN_FAIL:
                 Bundle data = msg.getData();
                 String error = data.getString("error");
                 if (error.equals("passerror")) {
@@ -49,6 +53,15 @@ public class Login extends Activity implements View.OnClickListener {
                     showToast(R.string.usernotfind);
                 }
                 mLogin.setClickable(true);
+                break;
+            case HANDLER_MEG_FINASH:
+                Intent intent = new Intent();
+                intent.setClass(Login.this, Home.class);
+                startActivity(intent);
+                Intent service = new Intent(Login.this, BackStageService.class);
+                startService(service);
+                mService.setLoginHandler(null);
+                finish();
                 break;
             }
         }
@@ -83,6 +96,7 @@ public class Login extends Activity implements View.OnClickListener {
         mLogin.setOnClickListener(this);
         mRegister.setOnClickListener(this);
         mService = ChatService.getInstance();
+        mService.setLoginHandler(mHandler);
     }
 
     private void showToast(String msg) {
@@ -99,7 +113,8 @@ public class Login extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == mRegister) {
-
+            Intent intent = new Intent(this, Register.class);
+            startActivity(intent);
         } else if (v == mLogin) {
             startLogin();
         } else if (v == mAutoLabel) {
@@ -112,11 +127,25 @@ public class Login extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        User u = getRemeberUser();
-        if (u.getId() != null && !u.getId().equals("")) {
-            mUserId.setText(u.getId());
-            mUserPass.setText(u.getPassword());
+        String action = getIntent().getAction();
+        if (action != null && ACTION_AUTO_LOGIN.equals(action)) {
+            String id = getIntent().getStringExtra("user_id");
+            String pass = getIntent().getStringExtra("user_pass");
+            mUserId.setText(id);
+            mUserPass.setText(pass);
             mRemeberPass.setChecked(true);
+            mLogin.performClick();
+        } else {
+            if (mService.getMySelf() != null) {
+                mHandler.sendEmptyMessage(HANDLER_MEG_FINASH);
+            } else {
+                User u = getRemeberUser();
+                if (u.getId() != null && !u.getId().equals("")) {
+                    mUserId.setText(u.getId());
+                    mUserPass.setText(u.getPassword());
+                    mRemeberPass.setChecked(true);
+                }
+            }
         }
     }
 
@@ -162,12 +191,4 @@ public class Login extends Activity implements View.OnClickListener {
         editor.commit();
     }
 
-    public void loginFail(String error) {
-        Bundle data = new Bundle();
-        data.putString("error", error);
-        Message m = new Message();
-        m.setData(data);
-        m.what = MSG_LOGIN_FAIL;
-        mHandler.sendMessage(m);
-    }
 }

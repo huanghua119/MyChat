@@ -16,14 +16,13 @@
     <string name="notpass">请输入密码</string>
     <string name="passerror">你输入的密码不正确</string>
     <string name="usernotfind">你输入的帐号不存在</string>
-    <string name="name">用户昵称:</string>
-    <string name="pass">登陆密码:</string>
-    <string name="twopass">确认密码:</string>
+    <string name="name">用户昵称</string>
+    <string name="pass">登陆密码</string>
+    <string name="twopass">确认密码</string>
     <string name="namenotnull">请输入用户昵称!</string>
     <string name="passnotnull">请输入登陆密码!</string>
     <string name="twopassnotpass">确认密码和登陆密码不一置!</string>
     <string name="beingRegister">注册中......</string>
-    <string name="autoLogin">自动登陆</string>
     <string name="succesAlert">注册成功!你的ID为:%s,请勿必记住,它将做为你的登陆帐号!</string>
     <string name="commit">提交</string>
     <string name="offlineNotification">下线通知</string>
@@ -42,5 +41,14 @@
     <string name="status_offline">离线</string>
     <string name="status_stedlth">隐身</string>
     <string name="status_leave">离开</string>
+    <string name="user_register">新用户注册</string>
+    <string name="back">返回</string>
+    <string name="register_process">注册流程:</string>
+    <string name="process_commit">提交信息-></string>
+    <string name="process_account">生成帐号</string>
+    <string name="six">性别</string>
+    <string name="six_man">男</string>
+    <string name="six_woman">女</string>
+    <string name="registerFail">注册失败!请重新注册!</string>
 
 </resources>

@@ -8,6 +8,7 @@ public class User {
     private String name;
     private String password;
     private int status;
+    private int six;
 
     public User() {
     }
@@ -60,6 +61,14 @@ public class User {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getSix() {
+        return six;
+    }
+
+    public void setSix(int six) {
+        this.six = six;
     }
 
     @Override

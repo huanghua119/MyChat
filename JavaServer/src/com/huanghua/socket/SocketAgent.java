@@ -61,7 +61,9 @@ public class SocketAgent extends Thread {
                     mService.sendContextByIdToUser(context, id, mCurrent);
                 } else if (msg != null && msg.startsWith("<#USERREGISTER#>")) {
                     String temp[] = msg.substring(16).split("\\|");
-                    userRegister(new User(temp[0], temp[1]));
+                    User u = new User(temp[0], temp[1]);
+                    u.setSix(Integer.parseInt(temp[2]));
+                    userRegister(u);
                 } else if (msg != null && msg.startsWith("<#FORCEOFFLINEOK#>")) {
                     close();
                 }
@@ -90,8 +92,8 @@ public class SocketAgent extends Thread {
     public void userRegister(User u) {
         String userId = mService.getUserId();
         u.setId(userId);
-        String sql = "insert into User(userId, userName, userPass, statusId,registerTime) values('" + u.getId() + "', '" + u.getName() + "', '"
-                + u.getPassword() + "', " + Status.STATUS_OFFLINE + ", now())";
+        String sql = "insert into User(userId, userName, userPass, userSex,statusId,registerTime) values('" + u.getId() + "', '" + u.getName() + "', '"
+                + u.getPassword() + "', " + u.getSix() + ", " + Status.STATUS_OFFLINE + ", now())";
         int result = DBUtil.executeUpdate(sql);
         try {
             if (result != 0) {

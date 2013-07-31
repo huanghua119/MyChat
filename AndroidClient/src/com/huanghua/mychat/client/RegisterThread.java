@@ -1,14 +1,14 @@
 
 package com.huanghua.mychat.client;
 
+import com.huanghua.mychat.service.ChatService;
+import com.huanghua.pojo.User;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import com.huanghua.mychat.service.ChatService;
-import com.huanghua.pojo.User;
 
 public class RegisterThread implements Runnable {
     private Socket mSocket;
@@ -44,7 +44,7 @@ public class RegisterThread implements Runnable {
 
     private void startRegister(User u) {
         try {
-            mDos.writeUTF("<#USERREGISTER#>" + u.getName() + "|" + u.getPassword());
+            mDos.writeUTF("<#USERREGISTER#>" + u.getName() + "|" + u.getPassword() + "|" + u.getSix());
             String msg = mDis.readUTF();
             if (msg != null && msg.startsWith("<#REGISTERSUCCES#>")) {
                 String userId = msg.substring(18);

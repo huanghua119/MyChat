@@ -227,7 +227,7 @@ public class Register extends JFrame implements ActionListener {
             mName.setEditable(false);
             mPass.setEditable(false);
             mPassLabel.setEnabled(false);
-            mService.userRegister(name, pass);
+            mService.userRegister(name, pass, 1);
             mOK.setText(Resource.getString("beingRegister"));
             mOK.setEnabled(false);
         }

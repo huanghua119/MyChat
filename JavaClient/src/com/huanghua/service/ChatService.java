@@ -306,8 +306,10 @@ public class ChatService {
         mRegister = r;
     }
 
-    public void userRegister(String name, String pass) {
-        RegisterThread rt = new RegisterThread(this, new User(name, pass));
+    public void userRegister(String name, String pass, int six) {
+        User u = new User(name, pass);
+        u.setSix(six);
+        RegisterThread rt = new RegisterThread(this, u);
         new Thread(rt).start();
     }
 

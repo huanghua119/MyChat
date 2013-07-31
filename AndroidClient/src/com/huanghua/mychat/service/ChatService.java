@@ -7,14 +7,18 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 
 import com.huanghua.mychat.ChatActivity;
 import com.huanghua.mychat.Contact;
 import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.Messages;
+import com.huanghua.mychat.Register;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
 import com.huanghua.pojo.NewMessage;
@@ -25,15 +29,17 @@ public class ChatService {
 
     private static ChatService service = null;
     private ClientThread mClient;
-    private Login mLogin;
-    private Home mHome;
     private List<User> mUser;
     private User mSelf;
+    private Context mContext;
 
     private BackStageService mBackStageService = null;
     private Handler mMessagesHandle = null;
     private Handler mContactHandle = null;
     private Handler mChatHandle = null;
+    private Handler mRegisterHandle = null;
+    private Handler mLoginHandle = null;
+    private Handler mHomeHandle = null;
 
     private ChatService() {
         mUser = new ArrayList<User>();
@@ -50,9 +56,9 @@ public class ChatService {
         return service;
     }
 
-    public void login(Login login, String id, String password) {
-        if (mLogin == null) {
-            mLogin = login;
+    public void login(Context context, String id, String password) {
+        if (mContext == null) {
+            mContext = context;
         }
         mSelf = new User();
         mSelf.setId(id);
@@ -62,17 +68,24 @@ public class ChatService {
     }
 
     public void loginSuccess() {
-        Intent intent = new Intent();
-        intent.setClass(mLogin, Home.class);
-        mLogin.startActivity(intent);
-        Intent service = new Intent(mLogin, BackStageService.class);
-        mLogin.startService(service);
-        mLogin.finish();
-        mLogin = null;
+        if (mLoginHandle != null) {
+            mLoginHandle.sendEmptyMessage(Login.HANDLER_MEG_FINASH);
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(mContext, Home.class);
+            mContext.startActivity(intent);
+            Intent service = new Intent(mContext, BackStageService.class);
+            mContext.startService(service);
+        }
     }
 
     public void loginFail(String error) {
-        mLogin.loginFail(error);
+        Bundle data = new Bundle();
+        data.putString("error", error);
+        Message m = new Message();
+        m.setData(data);
+        m.what = Login.HANDLE_MSG_LOGIN_FAIL;
+        mLoginHandle.sendMessage(m);
         mClient.close();
         mClient = null;
     }
@@ -164,23 +177,33 @@ public class ChatService {
 
     public void goToLogin() {
         Intent intent = new Intent();
-        intent.setClass(mHome, Login.class);
-        mHome.startActivity(intent);
-        mHome.finish();
+        intent.setClass(mContext, Login.class);
+        mContext.startActivity(intent);
+        mHomeHandle.sendEmptyMessage(Home.HANDLER_MEG_FINISH);
         mBackStageService.stopSelf();
         mBackStageService = null;
-        mHome = null;
+        mSelf = null;
     }
 
-    public void userRegister(String name, String pass) {
-        RegisterThread rt = new RegisterThread(this, new User(name, pass));
+    public void userRegister(String name, String pass, int six) {
+        User u = new User(name, pass);
+        u.setSix(six);
+        RegisterThread rt = new RegisterThread(this, u);
         new Thread(rt).start();
     }
 
     public void userRegisterSucces(User u) {
+        Message m = new Message();
+        Bundle data = new Bundle();
+        data.putString("user_pass", u.getPassword());
+        data.putString("user_id", u.getId());
+        m.setData(data);
+        m.what = Register.HANDLER_MEG_REGISTER_SUCCESS;
+        mRegisterHandle.sendMessage(m);
     }
 
     public void userRegisterFail() {
+        mRegisterHandle.sendEmptyMessage(Register.HANDLER_MEG_REGISTER_FAIL);
     }
 
     public void setMySelf(User u) {
@@ -221,10 +244,6 @@ public class ChatService {
         }
     }
 
-    public void setHome(Home home) {
-        mHome = home;
-    }
-
     public void setContactHandle(Handler handler) {
         mContactHandle = handler;
     }
@@ -235,6 +254,18 @@ public class ChatService {
 
     public void setChatHandler(Handler handler) {
         mChatHandle = handler;
+    }
+
+    public void setRegisterHandler(Handler handler) {
+        mRegisterHandle = handler;
+    }
+
+    public void setLoginHandler(Handler handler) {
+        mLoginHandle = handler;
+    }
+
+    public void setHomeHandler(Handler mHandler) {
+        mHomeHandle = mHandler;
     }
 
     public void setBackStageService(BackStageService sevice) {
@@ -261,4 +292,6 @@ public class ChatService {
         }
         return result;
     }
+
+
 }

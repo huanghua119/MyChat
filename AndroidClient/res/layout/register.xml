@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/register_bg"
+    android:gravity="center_horizontal" >
+
+    <RelativeLayout
+        android:id="@+id/top_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/title"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dip"
+        android:paddingTop="8dip" >
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dip"
+            android:background="@drawable/back_button_bg"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:text="@string/back"
+            android:textColor="@color/tab_text_color"
+            android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/user_register"
+            android:textColor="@color/tab_text_color"
+            android:textSize="22sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/process_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_view"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingBottom="8dip"
+        android:paddingTop="8dip" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/register_process"
+            android:textColor="@color/context_search_color"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/process_commit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dip"
+            android:layout_marginRight="2dip"
+            android:text="@string/process_commit"
+            android:textColor="@color/tab_text_color"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/process_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/process_account"
+            android:textColor="@color/context_search_color"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/driver_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_below="@+id/process_view"
+        android:background="@drawable/register_driver" />
+
+    <LinearLayout
+        android:id="@+id/register_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/driver_view"
+        android:layout_marginTop="40dip"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:layout_width="250dip"
+            android:layout_height="45dip" >
+
+            <EditText
+                android:id="@+id/userName"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit"
+                android:inputType="none"
+                android:paddingLeft="100dip"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="90dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit_left"
+                android:gravity="center"
+                android:text="@string/name"
+                android:textColor="@color/tab_text_color"
+                android:textSize="13sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="250dip"
+            android:layout_height="45dip"
+            android:layout_marginTop="10dip" >
+
+            <EditText
+                android:id="@+id/pass"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit"
+                android:inputType="textPassword"
+                android:paddingLeft="100dip"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="90dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit_left"
+                android:gravity="center"
+                android:text="@string/pass"
+                android:textColor="@color/tab_text_color"
+                android:textSize="13sp" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="250dip"
+            android:layout_height="45dip"
+            android:layout_marginTop="10dip" >
+
+            <EditText
+                android:id="@+id/twopass"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit"
+                android:inputType="textPassword"
+                android:paddingLeft="100dip"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="90dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit_left"
+                android:gravity="center"
+                android:text="@string/twopass"
+                android:textColor="@color/tab_text_color"
+                android:textSize="13sp" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="250dip"
+            android:layout_height="45dip"
+            android:layout_marginTop="10dip"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="90dip"
+                android:layout_height="match_parent"
+                android:background="@drawable/register_edit_left"
+                android:gravity="center"
+                android:text="@string/six"
+                android:textColor="@color/tab_text_color"
+                android:textSize="13sp" />
+
+            <RadioGroup
+                android:id="@+id/user_six"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dip"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/six_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/checkbox_bg"
+                    android:checked="true"
+                    android:text="@string/six_man"
+                    android:textColor="@color/tab_text_color"
+                    android:textSize="13sp" />
+
+                <RadioButton
+                    android:id="@+id/six_woman"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dip"
+                    android:button="@drawable/checkbox_bg"
+                    android:text="@string/six_woman"
+                    android:textColor="@color/tab_text_color"
+                    android:textSize="13sp" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/commit_register"
+            android:layout_width="250dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:background="@drawable/red_button_bg"
+            android:gravity="center"
+            android:text="@string/commit"
+            android:textColor="@drawable/text_white_black"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/register_success"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/driver_view"
+        android:layout_marginTop="40dip"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/success_alert"
+            android:layout_width="250dip"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/register_success"
+            android:gravity="center"
+            android:text="@string/succesAlert"
+            android:textColor="@drawable/text_white_black"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/auto_login"
+            android:layout_width="200dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dip"
+            android:background="@drawable/red_button_bg"
+            android:gravity="center"
+            android:text="@string/autologin"
+            android:textColor="@drawable/text_white_black"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</RelativeLayout>
