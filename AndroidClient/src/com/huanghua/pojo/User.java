@@ -23,7 +23,7 @@ public class User {
         this.status = status;
     }
 
-    public User(String ip, String id, String name, String pass, int status) {
+    public User(String id, String name, String pass, int status) {
         this.id = id;
         this.name = name;
         this.password = pass;

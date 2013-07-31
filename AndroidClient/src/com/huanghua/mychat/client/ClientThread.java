@@ -66,7 +66,7 @@ public class ClientThread implements Runnable {
                     mService.loginFail("usernotfind");
                 } else if (msg != null && msg.startsWith("<#USERLOGINSUCCES#>")) {
                     String[] self = mDis.readUTF().split("\\|");
-                    User u = new User(self[0], self[1], Integer.parseInt(self[2]));
+                    User u = new User(self[0], self[1], self[2], Integer.parseInt(self[3]));
                     mService.setMySelf(u);
                     mService.loginSuccess();
                 } else if (msg != null && msg.startsWith("<#FORCEOFFLINE#>")) {
