@@ -64,4 +64,11 @@ public class Setting extends Activity implements View.OnClickListener {
         super.onResume();
     }
 
+    public void onBackPressed() {
+        if (null != getParent()) {
+            getParent().moveTaskToBack(true);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

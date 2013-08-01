@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -155,6 +156,19 @@ public class Messages extends Activity implements View.OnClickListener, OnItemCl
         mHandler.removeMessages(HANDLER_MEG_REFRESHLIST);
         mHandler.sendEmptyMessage(HANDLER_MEG_REFRESHLIST);
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    public void onBackPressed() {
+        if (null != getParent()) {
+            getParent().moveTaskToBack(true);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

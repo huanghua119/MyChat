@@ -122,4 +122,13 @@ public class MessageService {
         return result;
     }
 
+    public static void setMessageReadByUser(User u) {
+        ArrayList<NewMessage> lists = mMessageBox.get(u);
+        if (lists != null && lists.size() > 0) {
+            for (NewMessage nm : lists) {
+                nm.setNew(false);
+            }
+        }
+    }
+
 }

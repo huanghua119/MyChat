@@ -37,6 +37,7 @@ public class Login extends Activity implements View.OnClickListener {
     private ChatService mService;
 
     public static final String ACTION_AUTO_LOGIN = "action_auto_login";
+
     public static final int HANDLE_MSG_LOGIN_FAIL = 1;
     public static final int HANDLER_MEG_FINASH = 2;
     private Handler mHandler = new Handler() {
@@ -58,8 +59,6 @@ public class Login extends Activity implements View.OnClickListener {
                 Intent intent = new Intent();
                 intent.setClass(Login.this, Home.class);
                 startActivity(intent);
-                Intent service = new Intent(Login.this, BackStageService.class);
-                startService(service);
                 mService.setLoginHandler(null);
                 finish();
                 break;
@@ -136,15 +135,14 @@ public class Login extends Activity implements View.OnClickListener {
             mRemeberPass.setChecked(true);
             mLogin.performClick();
         } else {
-            if (mService.getMySelf() != null) {
-                mHandler.sendEmptyMessage(HANDLER_MEG_FINASH);
-            } else {
-                User u = getRemeberUser();
-                if (u.getId() != null && !u.getId().equals("")) {
-                    mUserId.setText(u.getId());
-                    mUserPass.setText(u.getPassword());
-                    mRemeberPass.setChecked(true);
-                }
+            User u = getRemeberUser();
+            Intent intent = new Intent(BackStageService.CHAT_ACTION_REMOVE_NOTIFY);
+            intent.putExtra("id", 2);
+            sendBroadcast(intent);
+            if (u.getId() != null && !u.getId().equals("")) {
+                mUserId.setText(u.getId());
+                mUserPass.setText(u.getPassword());
+                mRemeberPass.setChecked(true);
             }
         }
     }
@@ -190,5 +188,4 @@ public class Login extends Activity implements View.OnClickListener {
         editor.putString("userPass", "");
         editor.commit();
     }
-
 }

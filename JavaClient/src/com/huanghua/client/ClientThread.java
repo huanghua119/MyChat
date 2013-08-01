@@ -30,6 +30,7 @@ public class ClientThread extends Thread {
     public void run() {
         try {
             mSocket = new Socket(Configuration.SERVER_IP, Configuration.SERVER_PORT);
+            mSocket.setSoTimeout(0);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             userLogin(mService.getMySelf().getId(), mService.getMySelf().getPassword());

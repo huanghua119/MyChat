@@ -3,21 +3,26 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.mychat.service.MessageService;
+import com.huanghua.mychat.util.Util;
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.User;
 
@@ -35,19 +40,62 @@ public class ChatActivity extends Activity implements OnClickListener {
     private EditText mContext = null;
     private ListView mChatList = null;
     private ArrayList<NewMessage> mAllMessage = null;
+    private PopupWindow mAlertMessage = null;
+    private TextView mNewMessage = null;
+    private int mStatusHeight = 0;
+    private int mWindowWidth = 0;
 
     public static final int HANDLER_MEG_REFRESHLIST = 1;
+    public static final int HANDLER_MEG_FINISH = 2;
 
+    private Runnable mDismissWindow = new Runnable() {
+        @Override
+        public void run() {
+            if (mAlertMessage != null && mAlertMessage.isShowing()) {
+                mAlertMessage.dismiss();
+            }
+        }
+    };
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int what = msg.what;
             switch (what) {
                 case HANDLER_MEG_REFRESHLIST:
-                    refreshList();
-                    mAdapter.notifyDataSetInvalidated();
-                    mChatList.setSelection(mAllMessage.size());
-                    mBack.setText(getString(R.string.message) + MessageService.getAllNewMessage(mCurrentUser));
+                    Bundle data =  msg.getData();
+                    User u = mService.getUserById(data.getString("user_id"));
+                    if (u == null || u.equals(mCurrentUser)) {
+                        refreshList();
+                        mAdapter.notifyDataSetInvalidated();
+                        mChatList.setSelection(mAllMessage.size());
+                    } else {
+                        ArrayList<NewMessage> newMessage = MessageService.getMessageByUser(u);
+                        Util.ChatLog("newMessage:" + newMessage.size());
+                        if (newMessage != null && newMessage.size() > 0) {
+                            getWindowData();
+                            if (mAlertMessage == null) {
+                                View view = mInFlater.inflate(R.layout.popup_message, null);
+                                mNewMessage = (TextView) view.findViewById(R.id.new_message);
+                                mNewMessage.setOnClickListener(ChatActivity.this);
+                                mAlertMessage = new PopupWindow(view, mWindowWidth, 40);
+                            }
+                            mNewMessage.setTag(u);
+                            mNewMessage.setText(u.getName() + " : "
+                                    + newMessage.get(newMessage.size() - 1).getContext());
+                            mAlertMessage.update();
+                            mAlertMessage.showAtLocation(mChatList, Gravity.TOP, 0,
+                                    mChatList.getTop()
+                                            + mStatusHeight);
+                            mHandler.removeCallbacks(mDismissWindow);
+                            mHandler.postDelayed(mDismissWindow, 3000);
+                        }
+                        mBack.setText(getString(R.string.message)
+                                + MessageService.getAllNewMessage(mCurrentUser));
+                    }
+
+                    break;
+                case HANDLER_MEG_FINISH:
+                    finish();
                     break;
             }
         }
@@ -134,7 +182,6 @@ public class ChatActivity extends Activity implements OnClickListener {
         mChatList = (ListView) findViewById(R.id.chatList);
         mChatList.setAdapter(mAdapter);
         mChatList.setSelection(mAllMessage.size());
-        mBack.setText(getString(R.string.message) + MessageService.getAllNewMessage(mCurrentUser));
     }
 
     private void refreshList() {
@@ -151,15 +198,35 @@ public class ChatActivity extends Activity implements OnClickListener {
             if (context != null && !"".equals(context)) {
                 mService.sendMessageToUser(mCurrentUser, context);
                 MessageService.addMessage(context, mCurrentUser, false, mService.getMySelf());
-                mHandler.sendEmptyMessage(HANDLER_MEG_REFRESHLIST);
+                refreshList();
+                mAdapter.notifyDataSetInvalidated();
+                mChatList.setSelection(mAllMessage.size());
                 mContext.setText("");
             }
+        } else if (v == mNewMessage) {
+            mHandler.removeCallbacks(mDismissWindow);
+            User u = (User) v.getTag();
+            if (mAlertMessage != null && mAlertMessage.isShowing()) {
+                mAlertMessage.dismiss();
+            }
+            mCurrentUser = u;
+            mUserName.setText(u.getName());
+            MessageService.setMessageReadByUser(mCurrentUser);
+            mBack.setText(getString(R.string.message)
+                    + MessageService.getAllNewMessage(mCurrentUser));
+            Message m = new Message();
+            Bundle data = new Bundle();
+            data.putString("user_id", u.getId());
+            m.setData(data);
+            m.what = ChatActivity.HANDLER_MEG_REFRESHLIST;
+            mHandler.sendMessage(m);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mBack.setText(getString(R.string.message) + MessageService.getAllNewMessage(mCurrentUser));
         if (mChatList != null) {
             mChatList.setSelection(mAllMessage.size());
         }
@@ -169,5 +236,14 @@ public class ChatActivity extends Activity implements OnClickListener {
     public void onBackPressed() {
         mService.setChatHandler(null);
         super.onBackPressed();
+    }
+
+    private void getWindowData() {
+        Rect frame = new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        mStatusHeight = frame.top;
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        mWindowWidth = dm.widthPixels;
     }
 }

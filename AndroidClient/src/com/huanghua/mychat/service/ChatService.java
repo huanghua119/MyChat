@@ -21,6 +21,7 @@ import com.huanghua.mychat.Messages;
 import com.huanghua.mychat.Register;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
+import com.huanghua.mychat.util.Util;
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.Status;
 import com.huanghua.pojo.User;
@@ -74,8 +75,6 @@ public class ChatService {
             Intent intent = new Intent();
             intent.setClass(mContext, Home.class);
             mContext.startActivity(intent);
-            Intent service = new Intent(mContext, BackStageService.class);
-            mContext.startService(service);
         }
     }
 
@@ -173,7 +172,12 @@ public class ChatService {
     }
 
     public void forceOffLine() {
-        goToLogin();
+        mHomeHandle.sendEmptyMessage(Home.HANDLER_MEG_FINISH);
+        if (mChatHandle != null) {
+            mChatHandle.sendEmptyMessage(ChatActivity.HANDLER_MEG_FINISH);
+        }
+        mSelf = null;
+        mBackStageService.forceOffLineNotify();
     }
 
     public void goToLogin() {
@@ -220,8 +224,20 @@ public class ChatService {
         MessageService.addMessage(context, u, true, u);
         mMessagesHandle.sendEmptyMessage(Messages.HANDLER_MEG_REFRESHLIST);
         if (mChatHandle != null) {
-            mChatHandle.sendEmptyMessage(ChatActivity.HANDLER_MEG_REFRESHLIST);
+            Message m = new Message();
+            Bundle data = new Bundle();
+            data.putString("user_id", id);
+            m.setData(data);
+            m.what = ChatActivity.HANDLER_MEG_REFRESHLIST;
+            if (mChatHandle.hasMessages(ChatActivity.HANDLER_MEG_REFRESHLIST)) {
+                mChatHandle.removeMessages(ChatActivity.HANDLER_MEG_REFRESHLIST);
+            }
+            mChatHandle.sendMessage(m);
         }
+        Util.ChatLog("setMessageById");
+        mBackStageService.message(context, u);
+        Intent intent = new Intent(BackStageService.CHAT_ACTION_NEW_MESSAGE);
+        mContext.sendBroadcast(intent);
     }
 
     public void sendMessageToUser(final User mCurrent, final String msg) {
@@ -293,6 +309,5 @@ public class ChatService {
         }
         return result;
     }
-
 
 }

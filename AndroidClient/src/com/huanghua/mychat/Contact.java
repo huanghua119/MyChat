@@ -92,7 +92,8 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
                         : R.drawable.group_flag_red);
             }
             TextView userCount = (TextView) group.findViewById(R.id.user_count);
-            userCount.setText(mService.getOnLineCount(groupPosition) + "/" + mChild[groupPosition].length);
+            userCount.setText(mService.getOnLineCount(groupPosition) + "/"
+                    + mChild[groupPosition].length);
             return group;
         }
 
@@ -192,4 +193,11 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
         return false;
     }
 
+    public void onBackPressed() {
+        if (null != getParent()) {
+            getParent().moveTaskToBack(true);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

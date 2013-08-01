@@ -2,6 +2,7 @@
 package com.huanghua.mychat.util;
 
 import android.content.res.Resources;
+import android.util.Log;
 
 import com.huanghua.mychat.R;
 
@@ -24,5 +25,9 @@ public class Util {
                 break;
         }
         return "[" + result + "]";
+    }
+
+    public static void ChatLog(String msg) {
+        Log.i("chat_log", msg);
     }
 }

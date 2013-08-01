@@ -11,10 +11,8 @@ import android.view.View;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.huanghua.mychat.service.BackStageService;
 import com.huanghua.mychat.service.ChatService;
-import com.huanghua.pojo.User;
-
-import java.util.List;
 
 @SuppressWarnings("deprecation")
 public class Home extends TabActivity implements View.OnClickListener {
@@ -54,8 +52,11 @@ public class Home extends TabActivity implements View.OnClickListener {
     }
 
     private void init() {
+        Intent service = new Intent(this, BackStageService.class);
+        startService(service);
         mService = ChatService.getInstance();
         mService.setHomeHandler(mHandler);
+        isLogin();
         mMessageButton = findViewById(R.id.message);
         mContactButton = findViewById(R.id.contact);
         mLoveButton = findViewById(R.id.love);
@@ -145,6 +146,39 @@ public class Home extends TabActivity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (isTaskRoot()) {
+            moveTaskToBack(false);
+        } else {
+            super.onBackPressed();
+        }
+    }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (mService != null) {
+            Intent i = new Intent(BackStageService.CHAT_ACTION_REMOVE_NOTIFY);
+            i.putExtra("id", 1);
+            sendBroadcast(i);
+        }
+    }
+
+    private void isLogin() {
+        if (mService.getMySelf() == null) {
+            Intent intent = new Intent();
+            intent.setClass(this, Login.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
     }
 
 }
