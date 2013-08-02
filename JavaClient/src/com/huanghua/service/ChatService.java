@@ -127,19 +127,9 @@ public class ChatService {
         mClient = null;
     }
 
-    public void addUser(User u) {
-        boolean isHas = false;
-        for (User u1 : mUser) {
-            if (u.getId().equals(u1.getId())) {
-                isHas = true;
-                mUser.remove(u1);
-                mUser.add(u);
-                break;
-            }
-        }
-        if (!isHas) {
-            mUser.add(u);
-        }
+    public void addUser(List<User> list) {
+        mUser.clear();
+        mUser = list;
         refreshList();
     }
 

@@ -6,6 +6,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.pojo.User;
@@ -38,12 +40,14 @@ public class ClientThread implements Runnable {
                     msg = msg.substring(16);
                     String[] type = msg.split("\\|");
                     int size = Integer.parseInt(type[0]);
+                    List<User> list = new ArrayList<User>();
                     for (int i = 0; i < size; i++) {
                         String temp = mDis.readUTF();
                         String[] user = temp.split("\\|");
                         User u = new User(user[0], user[1], Integer.parseInt(user[2]));
-                        mService.addUser(u);
+                        list.add(u);
                     }
+                    mService.addUser(list);
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     close();
                     mService.goToLogin();

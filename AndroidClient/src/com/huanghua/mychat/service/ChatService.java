@@ -21,7 +21,6 @@ import com.huanghua.mychat.Messages;
 import com.huanghua.mychat.Register;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
-import com.huanghua.mychat.util.Util;
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.Status;
 import com.huanghua.pojo.User;
@@ -89,19 +88,9 @@ public class ChatService {
         mClient = null;
     }
 
-    public void addUser(User u) {
-        boolean isHas = false;
-        for (User u1 : mUser) {
-            if (u.getId().equals(u1.getId())) {
-                isHas = true;
-                mUser.remove(u1);
-                mUser.add(u);
-                break;
-            }
-        }
-        if (!isHas) {
-            mUser.add(u);
-        }
+    public void addUser(List<User> list) {
+        mUser.clear();
+        mUser = list;
         refreshList();
     }
 
@@ -234,7 +223,6 @@ public class ChatService {
             }
             mChatHandle.sendMessage(m);
         }
-        Util.ChatLog("setMessageById");
         mBackStageService.message(context, u);
         Intent intent = new Intent(BackStageService.CHAT_ACTION_NEW_MESSAGE);
         mContext.sendBroadcast(intent);

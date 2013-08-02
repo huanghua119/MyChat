@@ -46,6 +46,7 @@ public class ServerService {
         mSocket = new SocketThread(service);
         Thread thread = new Thread(mSocket);
         thread.start();
+        new Thread(mSendUserListRunnable).start();
     }
 
     public void addUser(User u) {
@@ -69,8 +70,8 @@ public class ServerService {
     }
 
     public void userOffLine(User u) {
-        setMessage(Resource.getString("offline") + u.getIp() + ":" + u.getId());
         mUser.remove(u);
+        setMessage(Resource.getString("offline") + u.getIp() + ":" + u.getId());
         String sql = "update User set statusId=" + u.getStatus() + " where userId=" + u.getId();
         DBUtil.executeUpdate(sql);
         sendUserOffline(u);
@@ -90,7 +91,10 @@ public class ServerService {
         if (u == null) {
             toUser.getsAgent().sendError(Resource.getString("usernotonline"), id);
         } else {
-            u.getsAgent().sendMessage(context, toUser);
+            boolean isSuccess = u.getsAgent().sendMessage(context, toUser);
+            if (!isSuccess) {
+                toUser.getsAgent().sendError(Resource.getString("sendfail"), id);
+            }
         }
     }
 
@@ -176,4 +180,18 @@ public class ServerService {
         }
         mSocket.close();
     }
+
+    private Runnable mSendUserListRunnable = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                sendUserList();
+                try {
+                    Thread.sleep(1000 * 60 * 10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
 }

@@ -2,6 +2,7 @@
 package com.huanghua.view;
 
 import com.huanghua.i18n.Resource;
+import com.huanghua.pojo.User;
 import com.huanghua.service.ServerService;
 
 import java.awt.BorderLayout;
@@ -9,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -74,7 +76,12 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     public void setMessage(String message) {
-        this.mIPList.append(message + "\n");
+        List<User> lists = mService.getUserList();
+        String msg = Resource.getString("nowListener") + " online:" + lists.size() + "\n";
+        for (User u : lists) {
+            msg += "(" + u.getId() + ") " + u.getName() + "\n";
+        }
+        this.mIPList.setText(msg);
     }
 
     public static void main(String[] args) {

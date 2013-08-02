@@ -69,6 +69,7 @@ public class SocketAgent extends Thread {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                mService.userOffLine(mCurrent);
                 close();
             }
 
@@ -121,7 +122,6 @@ public class SocketAgent extends Thread {
                         forceLogin(u, id, password);
                         return;
                     }
-                    mService.setMessage(Resource.getString("newPersor") + ip + "|" + id);
                     mCurrent = new User();
                     mCurrent.setIp(ip);
                     mCurrent.setId(id);
@@ -130,6 +130,7 @@ public class SocketAgent extends Thread {
                     mCurrent.setsAgent(this);
                     mCurrent.setStatus(Status.STATUS_ONLINE);
                     mService.addUser(mCurrent);
+                    mService.setMessage(Resource.getString("newPersor") + ip + "|" + id);
                     sendLoginSucces();
                     mService.sendUserList();
                 } else {
@@ -201,13 +202,20 @@ public class SocketAgent extends Thread {
         }
     }
 
-    public void sendMessage(String msg, User toUser) {
+    public boolean sendMessage(String msg, User toUser) {
+        boolean result = true;
+        if (mSocket.isClosed()) {
+            result = true;
+            return result;
+        }
         try {
             mDos.writeUTF("<#GETMESSAGE#>" + toUser.getId());
             mDos.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
+            result = false;
         }
+        return result;
     }
 
     public void sendError(String msg, String id) {

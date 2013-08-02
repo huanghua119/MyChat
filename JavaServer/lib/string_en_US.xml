@@ -8,5 +8,6 @@
     <string name="newPersor">有人来了:</string>
     <string name="offline">有人走了:</string>
     <string name="usernotonline">用户已经下线!</string>
+    <string name="sendfail">发送失败!</string>
 
 </resources>
