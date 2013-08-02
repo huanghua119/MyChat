@@ -9,6 +9,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -75,15 +76,22 @@ public class ChatService {
             intent.setClass(mContext, Home.class);
             mContext.startActivity(intent);
         }
+        setLogin(mContext, true);
     }
 
     public void loginFail(String error) {
-        Bundle data = new Bundle();
-        data.putString("error", error);
-        Message m = new Message();
-        m.setData(data);
-        m.what = Login.HANDLE_MSG_LOGIN_FAIL;
-        mLoginHandle.sendMessage(m);
+        if (mLoginHandle != null) {
+            Bundle data = new Bundle();
+            data.putString("error", error);
+            Message m = new Message();
+            m.setData(data);
+            m.what = Login.HANDLE_MSG_LOGIN_FAIL;
+            mLoginHandle.sendMessage(m);
+        } else {
+            Intent intent = new Intent();
+            intent.setClass(mContext, Login.class);
+            mContext.startActivity(intent);
+        }
         mClient.close();
         mClient = null;
     }
@@ -298,4 +306,10 @@ public class ChatService {
         return result;
     }
 
+    public void setLogin(Context context, boolean isLogin) {
+        SharedPreferences sp = context.getSharedPreferences("mychat", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("is_login", isLogin);
+        editor.commit();
+    }
 }

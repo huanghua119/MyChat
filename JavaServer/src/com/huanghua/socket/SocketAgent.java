@@ -69,6 +69,7 @@ public class SocketAgent extends Thread {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                mCurrent.setStatus(Status.STATUS_OFFLINE);
                 mService.userOffLine(mCurrent);
                 close();
             }

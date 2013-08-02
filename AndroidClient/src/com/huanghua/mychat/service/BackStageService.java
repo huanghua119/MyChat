@@ -17,7 +17,6 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 
 import com.huanghua.mychat.ChatActivity;
-import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.R;
 import com.huanghua.mychat.util.Util;
@@ -66,6 +65,8 @@ public class BackStageService extends Service {
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mBroadcastReceiver);
+        Intent intent = new Intent(this, BackStageService.class);
+        startService(intent);
     }
 
     @Override

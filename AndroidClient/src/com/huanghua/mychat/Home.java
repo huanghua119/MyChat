@@ -3,6 +3,7 @@ package com.huanghua.mychat;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.huanghua.mychat.service.BackStageService;
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.pojo.User;
 
 @SuppressWarnings("deprecation")
 public class Home extends TabActivity implements View.OnClickListener {
@@ -35,6 +37,7 @@ public class Home extends TabActivity implements View.OnClickListener {
             int what = msg.what;
             switch (what) {
                 case HANDLER_MEG_FINISH:
+                    setLogin(false);
                     finish();
                     break;
             }
@@ -161,6 +164,7 @@ public class Home extends TabActivity implements View.OnClickListener {
             super.onBackPressed();
         }
     }
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -172,13 +176,39 @@ public class Home extends TabActivity implements View.OnClickListener {
     }
 
     private void isLogin() {
-        if (mService.getMySelf() == null) {
+        if (!getIsLogin()) {
             Intent intent = new Intent();
             intent.setClass(this, Login.class);
             startActivity(intent);
             finish();
             return;
+        } else {
+            if (mService.getMySelf() == null) {
+                User u = getRemeberUser();
+                mService.login(this, u.getId(), u.getPassword());
+            }
+
         }
+    }
+
+    public void setLogin(boolean isLogin) {
+        SharedPreferences sp = getSharedPreferences("mychat", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("is_login", isLogin);
+        editor.commit();
+    }
+
+    public boolean getIsLogin() {
+        SharedPreferences sp = getSharedPreferences("mychat", MODE_PRIVATE);
+        return sp.getBoolean("is_login", false);
+    }
+
+    private User getRemeberUser() {
+        User u = new User();
+        SharedPreferences sp = getSharedPreferences("mychat", MODE_PRIVATE);
+        u.setId(sp.getString("userId", ""));
+        u.setPassword(sp.getString("userPass", ""));
+        return u;
     }
 
 }

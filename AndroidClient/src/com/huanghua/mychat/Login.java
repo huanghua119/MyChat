@@ -167,14 +167,14 @@ public class Login extends Activity implements View.OnClickListener {
 
     private User getRemeberUser() {
         User u = new User();
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("mychat", MODE_PRIVATE);
         u.setId(sp.getString("userId", ""));
         u.setPassword(sp.getString("userPass", ""));
         return u;
     }
 
     public void remeberUser(String userId, String userPass) {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("mychat", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("userId", userId);
         editor.putString("userPass", userPass);
@@ -182,10 +182,11 @@ public class Login extends Activity implements View.OnClickListener {
     }
 
     public void removeRemeber() {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("mychat", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("userId", "");
         editor.putString("userPass", "");
         editor.commit();
     }
+
 }
