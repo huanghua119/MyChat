@@ -1,6 +1,9 @@
 
 package com.huanghua.mychat.service;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.User;
 
@@ -28,25 +31,34 @@ public class MessageService {
         return result;
     }
 
-    public static void addMessage(String context, User u, boolean isNew, User sendUser) {
-        if (mMessageBox.containsKey(u)) {
-            ArrayList<NewMessage> message = mMessageBox.get(u);
+    public static void addMessage(Context context, String newmessage, User u, boolean isNew,
+            User sendUser, User fromUser, User toUser) {
+        if (mMessageBox.containsKey(sendUser)) {
+            ArrayList<NewMessage> message = mMessageBox.get(sendUser);
             NewMessage m = new NewMessage();
             m.setMessageDate(new Date());
-            m.setContext(context);
-            m.setUser(sendUser);
+            m.setContext(newmessage);
+            m.setUser(fromUser);
             m.setNew(isNew);
             message.add(m);
         } else {
             ArrayList<NewMessage> message = new ArrayList<NewMessage>();
             NewMessage m = new NewMessage();
             m.setMessageDate(new Date());
-            m.setContext(context);
-            m.setUser(sendUser);
+            m.setContext(newmessage);
+            m.setUser(fromUser);
             m.setNew(isNew);
             message.add(m);
-            mMessageBox.put(u, message);
+            mMessageBox.put(sendUser, message);
         }
+        Intent intent = new Intent(BackStageService.CHAT_ACTION_NEW_MESSAGE);
+        intent.putExtra("from_userId", fromUser.getId());
+        intent.putExtra("to_userId", toUser.getId());
+        intent.putExtra("userId", u.getId());
+        intent.putExtra("send_userId", sendUser.getId());
+        intent.putExtra("context", newmessage);
+        intent.putExtra("isNew", isNew);
+        context.sendBroadcast(intent);
         List<Map.Entry<User, ArrayList<NewMessage>>> lists = new ArrayList<Map.Entry<User, ArrayList<NewMessage>>>(
                 mMessageBox.entrySet());
         Collections.sort(lists, new Comparator<Map.Entry<User, ArrayList<NewMessage>>>() {
@@ -131,4 +143,29 @@ public class MessageService {
         }
     }
 
+    public static void clearAllMessage() {
+        mMessageBox.clear();
+    }
+
+    public static void addMessageByDatabase(String newmessage, User u, boolean isNew,
+            User sendUser, User fromUser, String date) {
+        if (mMessageBox.containsKey(sendUser)) {
+            ArrayList<NewMessage> message = mMessageBox.get(sendUser);
+            NewMessage m = new NewMessage();
+            m.setMessageDate(new Date(date));
+            m.setContext(newmessage);
+            m.setUser(fromUser);
+            m.setNew(isNew);
+            message.add(m);
+        } else {
+            ArrayList<NewMessage> message = new ArrayList<NewMessage>();
+            NewMessage m = new NewMessage();
+            m.setMessageDate(new Date(date));
+            m.setContext(newmessage);
+            m.setUser(fromUser);
+            m.setNew(isNew);
+            message.add(m);
+            mMessageBox.put(sendUser, message);
+        }
+    }
 }

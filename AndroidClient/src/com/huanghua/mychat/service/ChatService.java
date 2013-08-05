@@ -99,6 +99,7 @@ public class ChatService {
     public void addUser(List<User> list) {
         mUser.clear();
         mUser = list;
+        mContext.sendBroadcast(new Intent(BackStageService.CHAT_ACTION_READ_MESSAGE));
         refreshList();
     }
 
@@ -185,6 +186,7 @@ public class ChatService {
         mBackStageService.stopSelf();
         mBackStageService = null;
         mSelf = null;
+        MessageService.clearAllMessage();
     }
 
     public void userRegister(String name, String pass, int six) {
@@ -218,7 +220,7 @@ public class ChatService {
 
     public void setMessageById(String context, String id) {
         User u = getUserById(id);
-        MessageService.addMessage(context, u, true, u);
+        MessageService.addMessage(mContext, context, mSelf, true, u, u, mSelf);
         mMessagesHandle.sendEmptyMessage(Messages.HANDLER_MEG_REFRESHLIST);
         if (mChatHandle != null) {
             Message m = new Message();
@@ -232,8 +234,6 @@ public class ChatService {
             mChatHandle.sendMessage(m);
         }
         mBackStageService.message(context, u);
-        Intent intent = new Intent(BackStageService.CHAT_ACTION_NEW_MESSAGE);
-        mContext.sendBroadcast(intent);
     }
 
     public void sendMessageToUser(final User mCurrent, final String msg) {
@@ -251,7 +251,7 @@ public class ChatService {
 
     public void setError(String id, String msg) {
         User u = getUserById(id);
-        MessageService.addMessage(msg, u, false, mSelf);
+        MessageService.addMessage(mContext, msg, mSelf, false, u, mSelf, u);
         if (mChatHandle != null) {
             mChatHandle.sendEmptyMessage(ChatActivity.HANDLER_MEG_REFRESHLIST);
         }
@@ -311,5 +311,11 @@ public class ChatService {
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("is_login", isLogin);
         editor.commit();
+    }
+
+    public void refreshMessageList() {
+        if (mMessagesHandle != null) {
+            mMessagesHandle.sendEmptyMessage(Messages.HANDLER_MEG_REFRESHLIST);
+        }
     }
 }

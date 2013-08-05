@@ -3,6 +3,7 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.huanghua.mychat.service.BackStageService;
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.mychat.service.MessageService;
 import com.huanghua.mychat.util.Util;
@@ -108,7 +110,13 @@ public class ChatActivity extends Activity implements OnClickListener {
             View self = v.findViewById(R.id.self_chat);
             View it = v.findViewById(R.id.it_chat);
             NewMessage message = mAllMessage.get(position);
-            message.setNew(false);
+            if (message.isNew()) {
+                message.setNew(false);
+                Intent intent = new Intent(BackStageService.CHAT_ACTION_SETREAD_MESSAGE);
+                intent.putExtra("userId", mService.getMySelf().getId());
+                intent.putExtra("send_userId", mCurrentUser.getId());
+                sendBroadcast(intent);
+            }
             User u = message.getUser();
             if (u.getId().equals(mService.getMySelf().getId())) {
                 it.setVisibility(View.GONE);
@@ -197,7 +205,8 @@ public class ChatActivity extends Activity implements OnClickListener {
             String context = mContext.getText().toString();
             if (context != null && !"".equals(context)) {
                 mService.sendMessageToUser(mCurrentUser, context);
-                MessageService.addMessage(context, mCurrentUser, false, mService.getMySelf());
+                MessageService.addMessage(this, context, mService.getMySelf(), false, mCurrentUser,
+                        mService.getMySelf(), mCurrentUser);
                 refreshList();
                 mAdapter.notifyDataSetInvalidated();
                 mChatList.setSelection(mAllMessage.size());

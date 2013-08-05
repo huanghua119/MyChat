@@ -92,3 +92,16 @@ CREATE TABLE `user` (
 INSERT INTO user VALUES ('10000', '黄华', '3629226', '江西', '1', '4', '2013-07-21 12:45:26', null, null, null);
 
 INSERT INTO user VALUES ('10001', '朱燕', '3629226', '湖北', '1', '4', '2013-07-21 12:45:26', null, null, null);
+
+
+CREATE TABLE `newmessage` (
+  `id` int(11) NOT NULL auto_increment,
+  `userId` int(11) default NULL,
+  `send_userId` int(11) default NULL,
+  `from_userId` int(11) default NULL,
+  `to_userId` int(11) default NULL,
+  `context` varchar(1000) default NULL,
+  `messageDate` datetime default NULL,
+  `isNew` int(10) default NULL,
+  PRIMARY KEY  (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8
