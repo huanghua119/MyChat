@@ -24,7 +24,7 @@ public class Love extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_setting);
+        setContentView(R.layout.tab_love);
         mInFlater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         init();
     }

@@ -53,5 +53,8 @@
     <string name="six_man">男</string>
     <string name="six_woman">女</string>
     <string name="registerFail">注册失败!请重新注册!</string>
+    <string name="signature">个性签名</string>
+    <string name="user_info">我的资料</string>
+    <string name="about_me">关于我们</string>
 
 </resources>
