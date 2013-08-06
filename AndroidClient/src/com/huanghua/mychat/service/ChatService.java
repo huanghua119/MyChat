@@ -233,6 +233,9 @@ public class ChatService {
             }
             mChatHandle.sendMessage(m);
         }
+        if (mHomeHandle != null) {
+            mHomeHandle.sendEmptyMessage(Home.HANDLER_MEG_NEW_COUNT);
+        }
         mBackStageService.message(context, u);
     }
 
@@ -316,6 +319,9 @@ public class ChatService {
     public void refreshMessageList() {
         if (mMessagesHandle != null) {
             mMessagesHandle.sendEmptyMessage(Messages.HANDLER_MEG_REFRESHLIST);
+        }
+        if (mHomeHandle != null) {
+            mHomeHandle.sendEmptyMessage(Home.HANDLER_MEG_NEW_COUNT);
         }
     }
 }

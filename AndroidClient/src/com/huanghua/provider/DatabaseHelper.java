@@ -31,7 +31,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + MyChatTable.MessageColumns.from_userId + " varchat(100) not null,"
                 + MyChatTable.MessageColumns.to_userId + " varchat(100) not null,"
                 + MyChatTable.MessageColumns.context + " varchat(1000) not null,"
-                + MyChatTable.MessageColumns.messageDate + " datetime,"
+                + MyChatTable.MessageColumns.messageDate + " long,"
                 + MyChatTable.MessageColumns.isNew + " int(10));";
         db.execSQL(sql);
     }

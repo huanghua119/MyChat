@@ -148,7 +148,7 @@ public class MessageService {
     }
 
     public static void addMessageByDatabase(String newmessage, User u, boolean isNew,
-            User sendUser, User fromUser, String date) {
+            User sendUser, User fromUser, long date) {
         if (mMessageBox.containsKey(sendUser)) {
             ArrayList<NewMessage> message = mMessageBox.get(sendUser);
             NewMessage m = new NewMessage();

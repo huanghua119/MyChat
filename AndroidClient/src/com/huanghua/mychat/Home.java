@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.huanghua.mychat.service.BackStageService;
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.mychat.service.MessageService;
 import com.huanghua.pojo.User;
 
 @SuppressWarnings("deprecation")
@@ -28,9 +29,11 @@ public class Home extends TabActivity implements View.OnClickListener {
     private TabHost mTabHost;
     private Intent mMessageIntent, mContactIntent, mLoveIntent, mSettingIntent;
     private View mMessageButton, mContactButton, mLoveButton, mSettingButton;
+    private TextView mNewCount;
     private int mCurTabId;
 
     public static final int HANDLER_MEG_FINISH = 1;
+    public static final int HANDLER_MEG_NEW_COUNT = 2;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -39,6 +42,15 @@ public class Home extends TabActivity implements View.OnClickListener {
                 case HANDLER_MEG_FINISH:
                     setLogin(false);
                     finish();
+                    break;
+                case HANDLER_MEG_NEW_COUNT:
+                    int count = MessageService.getAllNewMessage2(null);
+                    if (count != 0) {
+                        mNewCount.setVisibility(View.VISIBLE);
+                        mNewCount.setText(count + "");
+                    } else {
+                        mNewCount.setVisibility(View.GONE);
+                    }
                     break;
             }
         }
@@ -68,6 +80,7 @@ public class Home extends TabActivity implements View.OnClickListener {
         mContactButton.setOnClickListener(this);
         mLoveButton.setOnClickListener(this);
         mSettingButton.setOnClickListener(this);
+        mNewCount = (TextView) findViewById(R.id.new_count);
     }
 
     private void prepareIntent() {
@@ -149,6 +162,7 @@ public class Home extends TabActivity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
+        mHandler.sendEmptyMessage(HANDLER_MEG_NEW_COUNT);
     }
 
     @Override

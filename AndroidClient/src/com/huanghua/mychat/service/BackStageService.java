@@ -27,7 +27,6 @@ import com.huanghua.pojo.User;
 import com.huanghua.provider.DatabaseHelper;
 import com.huanghua.provider.MyChatTable;
 
-import java.util.Date;
 import java.util.List;
 
 public class BackStageService extends Service {
@@ -61,9 +60,9 @@ public class BackStageService extends Service {
                 values.put(MyChatTable.MessageColumns.send_userId, send_userId);
                 values.put(MyChatTable.MessageColumns.from_userId, from_userId);
                 values.put(MyChatTable.MessageColumns.to_userId, to_userId);
-                values.put(MyChatTable.MessageColumns.messageDate, new Date().toString());
+                values.put(MyChatTable.MessageColumns.messageDate, System.currentTimeMillis());
                 values.put(MyChatTable.MessageColumns.context, message);
-                values.put(MyChatTable.MessageColumns.isNew, isNew);
+                values.put(MyChatTable.MessageColumns.isNew, !isNew);
                 String sql = "insert into " + MyChatTable.MessageColumns.TABLE_NAME
                         + "(" + MyChatTable.MessageColumns.userId + ","
                         + MyChatTable.MessageColumns.send_userId + ","
@@ -247,7 +246,7 @@ public class BackStageService extends Service {
                     .getColumnIndex(MyChatTable.MessageColumns.send_userId));
             String from_userId = c.getString(c
                     .getColumnIndex(MyChatTable.MessageColumns.from_userId));
-            String messageDate = c.getString(c
+            long messageDate = c.getLong(c
                     .getColumnIndex(MyChatTable.MessageColumns.messageDate));
             String context = c.getString(c.getColumnIndex(MyChatTable.MessageColumns.context));
             int isNew = c.getInt(c.getColumnIndex(MyChatTable.MessageColumns.isNew));

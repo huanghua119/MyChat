@@ -29,15 +29,19 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent" >
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/message"
-                style="@style/main_tab_but_linear" >
+                android:layout_width="fill_parent"
+                android:layout_height="52dip"
+                android:clickable="true"
+                android:layout_weight="1" >
 
                 <ImageView
                     android:id="@+id/imageview1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
                     android:contentDescription="@string/message"
                     android:src="@drawable/tab_message" />
 
@@ -45,10 +49,24 @@
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_below="@+id/imageview1"
                     android:text="@string/message"
+                    android:layout_centerHorizontal="true"
                     android:textSize="12sp" />
-            </LinearLayout>
+
+                <TextView
+                    android:id="@+id/new_count"
+                    android:layout_width="23dip"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/message_count"
+                    android:gravity="center"
+                    android:textColor="@color/tab_text_color"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="8dip"
+                    android:layout_marginTop="8dip"
+                    android:visibility="gone"
+                    android:textSize="12sp" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/contact"
