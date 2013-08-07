@@ -45,6 +45,7 @@ public class EditActivity extends Activity implements OnClickListener {
         mTitle.setText(intent.getStringExtra("title"));
         mBack.setText(intent.getStringExtra("back"));
         mEdit.setText(intent.getStringExtra("old_context"));
+        mEdit.setSelection(mEdit.length());
     }
 
     @Override
@@ -52,7 +53,10 @@ public class EditActivity extends Activity implements OnClickListener {
         if (v == mBack) {
             finish();
         } else if (v == mOk) {
-            
+            Intent data = new Intent();
+            data.putExtra("edit_context", mEdit.getText().toString());
+            setResult(2, data);
+            finish();
         }
     }
 

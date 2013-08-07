@@ -59,6 +59,10 @@
         android:layout_margin="12dip"
         android:background="@drawable/input_box_gb"
         android:gravity="top"
-        android:inputType="none" />
+        android:inputType="none"
+        android:paddingBottom="8dip"
+        android:paddingLeft="10dip"
+        android:paddingRight="5dip"
+        android:paddingTop="8dip" />
 
 </LinearLayout>

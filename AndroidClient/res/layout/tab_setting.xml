@@ -101,7 +101,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:layout_toRightOf="@+id/sign_text"
+                    android:layout_marginRight="35dip"
                     android:textColor="@color/context_search_color"
                     android:textSize="12sp" />
 

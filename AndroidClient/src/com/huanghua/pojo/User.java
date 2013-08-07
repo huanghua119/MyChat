@@ -9,6 +9,7 @@ public class User {
     private String password;
     private int status;
     private int six;
+    private String signature;
 
     public User() {
     }
@@ -69,6 +70,14 @@ public class User {
 
     public void setSix(int six) {
         this.six = six;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     @Override

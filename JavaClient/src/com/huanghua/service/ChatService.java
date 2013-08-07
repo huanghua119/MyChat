@@ -390,4 +390,10 @@ public class ChatService {
     public void stopFlash() {
         mTrayFalsh.setStop();
     }
+
+    public void updateSignatureSuccess() {
+    }
+
+    public void updateSignatureFail() {
+    }
 }

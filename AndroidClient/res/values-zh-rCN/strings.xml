@@ -53,5 +53,7 @@
     <string name="signature">个性签名</string>
     <string name="user_info">我的资料</string>
     <string name="about_me">关于我们</string>
+    <string name="update_success">更新成功</string>
+    <string name="update_fail">更新失败</string>
 
 </resources>

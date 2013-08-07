@@ -20,6 +20,7 @@ import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.Messages;
 import com.huanghua.mychat.Register;
+import com.huanghua.mychat.Setting;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
 import com.huanghua.pojo.NewMessage;
@@ -41,6 +42,7 @@ public class ChatService {
     private Handler mRegisterHandle = null;
     private Handler mLoginHandle = null;
     private Handler mHomeHandle = null;
+    private Handler mSettingHandle = null;
 
     private ChatService() {
         mUser = new ArrayList<User>();
@@ -323,5 +325,22 @@ public class ChatService {
         if (mHomeHandle != null) {
             mHomeHandle.sendEmptyMessage(Home.HANDLER_MEG_NEW_COUNT);
         }
+    }
+
+    public void setSettingHandle(Handler handler) {
+        mSettingHandle = handler;
+    }
+
+    public void updateSignature(String text) {
+        mClient.sendToServer("<#UPDATE_SIGNATURE#>" + mSelf.getId());
+        mClient.sendToServer(text);
+    }
+
+    public void updateSignatureSuccess() {
+        mSettingHandle.sendEmptyMessage(Setting.HANDLER_MEG_UPDATE_SUCCESS);
+    }
+
+    public void updateSignatureFail() {
+        mSettingHandle.sendEmptyMessage(Setting.HANDLER_MEG_UPDATE_FAIL);
     }
 }

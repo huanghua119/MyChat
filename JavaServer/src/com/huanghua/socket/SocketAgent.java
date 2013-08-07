@@ -66,6 +66,10 @@ public class SocketAgent extends Thread {
                     userRegister(u);
                 } else if (msg != null && msg.startsWith("<#FORCEOFFLINEOK#>")) {
                     close();
+                } else if (msg != null && msg.startsWith("<#UPDATE_SIGNATURE#>")) {
+                    String id = msg.substring(20);
+                    String signature = mDis.readUTF();
+                    updateSingature(id, signature);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -94,7 +98,8 @@ public class SocketAgent extends Thread {
     public void userRegister(User u) {
         String userId = mService.getUserId();
         u.setId(userId);
-        String sql = "insert into User(userId, userName, userPass, userSex,statusId,registerTime) values('" + u.getId() + "', '" + u.getName() + "', '"
+        String sql = "insert into User(userId, userName, userPass, userSex,statusId,registerTime) values('"
+                + u.getId() + "', '" + u.getName() + "', '"
                 + u.getPassword() + "', " + u.getSix() + ", " + Status.STATUS_OFFLINE + ", now())";
         int result = DBUtil.executeUpdate(sql);
         try {
@@ -117,6 +122,7 @@ public class SocketAgent extends Thread {
                 String password = rs.getString("userPass");
                 if (password.equals(pass)) {
                     String name = rs.getString("userName");
+                    String signature = rs.getString("signature");
                     String ip = mSocket.getInetAddress().toString().replace("/", "");
                     User u = mService.getUserById(id);
                     if (u != null) {
@@ -130,6 +136,7 @@ public class SocketAgent extends Thread {
                     mCurrent.setPassword(pass);
                     mCurrent.setsAgent(this);
                     mCurrent.setStatus(Status.STATUS_ONLINE);
+                    mCurrent.setSignature(signature);
                     mService.addUser(mCurrent);
                     mService.setMessage(Resource.getString("newPersor") + ip + "|" + id);
                     sendLoginSucces();
@@ -151,11 +158,13 @@ public class SocketAgent extends Thread {
     }
 
     public void sendLoginSucces() {
-        String sql = "update User set statusId=" + mCurrent.getStatus() + " ,lastLoginTime=now()" + " where userId=" + mCurrent.getId();
+        String sql = "update User set statusId=" + mCurrent.getStatus() + " ,lastLoginTime=now()"
+                + " where userId=" + mCurrent.getId();
         DBUtil.executeUpdate(sql);
         try {
             mDos.writeUTF("<#USERLOGINSUCCES#>");
-            mDos.writeUTF(mCurrent.getId() + "|" + mCurrent.getName() + "|" + mCurrent.getPassword() + "|" + mCurrent.getStatus());
+            mDos.writeUTF(mCurrent.getId() + "|" + mCurrent.getName() + "|"
+                    + mCurrent.getPassword() + "|" + mCurrent.getStatus() + "|" + mCurrent.getSignature());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -225,6 +234,25 @@ public class SocketAgent extends Thread {
             mDos.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void updateSingature(String id, String singature) {
+        String sql = "update User set signature='" + singature + "' where userId=" + id;
+        System.out.println("sql:" + sql);
+        int result = DBUtil.executeUpdate(sql);
+        if (result > 0) {
+            try {
+                mDos.writeUTF("<#UPDATE_SIGNATUREOK#>");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                mDos.writeUTF("<#UPDATE_SIGNATUREFAIL#>");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

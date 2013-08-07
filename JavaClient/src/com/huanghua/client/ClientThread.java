@@ -72,12 +72,17 @@ public class ClientThread extends Thread {
                 } else if (msg != null && msg.startsWith("<#USERLOGINSUCCES#>")) {
                     String[] self = mDis.readUTF().split("\\|");
                     User u = new User(self[0], self[1], self[2], Integer.parseInt(self[3]));
+                    u.setSignature(self[4]);
                     mService.setMySelf(u);
                     mService.loginSuccess();
                 } else if (msg != null && msg.startsWith("<#FORCEOFFLINE#>")) {
                     mDos.writeUTF("<#FORCEOFFLINEOK#>");
                     mService.forceOffLine();
                     close();
+                } else if (msg != null && msg.startsWith("<#UPDATE_SIGNATUREOK#>")) {
+                    mService.updateSignatureSuccess();
+                } else if (msg != null && msg.startsWith("<#UPDATE_SIGNATUREFAIL#>")) {
+                    mService.updateSignatureFail();
                 }
             }
         } catch (UnknownHostException e) {

@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,9 +31,31 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
     private TextView mUserName;
     private ImageView mUserPhoto;
     private TextView mUserStatus;
+    private TextView mUserSignature;
+    private String mNewSignature;
     private Toast mToast;
     private LayoutInflater mInFlater;
     private ChatService mService;
+
+    public static final int HANDLER_MEG_UPDATE_SUCCESS = 1;
+    public static final int HANDLER_MEG_UPDATE_FAIL = 2;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            int what = msg.what;
+            switch (what) {
+                case HANDLER_MEG_UPDATE_SUCCESS:
+                    showToast(R.string.update_success, R.drawable.tenpay_toast_logo_success);
+                    mUserSignature.setText(mNewSignature);
+                    mService.getMySelf().setSignature(mNewSignature);
+                    break;
+                case HANDLER_MEG_UPDATE_FAIL:
+                    showToast(R.string.update_fail, 0);
+                    mNewSignature = "";
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +71,7 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
         mToast.setView(mInFlater.inflate(R.layout.toast_view, null));
         mToast.setGravity(Gravity.CENTER, 0, 0);
         mService = ChatService.getInstance();
+        mService.setSettingHandle(mHandler);
         mStauts = findViewById(R.id.status);
         mStauts.setOnClickListener(this);
         mStauts.setOnTouchListener(this);
@@ -66,17 +91,23 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
         mAbout.setOnTouchListener(this);
         mExit = (Button) findViewById(R.id.exit);
         mExit.setOnClickListener(this);
+        mUserSignature = (TextView) findViewById(R.id.user_signature);
+        mUserSignature.setText(mService.getMySelf().getSignature());
     }
 
-    private void showToast(String msg) {
+    private void showToast(String msg, int image) {
         View toast = mToast.getView();
         TextView m = (TextView) toast.findViewById(R.id.toast_msg);
+        ImageView iv = (ImageView) toast.findViewById(R.id.toast_image);
         m.setText(msg);
+        if (image != 0) {
+            iv.setBackgroundResource(image);
+        }
         mToast.show();
     }
 
-    private void showToast(int msg) {
-        showToast(getString(msg));
+    private void showToast(int msg, int image) {
+        showToast(getString(msg), image);
     }
 
     @Override
@@ -87,10 +118,10 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
             Util.ChatLog("mStauts onclick");
         } else if (v == mSignature) {
             Intent intent = new Intent(this, EditActivity.class);
-            intent.putExtra("old_context", "");
+            intent.putExtra("old_context", mUserSignature.getText().toString());
             intent.putExtra("title", getString(R.string.signature));
             intent.putExtra("back", getString(R.string.setting));
-            startActivity(intent);
+            startActivityForResult(intent, 1);
         }
     }
 
@@ -130,5 +161,21 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
                 break;
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
+                if (resultCode == 2) {
+                    mNewSignature = data.getStringExtra("edit_context");
+                    if (mNewSignature != null
+                            && !mNewSignature.equals(mService.getMySelf().getSignature())) {
+                        mService.updateSignature(mNewSignature);
+                    }
+                }
+                break;
+        }
     }
 }
