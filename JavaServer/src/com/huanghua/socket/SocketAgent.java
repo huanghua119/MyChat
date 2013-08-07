@@ -123,6 +123,9 @@ public class SocketAgent extends Thread {
                 if (password.equals(pass)) {
                     String name = rs.getString("userName");
                     String signature = rs.getString("signature");
+                    if (signature == null || signature.equals("")) {
+                        signature = "null";
+                    }
                     String ip = mSocket.getInetAddress().toString().replace("/", "");
                     User u = mService.getUserById(id);
                     if (u != null) {

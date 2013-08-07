@@ -72,6 +72,9 @@ public class ClientThread extends Thread {
                 } else if (msg != null && msg.startsWith("<#USERLOGINSUCCES#>")) {
                     String[] self = mDis.readUTF().split("\\|");
                     User u = new User(self[0], self[1], self[2], Integer.parseInt(self[3]));
+                    if (self[4].equals("null")) {
+                        self[4] = "";
+                    }
                     u.setSignature(self[4]);
                     mService.setMySelf(u);
                     mService.loginSuccess();

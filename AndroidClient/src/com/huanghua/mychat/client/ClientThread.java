@@ -30,7 +30,7 @@ public class ClientThread implements Runnable {
     @Override
     public void run() {
         try {
-            mSocket = new Socket("10.0.2.2", 12345);
+            mSocket = new Socket("huanghua119.xicp.net", 26741);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             userLogin(mService.getMySelf().getId(), mService.getMySelf().getPassword());
@@ -71,6 +71,9 @@ public class ClientThread implements Runnable {
                 } else if (msg != null && msg.startsWith("<#USERLOGINSUCCES#>")) {
                     String[] self = mDis.readUTF().split("\\|");
                     User u = new User(self[0], self[1], self[2], Integer.parseInt(self[3]));
+                    if (self[4].equals("null")) {
+                        self[4] = "";
+                    }
                     u.setSignature(self[4]);
                     mService.setMySelf(u);
                     mService.loginSuccess();
