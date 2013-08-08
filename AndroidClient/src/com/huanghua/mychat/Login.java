@@ -1,6 +1,8 @@
+
 package com.huanghua.mychat;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.huanghua.mychat.service.BackStageService;
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.mychat.util.Util;
 import com.huanghua.mychat.widght.AphoneCheckBox;
 import com.huanghua.pojo.User;
 
@@ -40,28 +43,32 @@ public class Login extends Activity implements View.OnClickListener {
 
     public static final int HANDLE_MSG_LOGIN_FAIL = 1;
     public static final int HANDLER_MEG_FINASH = 2;
+    public static final int DIALOG_NEW_REGISTER = 1;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int what = msg.what;
             switch (what) {
-            case HANDLE_MSG_LOGIN_FAIL:
-                Bundle data = msg.getData();
-                String error = data.getString("error");
-                if (error.equals("passerror")) {
-                    showToast(R.string.passerror);
-                } else {
-                    showToast(R.string.usernotfind);
-                }
-                mLogin.setClickable(true);
-                break;
-            case HANDLER_MEG_FINASH:
-                Intent intent = new Intent();
-                intent.setClass(Login.this, Home.class);
-                startActivity(intent);
-                mService.setLoginHandler(null);
-                finish();
-                break;
+                case HANDLE_MSG_LOGIN_FAIL:
+                    Bundle data = msg.getData();
+                    String error = data.getString("error");
+                    if (error.equals("passerror")) {
+                        showToast(R.string.passerror);
+                    } else {
+                        showToast(R.string.usernotfind);
+                    }
+                    mLogin.setClickable(true);
+                    removeDialog(DIALOG_NEW_REGISTER);
+                    break;
+                case HANDLER_MEG_FINASH:
+                    Intent intent = new Intent();
+                    intent.setClass(Login.this, Home.class);
+                    startActivity(intent);
+                    mService.setLoginHandler(null);
+                    removeDialog(DIALOG_NEW_REGISTER);
+                    finish();
+                    break;
             }
         }
     };
@@ -162,6 +169,7 @@ public class Login extends Activity implements View.OnClickListener {
             }
             mLogin.setClickable(false);
             mService.login(this, userId, userPass);
+            showDialog(DIALOG_NEW_REGISTER);
         }
     }
 
@@ -189,4 +197,14 @@ public class Login extends Activity implements View.OnClickListener {
         editor.commit();
     }
 
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+            case DIALOG_NEW_REGISTER:
+                dialog = Util.createLoadingDialog(this, getString(R.string.login_now));
+                break;
+        }
+        return dialog;
+    }
 }

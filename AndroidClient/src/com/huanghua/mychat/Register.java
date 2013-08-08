@@ -2,6 +2,7 @@
 package com.huanghua.mychat;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.mychat.util.Util;
 
 public class Register extends Activity implements View.OnClickListener {
 
@@ -42,6 +44,8 @@ public class Register extends Activity implements View.OnClickListener {
     public static final int HANDLER_MEG_REGISTER_FAIL = 2;
     public static final int HANDLER_MEG_FINASH = 3;
 
+    public static final int DIALOG_NEW_REGISTER = 1;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -52,10 +56,12 @@ public class Register extends Activity implements View.OnClickListener {
                     userId = b.getString("user_id");
                     userPass = b.getString("user_pass");
                     goToRegisterSuccess(userId);
+                    removeDialog(DIALOG_NEW_REGISTER);
                     break;
                 case HANDLER_MEG_REGISTER_FAIL:
                     showToast(R.string.registerFail);
                     goToRegister();
+                    removeDialog(DIALOG_NEW_REGISTER);
                     break;
                 case HANDLER_MEG_FINASH:
                     finish();
@@ -143,7 +149,20 @@ public class Register extends Activity implements View.OnClickListener {
             showToast(R.string.twopassnotpass);
         } else {
             mService.userRegister(name, twopass, six);
+            mCommit.setEnabled(false);
+            showDialog(DIALOG_NEW_REGISTER);
         }
+    }
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+            case DIALOG_NEW_REGISTER:
+                dialog = Util.createLoadingDialog(this, getString(R.string.register_now));
+                break;
+        }
+        return dialog;
     }
 
     @Override
@@ -152,6 +171,7 @@ public class Register extends Activity implements View.OnClickListener {
     }
 
     private void goToRegister() {
+        mCommit.setEnabled(true);
         mRegisterView.setVisibility(View.VISIBLE);
         mRegisterSuccess.setVisibility(View.GONE);
         mProcessCommit.setTextColor(getResources().getColor(R.color.tab_text_color));

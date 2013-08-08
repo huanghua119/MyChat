@@ -145,6 +145,7 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
             case MotionEvent.ACTION_DOWN:
                 if (v instanceof RelativeLayout) {
                     RelativeLayout r = ((RelativeLayout) v);
+                    r.setPressed(true);
                     for (int i = 0; i < r.getChildCount(); i++) {
                         r.getChildAt(i).setPressed(true);
                     }
@@ -154,6 +155,7 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
             case MotionEvent.ACTION_CANCEL:
                 if (v instanceof RelativeLayout) {
                     RelativeLayout r = ((RelativeLayout) v);
+                    r.setPressed(false);
                     for (int i = 0; i < r.getChildCount(); i++) {
                         r.getChildAt(i).setPressed(false);
                     }
