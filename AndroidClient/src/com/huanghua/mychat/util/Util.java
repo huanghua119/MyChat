@@ -4,6 +4,8 @@ package com.huanghua.mychat.util;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,5 +59,16 @@ public class Util {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT));
         return loadingDialog;
+    }
+
+    public static boolean isConnectivity(Context context) {
+        ConnectivityManager cManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo nInfo = cManager.getActiveNetworkInfo();
+        if (nInfo != null && nInfo.isAvailable()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

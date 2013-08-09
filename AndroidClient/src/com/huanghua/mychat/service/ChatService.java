@@ -19,10 +19,12 @@ import com.huanghua.mychat.Contact;
 import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.Messages;
+import com.huanghua.mychat.R;
 import com.huanghua.mychat.Register;
 import com.huanghua.mychat.Setting;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
+import com.huanghua.mychat.util.Util;
 import com.huanghua.pojo.NewMessage;
 import com.huanghua.pojo.Status;
 import com.huanghua.pojo.User;
@@ -63,6 +65,10 @@ public class ChatService {
         if (mContext == null) {
             mContext = context;
         }
+        if (!Util.isConnectivity(mContext)) {
+            loginFail(mContext.getString(R.string.no_connectivity));
+            return;
+        }
         mSelf = new User();
         mSelf.setId(id);
         mSelf.setPassword(password);
@@ -94,8 +100,10 @@ public class ChatService {
             intent.setClass(mContext, Login.class);
             mContext.startActivity(intent);
         }
-        mClient.close();
-        mClient = null;
+        if (mClient != null) {
+            mClient.close();
+            mClient = null;
+        }
     }
 
     public void addUser(List<User> list) {
@@ -169,6 +177,7 @@ public class ChatService {
 
     public void offLine() {
         mClient.offLine();
+        goToLogin();
     }
 
     public void forceOffLine() {

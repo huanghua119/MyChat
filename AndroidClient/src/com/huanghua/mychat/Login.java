@@ -55,8 +55,10 @@ public class Login extends Activity implements View.OnClickListener {
                     String error = data.getString("error");
                     if (error.equals("passerror")) {
                         showToast(R.string.passerror);
-                    } else {
+                    } else if (error.equals("usernotfind")) {
                         showToast(R.string.usernotfind);
+                    } else {
+                        showToast(error);
                     }
                     mLogin.setClickable(true);
                     removeDialog(DIALOG_NEW_REGISTER);

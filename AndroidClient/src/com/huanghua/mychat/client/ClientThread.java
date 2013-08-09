@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.huanghua.mychat.service.ChatService;
+import com.huanghua.mychat.util.Util;
 import com.huanghua.pojo.User;
 
 public class ClientThread implements Runnable {
@@ -50,7 +51,6 @@ public class ClientThread implements Runnable {
                     mService.addUser(list);
                 } else if (msg != null && msg.startsWith("<#USER_OFFLINE#>")) {
                     close();
-                    mService.goToLogin();
                 } else if (msg != null && msg.startsWith("<#SENDUSEROFF#>")) {
                     String temp = mDis.readUTF();
                     String[] user = temp.split("\\|");
