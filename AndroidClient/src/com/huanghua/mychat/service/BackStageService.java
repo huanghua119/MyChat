@@ -225,6 +225,9 @@ public class BackStageService extends Service {
     }
 
     private void queryMessage() {
+        if (mService == null || mService.getMySelf() == null) {
+            return;
+        }
         String[] COLUMNS = new String[] {
                 MyChatTable.MessageColumns.userId, MyChatTable.MessageColumns.send_userId,
                 MyChatTable.MessageColumns.from_userId, MyChatTable.MessageColumns.to_userId,

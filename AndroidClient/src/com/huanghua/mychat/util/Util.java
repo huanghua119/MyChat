@@ -18,20 +18,24 @@ import android.widget.TextView;
 import com.huanghua.mychat.R;
 
 public class Util {
+    public static final int USER_STATUS_ONLINE = 1;
+    public static final int USER_STATUS_LEAVE = 2;
+    public static final int USER_STATUS_STEDLTH = 3;
+    public static final int USER_STATUS_OFFLINE = 4;
 
     public static String getStatus(Resources r, int status) {
         String result = r.getString(R.string.status_offline);
         switch (status) {
-            case 1:
+            case USER_STATUS_ONLINE:
                 result = r.getString(R.string.status_online);
                 break;
-            case 2:
+            case USER_STATUS_LEAVE:
                 result = r.getString(R.string.status_leave);
                 break;
-            case 3:
+            case USER_STATUS_STEDLTH:
                 result = r.getString(R.string.status_stedlth);
                 break;
-            case 4:
+            case USER_STATUS_OFFLINE:
                 result = r.getString(R.string.status_offline);
                 break;
         }

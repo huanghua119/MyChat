@@ -190,9 +190,6 @@ public class ChatService {
     }
 
     public void goToLogin() {
-        Intent intent = new Intent();
-        intent.setClass(mContext, Login.class);
-        mContext.startActivity(intent);
         mHomeHandle.sendEmptyMessage(Home.HANDLER_MEG_FINISH);
         mBackStageService.stopSelf();
         mBackStageService = null;
@@ -351,5 +348,14 @@ public class ChatService {
 
     public void updateSignatureFail() {
         mSettingHandle.sendEmptyMessage(Setting.HANDLER_MEG_UPDATE_FAIL);
+    }
+
+    public void setSwitchTab(String tab) {
+        Message s = new Message();
+        Bundle data = new Bundle();
+        data.putString("switch_tab", tab);
+        s.what = Home.HANDLER_MEG_SWITCH_USER_TAB;
+        s.setData(data);
+        mHomeHandle.sendMessage(s);
     }
 }

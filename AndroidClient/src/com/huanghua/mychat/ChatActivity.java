@@ -255,4 +255,10 @@ public class ChatActivity extends Activity implements OnClickListener {
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         mWindowWidth = dm.widthPixels;
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
+    }
 }

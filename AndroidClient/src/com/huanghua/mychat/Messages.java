@@ -179,6 +179,7 @@ public class Messages extends Activity implements View.OnClickListener, OnItemCl
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("userId", mMessageUser[position].getId());
         startActivity(intent);
+        getParent().overridePendingTransition(R.anim.right_in, R.anim.right_out);
     }
 
 }

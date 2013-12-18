@@ -131,6 +131,12 @@ public class Register extends Activity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
+    }
+
     private void startRegister() {
         String name = mUserName.getText().toString();
         String pass = mPass.getText().toString();

@@ -60,4 +60,9 @@ public class EditActivity extends Activity implements OnClickListener {
         }
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.left_in, R.anim.left_out);
+    }
 }

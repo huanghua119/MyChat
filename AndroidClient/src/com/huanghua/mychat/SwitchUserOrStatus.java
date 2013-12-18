@@ -3,7 +3,6 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,38 +20,25 @@ import android.widget.Toast;
 import com.huanghua.mychat.service.ChatService;
 import com.huanghua.mychat.util.Util;
 
-public class Setting extends Activity implements View.OnClickListener, OnTouchListener {
+public class SwitchUserOrStatus extends Activity implements View.OnClickListener, OnTouchListener {
 
-    private Button mExit;
-    private View mStauts;
-    private View mSignature;
-    private View mUserInfo;
-    private View mAbout;
     private TextView mUserName;
     private ImageView mUserPhoto;
     private TextView mUserStatus;
-    private TextView mUserSignature;
-    private String mNewSignature;
     private Toast mToast;
     private LayoutInflater mInFlater;
     private ChatService mService;
+    private View mStatusOnline;
+    private View mStatusStealth;
+    private View mStatusLeave;
+    private View mAddUser;
+    private Button mBack;
 
-    public static final int HANDLER_MEG_UPDATE_SUCCESS = 1;
-    public static final int HANDLER_MEG_UPDATE_FAIL = 2;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int what = msg.what;
             switch (what) {
-                case HANDLER_MEG_UPDATE_SUCCESS:
-                    showToast(R.string.update_success, R.drawable.tenpay_toast_logo_success);
-                    mUserSignature.setText(mNewSignature);
-                    mService.getMySelf().setSignature(mNewSignature);
-                    break;
-                case HANDLER_MEG_UPDATE_FAIL:
-                    showToast(R.string.update_fail, 0);
-                    mNewSignature = "";
-                    break;
             }
         }
     };
@@ -60,7 +46,7 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tab_setting);
+        setContentView(R.layout.tab_switchuser);
         mInFlater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         init();
     }
@@ -72,27 +58,22 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
         mToast.setGravity(Gravity.CENTER, 0, 0);
         mService = ChatService.getInstance();
         mService.setSettingHandle(mHandler);
-        mStauts = findViewById(R.id.status);
-        mStauts.setOnClickListener(this);
-        mStauts.setOnTouchListener(this);
         mUserName = (TextView) findViewById(R.id.user_name);
-        mUserName.setText(mService.getMySelf().getName());
         mUserPhoto = (ImageView) findViewById(R.id.user_photo);
         mUserStatus = (TextView) findViewById(R.id.user_status);
-        mUserStatus.setText(Util.getStatus(getResources(), mService.getMySelf().getStatus()));
-        mSignature = findViewById(R.id.signature);
-        mSignature.setOnClickListener(this);
-        mSignature.setOnTouchListener(this);
-        mUserInfo = findViewById(R.id.user_info);
-        mUserInfo.setOnClickListener(this);
-        mUserInfo.setOnTouchListener(this);
-        mAbout = findViewById(R.id.about_me);
-        mAbout.setOnClickListener(this);
-        mAbout.setOnTouchListener(this);
-        mExit = (Button) findViewById(R.id.exit);
-        mExit.setOnClickListener(this);
-        mUserSignature = (TextView) findViewById(R.id.user_signature);
-        mUserSignature.setText(mService.getMySelf().getSignature());
+        mStatusOnline = findViewById(R.id.status_online);
+        mStatusStealth = findViewById(R.id.status_stealth);
+        mStatusLeave = findViewById(R.id.status_leave);
+        mAddUser = findViewById(R.id.add_user);
+        mStatusOnline.setOnClickListener(this);
+        mStatusOnline.setOnTouchListener(this);
+        mStatusStealth.setOnClickListener(this);
+        mStatusStealth.setOnTouchListener(this);
+        mStatusLeave.setOnClickListener(this);
+        mStatusLeave.setOnTouchListener(this);
+        mAddUser.setOnClickListener(this);
+        mBack = (Button) findViewById(R.id.back);
+        mBack.setOnClickListener(this);
     }
 
     private void showToast(String msg, int image) {
@@ -112,24 +93,24 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
 
     @Override
     public void onClick(View v) {
-        if (v == mExit) {
-            mService.offLine();
-        } else if (v == mStauts) {
-            Util.ChatLog("mStauts onclick");
-            mService.setSwitchTab(Home.TAB_TAG_SWITCH_USER);
-        } else if (v == mSignature) {
-            Intent intent = new Intent(this, EditActivity.class);
-            intent.putExtra("old_context", mUserSignature.getText().toString());
-            intent.putExtra("title", getString(R.string.signature));
-            intent.putExtra("back", getString(R.string.setting));
-            startActivityForResult(intent, 1);
-            getParent().overridePendingTransition(R.anim.right_in, R.anim.right_out);
+        if (v == mStatusOnline) {
+
+        } else if (v == mStatusLeave) {
+
+        } else if (v == mStatusStealth) {
+
+        } else if (v == mBack) {
+            mService.setSwitchTab(Home.TAB_TAG_SETTING);
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        mUserName.setText(mService.getMySelf().getName());
+        int status = mService.getMySelf().getStatus();
+        mUserStatus.setText(Util.getStatus(getResources(), status));
+        showSelectStatusFlag(status);
     }
 
     public void onBackPressed() {
@@ -167,18 +148,25 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
         return false;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 1:
-                if (resultCode == 2) {
-                    mNewSignature = data.getStringExtra("edit_context");
-                    if (mNewSignature != null
-                            && !mNewSignature.equals(mService.getMySelf().getSignature())) {
-                        mService.updateSignature(mNewSignature);
-                    }
-                }
+    private void showSelectStatusFlag(int status) {
+        ImageView online = (ImageView) mStatusOnline.findViewById(R.id.status_online_flag);
+        ImageView leave = (ImageView) mStatusLeave.findViewById(R.id.status_leave_flag);
+        ImageView stedlth = (ImageView) mStatusStealth.findViewById(R.id.status_stealth_flag);
+        switch (status) {
+            case Util.USER_STATUS_ONLINE:
+                online.setVisibility(View.VISIBLE);
+                leave.setVisibility(View.GONE);
+                stedlth.setVisibility(View.GONE);
+                break;
+            case Util.USER_STATUS_LEAVE:
+                online.setVisibility(View.GONE);
+                leave.setVisibility(View.VISIBLE);
+                stedlth.setVisibility(View.GONE);
+                break;
+            case Util.USER_STATUS_STEDLTH:
+                online.setVisibility(View.GONE);
+                leave.setVisibility(View.GONE);
+                stedlth.setVisibility(View.VISIBLE);
                 break;
         }
     }

@@ -70,6 +70,7 @@ public class Login extends Activity implements View.OnClickListener {
                     mService.setLoginHandler(null);
                     removeDialog(DIALOG_NEW_REGISTER);
                     finish();
+                    overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
                     break;
             }
         }
@@ -123,6 +124,7 @@ public class Login extends Activity implements View.OnClickListener {
         if (v == mRegister) {
             Intent intent = new Intent(this, Register.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.right_in, R.anim.right_out);
         } else if (v == mLogin) {
             startLogin();
         } else if (v == mAutoLabel) {

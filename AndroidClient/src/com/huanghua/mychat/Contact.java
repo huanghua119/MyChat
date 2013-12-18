@@ -190,6 +190,7 @@ public class Contact extends Activity implements View.OnClickListener, OnChildCl
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("userId", mChild[groupPosition][childPosition]);
         startActivity(intent);
+        getParent().overridePendingTransition(R.anim.right_in, R.anim.right_out);
         return false;
     }
 

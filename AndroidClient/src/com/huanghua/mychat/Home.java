@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -24,16 +26,21 @@ public class Home extends TabActivity implements View.OnClickListener {
     public static String TAB_TAG_CONTACT = "contact";
     public static String TAB_TAG_LOVE = "love";
     public static String TAB_TAG_SETTING = "setting";
+    public static String TAB_TAG_SWITCH_USER = "switchuser";
     private ChatService mService;
 
     private TabHost mTabHost;
-    private Intent mMessageIntent, mContactIntent, mLoveIntent, mSettingIntent;
+    private Intent mMessageIntent, mContactIntent, mLoveIntent, mSettingIntent, mSwitchUserIntent;
     private View mMessageButton, mContactButton, mLoveButton, mSettingButton;
     private TextView mNewCount;
     private int mCurTabId;
 
+    private Animation mLeftIn, mLeftOut;
+    private Animation mRightIn, mRightOut;
+
     public static final int HANDLER_MEG_FINISH = 1;
     public static final int HANDLER_MEG_NEW_COUNT = 2;
+    public static final int HANDLER_MEG_SWITCH_USER_TAB = 3;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -41,7 +48,11 @@ public class Home extends TabActivity implements View.OnClickListener {
             switch (what) {
                 case HANDLER_MEG_FINISH:
                     setLogin(false);
+                    Intent intent = new Intent();
+                    intent.setClass(Home.this, Login.class);
+                    startActivity(intent);
                     finish();
+                    overridePendingTransition(R.anim.slide_up_in, R.anim.slide_down_out);
                     break;
                 case HANDLER_MEG_NEW_COUNT:
                     int count = MessageService.getAllNewMessage2(null);
@@ -50,6 +61,22 @@ public class Home extends TabActivity implements View.OnClickListener {
                         mNewCount.setText(count + "");
                     } else {
                         mNewCount.setVisibility(View.GONE);
+                    }
+                    break;
+                case HANDLER_MEG_SWITCH_USER_TAB:
+                    String tab = msg.getData().getString("switch_tab");
+                    if (tab != null && !"".equals(tab)) {
+                        if (tab.equals(TAB_TAG_SWITCH_USER)) {
+                            mTabHost.getCurrentView().startAnimation(mRightOut);
+                        } else if (tab.equals(TAB_TAG_SETTING)) {
+                            mTabHost.getCurrentView().startAnimation(mLeftOut);
+                        }
+                        setCurrentTabByTag(tab);
+                        if (tab.equals(TAB_TAG_SWITCH_USER)) {
+                            mTabHost.getCurrentView().startAnimation(mRightIn);
+                        } else if (tab.equals(TAB_TAG_SETTING)) {
+                            mTabHost.getCurrentView().startAnimation(mLeftIn);
+                        }
                     }
                     break;
             }
@@ -63,6 +90,10 @@ public class Home extends TabActivity implements View.OnClickListener {
         init();
         prepareIntent();
         setupIntent();
+        mLeftIn = AnimationUtils.loadAnimation(this, R.anim.left_in);
+        mLeftOut = AnimationUtils.loadAnimation(this, R.anim.left_out);
+        mRightIn = AnimationUtils.loadAnimation(this, R.anim.right_in);
+        mRightOut = AnimationUtils.loadAnimation(this, R.anim.right_out);
         mMessageButton.performClick();
     }
 
@@ -88,6 +119,7 @@ public class Home extends TabActivity implements View.OnClickListener {
         mContactIntent = new Intent(this, Contact.class);
         mLoveIntent = new Intent(this, Love.class);
         mSettingIntent = new Intent(this, Setting.class);
+        mSwitchUserIntent = new Intent(this, SwitchUserOrStatus.class);
     }
 
     private void setupIntent() {
@@ -100,6 +132,8 @@ public class Home extends TabActivity implements View.OnClickListener {
                 R.drawable.tab_love, mLoveIntent));
         mTabHost.addTab(buildTabSpec(TAB_TAG_SETTING,
                 R.string.setting, R.drawable.tab_setting, mSettingIntent));
+        mTabHost.addTab(buildTabSpec(TAB_TAG_SWITCH_USER,
+                R.string.setting, R.drawable.tab_setting, mSwitchUserIntent));
     }
 
     private TabHost.TabSpec buildTabSpec(String tag, int resLabel, int resIcon,
@@ -134,6 +168,10 @@ public class Home extends TabActivity implements View.OnClickListener {
         tv2.setTextColor(Color.WHITE);
         tv3.setTextColor(Color.WHITE);
         tv4.setTextColor(Color.WHITE);
+        boolean anim = mTabHost.getCurrentTabTag().equals(TAB_TAG_SWITCH_USER);
+        if (anim) {
+            mTabHost.getCurrentView().startAnimation(mLeftOut);
+        }
 
         switch (viewId) {
             case R.id.message:
@@ -156,6 +194,9 @@ public class Home extends TabActivity implements View.OnClickListener {
                 mSettingButton.setBackgroundResource(R.drawable.home_bottom_select);
                 tv4.setTextColor(getResources().getColor(R.color.tab_text_color));
                 break;
+        }
+        if (anim) {
+            mTabHost.getCurrentView().startAnimation(mLeftIn);
         }
     }
 
