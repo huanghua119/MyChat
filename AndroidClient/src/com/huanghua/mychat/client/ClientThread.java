@@ -85,6 +85,10 @@ public class ClientThread implements Runnable {
                     mService.updateSignatureSuccess();
                 } else if (msg != null && msg.startsWith("<#UPDATE_SIGNATUREFAIL#>")) {
                     mService.updateSignatureFail();
+                } else if (msg != null && msg.startsWith("<#UPDATE_STATUSOK#>")) {
+                    mService.updateStatusSuccess();
+                } else if (msg != null && msg.startsWith("<#UPDATE_STATUSFAIL#>")) {
+                    mService.updateStatusFail();
                 }
             }
         } catch (UnknownHostException e) {

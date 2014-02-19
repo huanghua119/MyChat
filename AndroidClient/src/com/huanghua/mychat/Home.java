@@ -203,7 +203,15 @@ public class Home extends TabActivity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        mHandler.sendEmptyMessage(HANDLER_MEG_NEW_COUNT);
+        if (mService.getMySelf() == null) {
+            setLogin(false);
+            Intent intent = new Intent();
+            intent.setClass(Home.this, Login.class);
+            startActivity(intent);
+            finish();
+        } else {
+            mHandler.sendEmptyMessage(HANDLER_MEG_NEW_COUNT);
+        }
     }
 
     @Override

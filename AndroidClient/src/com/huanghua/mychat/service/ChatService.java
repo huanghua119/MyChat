@@ -19,9 +19,11 @@ import com.huanghua.mychat.Contact;
 import com.huanghua.mychat.Home;
 import com.huanghua.mychat.Login;
 import com.huanghua.mychat.Messages;
+import com.huanghua.mychat.OtherUserLogin;
 import com.huanghua.mychat.R;
 import com.huanghua.mychat.Register;
 import com.huanghua.mychat.Setting;
+import com.huanghua.mychat.SwitchUserOrStatus;
 import com.huanghua.mychat.client.ClientThread;
 import com.huanghua.mychat.client.RegisterThread;
 import com.huanghua.mychat.util.Util;
@@ -45,6 +47,7 @@ public class ChatService {
     private Handler mLoginHandle = null;
     private Handler mHomeHandle = null;
     private Handler mSettingHandle = null;
+    private Handler mOtherLoginHandler = null;
 
     private ChatService() {
         mUser = new ArrayList<User>();
@@ -95,11 +98,19 @@ public class ChatService {
             m.setData(data);
             m.what = Login.HANDLE_MSG_LOGIN_FAIL;
             mLoginHandle.sendMessage(m);
+        } else if (mOtherLoginHandler != null) {
+            Bundle data = new Bundle();
+            data.putString("error", error);
+            Message m = new Message();
+            m.setData(data);
+            m.what = OtherUserLogin.HANDLE_MSG_LOGIN_FAIL;
+            mOtherLoginHandler.sendMessage(m);
         } else {
             Intent intent = new Intent();
             intent.setClass(mContext, Login.class);
             mContext.startActivity(intent);
         }
+        mSelf = null;
         if (mClient != null) {
             mClient.close();
             mClient = null;
@@ -175,9 +186,18 @@ public class ChatService {
     public void startChat(User u) {
     }
 
-    public void offLine() {
-        mClient.offLine();
-        goToLogin();
+    public void offLine(boolean toLogin) {
+        if (mSelf != null) {
+            mClient.offLine();
+        }
+        if (toLogin) {
+            goToLogin();
+        } else {
+            mBackStageService.stopSelf();
+            mBackStageService = null;
+            mSelf = null;
+            MessageService.clearAllMessage();
+        }
     }
 
     public void forceOffLine() {
@@ -358,4 +378,24 @@ public class ChatService {
         s.setData(data);
         mHomeHandle.sendMessage(s);
     }
+
+    public void updateStatus(int newStatus) {
+        if (mSelf.getStatus() != newStatus) {
+            mClient.sendToServer("<#UPDATE_STATUS#>" + mSelf.getId());
+            mClient.sendToServer(newStatus + "");
+        }
+    }
+
+    public void updateStatusSuccess() {
+        mSettingHandle.sendEmptyMessage(SwitchUserOrStatus.HANDLER_MEG_UPDATE_STATUS_SUCCESS);
+    }
+
+    public void updateStatusFail() {
+        mSettingHandle.sendEmptyMessage(SwitchUserOrStatus.HANDLER_MEG_UPDATE_STATUS_FAIL);
+    }
+
+    public void setOtherLoginHandle(Handler handler) {
+        mOtherLoginHandler = handler;
+    }
+
 }

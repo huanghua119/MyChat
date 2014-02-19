@@ -71,15 +71,12 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
         mToast.setView(mInFlater.inflate(R.layout.toast_view, null));
         mToast.setGravity(Gravity.CENTER, 0, 0);
         mService = ChatService.getInstance();
-        mService.setSettingHandle(mHandler);
         mStauts = findViewById(R.id.status);
         mStauts.setOnClickListener(this);
         mStauts.setOnTouchListener(this);
         mUserName = (TextView) findViewById(R.id.user_name);
-        mUserName.setText(mService.getMySelf().getName());
         mUserPhoto = (ImageView) findViewById(R.id.user_photo);
         mUserStatus = (TextView) findViewById(R.id.user_status);
-        mUserStatus.setText(Util.getStatus(getResources(), mService.getMySelf().getStatus()));
         mSignature = findViewById(R.id.signature);
         mSignature.setOnClickListener(this);
         mSignature.setOnTouchListener(this);
@@ -92,7 +89,6 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
         mExit = (Button) findViewById(R.id.exit);
         mExit.setOnClickListener(this);
         mUserSignature = (TextView) findViewById(R.id.user_signature);
-        mUserSignature.setText(mService.getMySelf().getSignature());
     }
 
     private void showToast(String msg, int image) {
@@ -113,7 +109,7 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
     @Override
     public void onClick(View v) {
         if (v == mExit) {
-            mService.offLine();
+            mService.offLine(true);
         } else if (v == mStauts) {
             Util.ChatLog("mStauts onclick");
             mService.setSwitchTab(Home.TAB_TAG_SWITCH_USER);
@@ -130,6 +126,10 @@ public class Setting extends Activity implements View.OnClickListener, OnTouchLi
     @Override
     protected void onResume() {
         super.onResume();
+        mService.setSettingHandle(mHandler);
+        mUserName.setText(mService.getMySelf().getName());
+        mUserStatus.setText(Util.getStatus(getResources(), mService.getMySelf().getStatus()));
+        mUserSignature.setText(mService.getMySelf().getSignature());
     }
 
     public void onBackPressed() {

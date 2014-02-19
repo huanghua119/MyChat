@@ -70,6 +70,10 @@ public class SocketAgent extends Thread {
                     String id = msg.substring(20);
                     String signature = mDis.readUTF();
                     updateSingature(id, signature);
+                } else if (msg != null && msg.startsWith("<#UPDATE_STATUS#>")) {
+                    String id = msg.substring(17);
+                    String newStatus = mDis.readUTF();
+                    updateStatus(id, Integer.parseInt(newStatus));
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -246,6 +250,7 @@ public class SocketAgent extends Thread {
         int result = DBUtil.executeUpdate(sql);
         if (result > 0) {
             try {
+                mCurrent.setSignature(singature);
                 mDos.writeUTF("<#UPDATE_SIGNATUREOK#>");
             } catch (IOException e) {
                 e.printStackTrace();
@@ -253,6 +258,27 @@ public class SocketAgent extends Thread {
         } else {
             try {
                 mDos.writeUTF("<#UPDATE_SIGNATUREFAIL#>");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void updateStatus(String id, int status) {
+        String sql = "update User set statusId=" + status + " where userId=" + id;
+        System.out.println("sql:" + sql);
+        int result = DBUtil.executeUpdate(sql);
+        if (result > 0) {
+            try {
+                mCurrent.setStatus(status);
+                mDos.writeUTF("<#UPDATE_STATUSOK#>");
+                mService.sendUserList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                mDos.writeUTF("<#UPDATE_STATUSFAIL#>");
             } catch (IOException e) {
                 e.printStackTrace();
             }

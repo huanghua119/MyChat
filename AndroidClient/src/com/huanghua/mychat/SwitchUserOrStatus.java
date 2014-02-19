@@ -3,6 +3,7 @@ package com.huanghua.mychat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,6 +24,7 @@ import com.huanghua.mychat.util.Util;
 public class SwitchUserOrStatus extends Activity implements View.OnClickListener, OnTouchListener {
 
     private TextView mUserName;
+    private TextView mUserId;
     private ImageView mUserPhoto;
     private TextView mUserStatus;
     private Toast mToast;
@@ -33,12 +35,23 @@ public class SwitchUserOrStatus extends Activity implements View.OnClickListener
     private View mStatusLeave;
     private View mAddUser;
     private Button mBack;
+    private int mNewStatus;
+
+    public static final int HANDLER_MEG_UPDATE_STATUS_SUCCESS = 1;
+    public static final int HANDLER_MEG_UPDATE_STATUS_FAIL = 2;
 
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int what = msg.what;
             switch (what) {
+                case HANDLER_MEG_UPDATE_STATUS_SUCCESS:
+                    mService.getMySelf().setStatus(mNewStatus);
+                    mUserStatus.setText(Util.getStatus(getResources(), mNewStatus));
+                    break;
+                case HANDLER_MEG_UPDATE_STATUS_FAIL:
+                    updateStatus(mNewStatus);
+                    break;
             }
         }
     };
@@ -57,8 +70,8 @@ public class SwitchUserOrStatus extends Activity implements View.OnClickListener
         mToast.setView(mInFlater.inflate(R.layout.toast_view, null));
         mToast.setGravity(Gravity.CENTER, 0, 0);
         mService = ChatService.getInstance();
-        mService.setSettingHandle(mHandler);
         mUserName = (TextView) findViewById(R.id.user_name);
+        mUserId = (TextView) findViewById(R.id.user_id);
         mUserPhoto = (ImageView) findViewById(R.id.user_photo);
         mUserStatus = (TextView) findViewById(R.id.user_status);
         mStatusOnline = findViewById(R.id.status_online);
@@ -94,23 +107,44 @@ public class SwitchUserOrStatus extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == mStatusOnline) {
-
+            updateStatus(Util.USER_STATUS_ONLINE);
         } else if (v == mStatusLeave) {
-
+            updateStatus(Util.USER_STATUS_LEAVE);
         } else if (v == mStatusStealth) {
-
+            updateStatus(Util.USER_STATUS_STEDLTH);
         } else if (v == mBack) {
             mService.setSwitchTab(Home.TAB_TAG_SETTING);
+        } else if (v == mAddUser) {
+            Intent intent = new Intent();
+            intent.setClass(this, OtherUserLogin.class);
+            intent.putExtra("title", getString(R.string.add_user));
+            startActivity(intent);
+            getParent().overridePendingTransition(R.anim.push_up_in, R.anim.push_up_out);
         }
+    }
+
+    private void updateStatus(int newStatus) {
+        mNewStatus = newStatus;
+        mService.updateStatus(newStatus);
+        showSelectStatusFlag(newStatus);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mUserName.setText(mService.getMySelf().getName());
-        int status = mService.getMySelf().getStatus();
-        mUserStatus.setText(Util.getStatus(getResources(), status));
-        showSelectStatusFlag(status);
+        if (mService.getMySelf() == null) {
+            Intent intent = new Intent();
+            intent.setClass(this, Login.class);
+            startActivity(intent);
+            finish();
+        } else {
+            mService.setSettingHandle(mHandler);
+            mUserName.setText(mService.getMySelf().getName());
+            int status = mService.getMySelf().getStatus();
+            mUserStatus.setText(Util.getStatus(getResources(), status));
+            mUserId.setText(mService.getMySelf().getId() + "");
+            showSelectStatusFlag(status);
+        }
     }
 
     public void onBackPressed() {

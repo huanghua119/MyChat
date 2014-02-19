@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.File;
+
 public class EditActivity extends Activity implements OnClickListener {
 
     private Button mBack;

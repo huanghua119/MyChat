@@ -55,7 +55,7 @@ public class Love extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == mExit) {
-            mService.offLine();
+            mService.offLine(true);
         }
     }
 

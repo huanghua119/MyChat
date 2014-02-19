@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tab_text_color"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/title"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dip"
+        android:paddingTop="8dip" >
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center"
+            android:layout_marginLeft="15dip"
+            android:background="@drawable/back_button_bg"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:text="@android:string/cancel"
+            android:textColor="@color/tab_text_color"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@color/tab_text_color"
+            android:textSize="22sp" />
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="15dip"
+            android:background="@drawable/back_button_bg"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:text="@android:string/ok"
+            android:textColor="@color/tab_text_color"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:orientation="vertical"
+        android:paddingLeft="14dip"
+        android:paddingRight="14dip" >
+
+        <EditText
+            android:id="@+id/user_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_button_top_bg"
+            android:drawableLeft="@drawable/user"
+            android:drawablePadding="10dip"
+            android:inputType="number"
+            android:paddingBottom="12dip"
+            android:paddingLeft="15dip"
+            android:paddingTop="12dip"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/user_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/setting_button_bottom_bg"
+            android:drawableLeft="@drawable/password"
+            android:drawablePadding="10dip"
+            android:inputType="textPassword"
+            android:paddingBottom="12dip"
+            android:paddingLeft="15dip"
+            android:paddingTop="12dip"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

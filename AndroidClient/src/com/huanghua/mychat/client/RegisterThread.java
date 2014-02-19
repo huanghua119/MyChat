@@ -29,7 +29,8 @@ public class RegisterThread implements Runnable {
     @Override
     public void run() {
         try {
-            mSocket = new Socket("huanghua119.xicp.net", 26741);
+            //mSocket = new Socket("huanghua119.xicp.net", 26741);
+            mSocket = new Socket("192.168.5.4", 12345);
             mDis = new DataInputStream(mSocket.getInputStream());
             mDos = new DataOutputStream(mSocket.getOutputStream());
             startRegister(mUser);
