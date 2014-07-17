@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="tab_text_color">#f3f3f3</color>
+    <color name="black">#383636</color>
+    <color name="context_search_color">#999999</color>
+
+    <drawable name="driver_color">#c9c9c9</drawable>
+    <drawable name="child_view_press_color">#00aea0</drawable>
+
+    <color name="color_bottom_text_normal">#9da0a4</color>
+    <color name="color_bottom_text_press">#4f9ef6</color>
+    <color name="dialog_color_title">#f82c22</color>
+    <color name="base_color_text_black">#3e3e39</color>
+    <color name="base_color_text_gray">#9fa0a0</color>
+    <color name="base_color_text_white">#ffffff</color>
+
+</resources>

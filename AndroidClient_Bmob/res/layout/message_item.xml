@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/contact_child_view_bg"
+    android:padding="3dip" >
+
+    <ImageView
+        android:id="@+id/userPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="18dip"
+        android:layout_marginRight="13dip"
+        android:background="@drawable/user_photo_frame"
+        android:contentDescription="@string/contact"
+        android:src="@drawable/user_photo_default" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dip"
+        android:layout_toRightOf="@+id/userPhoto"
+        android:gravity="center_vertical"
+        android:textColor="@drawable/text_black_white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/newMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userName"
+        android:layout_toRightOf="@+id/userPhoto"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxWidth="150dip"
+        android:singleLine="true"
+        android:textColor="@color/context_search_color"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dip"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/messageDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:textColor="@color/context_search_color"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/messageCount"
+            android:layout_width="23dip"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:background="@drawable/message_count"
+            android:gravity="center"
+            android:paddingTop="0dip"
+            android:paddingBottom="0dip"
+            android:textColor="@color/tab_text_color"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</RelativeLayout>

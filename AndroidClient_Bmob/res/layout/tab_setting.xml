@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tab_text_color"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/title"
+        android:gravity="center_horizontal"
+        android:paddingBottom="8dip"
+        android:paddingTop="8dip"
+        android:text="@string/setting"
+        android:textColor="@color/tab_text_color"
+        android:textSize="22sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:paddingLeft="14dip"
+        android:paddingRight="14dip" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_button_top_bg"
+                android:clickable="true"
+                android:gravity="center_vertical" >
+
+                <ImageView
+                    android:id="@+id/user_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="2dip"
+                    android:layout_marginLeft="12dip"
+                    android:layout_marginTop="2dip"
+                    android:background="@drawable/user_photo_frame"
+                    android:contentDescription="@string/contact"
+                    android:src="@drawable/user_photo_default" />
+
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dip"
+                    android:layout_toRightOf="@+id/user_photo"
+                    android:textColor="@drawable/text_black_white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/user_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dip"
+                    android:drawablePadding="10dip"
+                    android:drawableRight="@drawable/group_flag_gree"
+                    android:gravity="center_vertical|right"
+                    android:textColor="@drawable/text_black_white"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/signature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_button_middle_bg"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="12dip"
+                android:paddingTop="12dip" >
+
+                <TextView
+                    android:id="@+id/sign_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="15dip"
+                    android:text="@string/signature"
+                    android:textColor="@drawable/text_black_white"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/user_signature"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="35dip"
+                    android:layout_toRightOf="@+id/sign_text"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textColor="@color/context_search_color"
+                    android:textSize="12sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dip"
+                    android:background="@drawable/group_flag_gree"
+                    android:contentDescription="@string/action_settings" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/user_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/setting_button_bottom_bg"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="12dip"
+                android:paddingTop="12dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="15dip"
+                    android:text="@string/user_info"
+                    android:textColor="@drawable/text_black_white"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dip"
+                    android:background="@drawable/group_flag_gree"
+                    android:contentDescription="@string/action_settings" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/about_me"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dip"
+                android:background="@drawable/setting_button_full_bg"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:paddingBottom="12dip"
+                android:paddingTop="12dip" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="8dip"
+                    android:layout_marginRight="15dip"
+                    android:text="@string/about_me"
+                    android:textColor="@drawable/text_black_white"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20dip"
+                    android:background="@drawable/group_flag_gree"
+                    android:contentDescription="@string/action_settings" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/exit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dip"
+                android:background="@drawable/red_button_bg"
+                android:gravity="center"
+                android:text="@string/exit"
+                android:textColor="@drawable/text_white_black"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
