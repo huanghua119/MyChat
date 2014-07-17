@@ -182,7 +182,7 @@ public class MainActivity extends ActivityBase implements EventListener{
         if (firstTime + 2000 > System.currentTimeMillis()) {
             super.onBackPressed();
         } else {
-            ShowToast(R.string.pass_exit);
+            ShowToastOld(R.string.pass_exit);
         }
         firstTime = System.currentTimeMillis();
     }

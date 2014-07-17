@@ -55,6 +55,7 @@ public class BaseActivity extends FragmentActivity {
     }
 
     Toast mToast;
+    Toast mToast2;
 
     public void ShowToast(final String text) {
         if (!TextUtils.isEmpty(text)) {
@@ -97,26 +98,44 @@ public class BaseActivity extends FragmentActivity {
         });
     }
 
-    /** 显示下线的对话框
-     * showOfflineDialog
+    public void ShowToastOld(String text) {
+        if (mToast2 == null) {
+            mToast2 = Toast.makeText(BaseActivity.this, text, Toast.LENGTH_SHORT);
+        }
+        mToast2.setText(text);
+        mToast2.show();
+    }
+
+    public void ShowToastOld(int text) {
+        if (mToast2 == null) {
+            mToast2 = Toast.makeText(BaseActivity.this, text, Toast.LENGTH_SHORT);
+        }
+        mToast2.setText(text);
+        mToast2.show();
+    }
+
+    /**
+     * 显示下线的对话框 showOfflineDialog
+     * 
      * @return void
      * @throws
      */
-   public void showOfflineDialog(final Context context) {
-       DialogTips dialog = new DialogTips(this,getString(R.string.offlineWarn), getString(R.string.again_login));
-       // 设置成功事件
-       dialog.SetOnSuccessListener(new DialogInterface.OnClickListener() {
-           public void onClick(DialogInterface dialogInterface, int userId) {
-               CustomApplcation.getInstance().logout();
-               startActivity(new Intent(context, LoginActivity.class));
-               finish();
-               dialogInterface.dismiss();
-           }
-       });
-       // 显示确认对话框
-       dialog.show();
-       dialog = null;
-   }
+    public void showOfflineDialog(final Context context) {
+        DialogTips dialog = new DialogTips(this, getString(R.string.offlineWarn),
+                getString(R.string.again_login));
+        // 设置成功事件
+        dialog.SetOnSuccessListener(new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialogInterface, int userId) {
+                CustomApplcation.getInstance().logout();
+                startActivity(new Intent(context, LoginActivity.class));
+                finish();
+                dialogInterface.dismiss();
+            }
+        });
+        // 显示确认对话框
+        dialog.show();
+        dialog = null;
+    }
 
     /**
      * 打Log ShowLog

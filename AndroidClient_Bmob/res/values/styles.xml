@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="@android:style/Theme.NoTitleBar"></style>
-
+    <style name="AppTheme" parent="@android:style/Theme.Light.NoTitleBar"></style>
     <style name="main_tab_but_linear">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">52dip</item>

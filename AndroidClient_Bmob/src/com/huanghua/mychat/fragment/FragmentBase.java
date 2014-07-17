@@ -58,27 +58,17 @@ public abstract class FragmentBase extends Fragment {
 
     public void ShowToast(String text) {
         if (mToast == null) {
-            mToast = new Toast(getActivity());
-            mToast.setDuration(Toast.LENGTH_SHORT);
-            mToast.setView(mInflater.inflate(R.layout.toast_view, null));
-            mToast.setGravity(Gravity.CENTER, 0, 0);
+            mToast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         }
-        View toast = mToast.getView();
-        TextView m = (TextView) toast.findViewById(R.id.toast_msg);
-        m.setText(text);
+        mToast.setText(text);
         mToast.show();
     }
 
     public void ShowToast(int text) {
         if (mToast == null) {
-            mToast = new Toast(getActivity());
-            mToast.setDuration(Toast.LENGTH_SHORT);
-            mToast.setView(mInflater.inflate(R.layout.toast_view, null));
-            mToast.setGravity(Gravity.CENTER, 0, 0);
+            mToast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
         }
-        View toast = mToast.getView();
-        TextView m = (TextView) toast.findViewById(R.id.toast_msg);
-        m.setText(text);
+        mToast.setText(text);
         mToast.show();
     }
 
